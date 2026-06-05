@@ -6,6 +6,8 @@ interface UploadResponse {
   fileName: string;
   fileSize: number;
   fileType: string;
+  textLength?: number;
+  textPreview?: string;
 }
 
 export default function UploadZone() {
@@ -49,6 +51,7 @@ export default function UploadZone() {
       <input
         type="file"
         accept=".pdf"
+        suppressHydrationWarning
         onChange={(e) => {
           const selectedFile = e.target.files?.[0];
 
@@ -74,19 +77,29 @@ export default function UploadZone() {
 
       {responseData && (
         <div className="mt-6 border rounded p-4">
-          <h3 className="font-semibold mb-2">Server Response</h3>
+          <h3 className="font-semibold mb-2">
+            Extraction Result
+          </h3>
 
           <p>
-            <strong>File Name:</strong> {responseData.fileName}
+            <strong>File:</strong>{" "}
+            {responseData.fileName}
           </p>
 
           <p>
-            <strong>File Size:</strong> {responseData.fileSize} bytes
+            <strong>Characters Extracted:</strong>{" "}
+            {responseData.textLength}
           </p>
 
-          <p>
-            <strong>File Type:</strong> {responseData.fileType}
-          </p>
+          <div className="mt-4">
+            <h4 className="font-semibold mb-2">
+              Preview
+            </h4>
+
+            <pre className="whitespace-pre-wrap text-sm">
+              {responseData.textPreview}
+            </pre>
+          </div>
         </div>
       )}
     </div>
