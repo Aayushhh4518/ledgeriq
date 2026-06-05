@@ -2,12 +2,21 @@
 
 import { useState } from "react";
 
+interface FinancialData {
+  company?: string;
+  revenue?: number;
+  grossProfit?: number;
+  netIncome?: number;
+  cash?: number;
+}
+
 interface UploadResponse {
   fileName: string;
   fileSize: number;
   fileType: string;
   textLength?: number;
   textPreview?: string;
+  financialData?: FinancialData;
 }
 
 export default function UploadZone() {
@@ -46,7 +55,9 @@ export default function UploadZone() {
 
   return (
     <div className="border rounded-lg p-8">
-      <h2 className="text-xl font-semibold mb-4">Upload Financial Statement</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        Upload Financial Statement
+      </h2>
 
       <input
         type="file"
@@ -82,14 +93,46 @@ export default function UploadZone() {
           </h3>
 
           <p>
-            <strong>File:</strong>{" "}
-            {responseData.fileName}
+            <strong>File:</strong> {responseData.fileName}
           </p>
 
           <p>
             <strong>Characters Extracted:</strong>{" "}
             {responseData.textLength}
           </p>
+
+          {responseData.financialData && (
+            <div className="mt-6 border rounded-lg p-4">
+              <h2 className="text-xl font-bold mb-4">
+                Financial Metrics
+              </h2>
+
+              <p>
+                <strong>Company:</strong>{" "}
+                {responseData.financialData.company}
+              </p>
+
+              <p>
+                <strong>Revenue:</strong>{" "}
+                {responseData.financialData.revenue?.toLocaleString()}
+              </p>
+
+              <p>
+                <strong>Gross Profit:</strong>{" "}
+                {responseData.financialData.grossProfit?.toLocaleString()}
+              </p>
+
+              <p>
+                <strong>Net Income:</strong>{" "}
+                {responseData.financialData.netIncome?.toLocaleString()}
+              </p>
+
+              <p>
+                <strong>Cash:</strong>{" "}
+                {responseData.financialData.cash?.toLocaleString()}
+              </p>
+            </div>
+          )}
 
           <div className="mt-4">
             <h4 className="font-semibold mb-2">

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { extractTextFromPDF } from "@/lib/pdf/extractText";
+import { parseFinancialData } from "@/lib/pdf/financial/parser";
 
 export async function POST(request: Request) {
   try {
@@ -25,11 +26,18 @@ export async function POST(request: Request) {
     const extractedText =
       await extractTextFromPDF(buffer);
 
+    const financialData = 
+        parseFinancialData(extractedText);
+
+    console.log(financialData);
+
+
     return NextResponse.json({
       success: true,
       fileName: file.name,
       textPreview: extractedText.slice(0, 2000),
       textLength: extractedText.length,
+      financialData,
     });
   } catch (error) {
     console.error("PDF ERROR:", error);
