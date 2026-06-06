@@ -50,6 +50,7 @@ export default function RevenueChart({ metrics }: Props) {
 
             <Bar
               dataKey="value"
+              fill="#3b82f6"
               radius={[8, 8, 0, 0]}
             />
           </BarChart>

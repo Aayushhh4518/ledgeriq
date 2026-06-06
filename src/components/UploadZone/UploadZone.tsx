@@ -4,7 +4,8 @@ import { useState } from "react";
 import OverviewCards from "../OverviewCards";
 import { FinancialMetrics } from "@/types/financial";
 import RevenueChart from "../RevenueChart";
-
+import HealthScore from "../HealthScore";
+import RiskPanel from "../RiskPanel";
 interface FinancialData {
   company?: string;
   revenue?: number;
@@ -110,6 +111,8 @@ export default function UploadZone() {
             <>
               <OverviewCards metrics={metrics} />
               <RevenueChart metrics={metrics} />
+              <HealthScore metrics={metrics}/>
+              <RiskPanel metrics={metrics}/>
             </>
           )}
 

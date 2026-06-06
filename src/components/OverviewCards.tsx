@@ -8,19 +8,19 @@ export default function OverviewCards({ metrics }: Props) {
   const cards = [
     {
       title: "Revenue",
-      value: `$${metrics.revenue.toLocaleString()}`
+      value: `$${(metrics.revenue ?? 0).toLocaleString()}`
     },
     {
       title: "Gross Profit",
-      value: `$${metrics.grossProfit.toLocaleString()}`
+      value: `$${(metrics.grossProfit ?? 0).toLocaleString()}`
     },
     {
       title: "Net Income",
-      value: `$${metrics.netIncome.toLocaleString()}`
+      value: `$${(metrics.netIncome ?? 0).toLocaleString()}`
     },
     {
       title: "Cash",
-      value: `$${metrics.cash.toLocaleString()}`
+      value: `$${(metrics.cash ?? 0).toLocaleString()}`
     }
   ];
 
