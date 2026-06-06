@@ -6,6 +6,7 @@ import { FinancialMetrics } from "@/types/financial";
 import RevenueChart from "../RevenueChart";
 import HealthScore from "../HealthScore";
 import RiskPanel from "../RiskPanel";
+import ExecutiveSummary from "@/components/ExecutiveSummary/ExecutiveSummary";
 interface FinancialData {
   company?: string;
   revenue?: number;
@@ -113,6 +114,12 @@ export default function UploadZone() {
               <RevenueChart metrics={metrics} />
               <HealthScore metrics={metrics}/>
               <RiskPanel metrics={metrics}/>
+              <ExecutiveSummary
+                company={responseData.financialData?.company ?? "Unknown"}
+                revenue={responseData.financialData?.revenue ?? 0}
+                netIncome={responseData.financialData?.netIncome ?? 0}
+                cash={responseData.financialData?.cash ?? 0}
+              />
             </>
           )}
 
