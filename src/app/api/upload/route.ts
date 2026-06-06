@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { extractTextFromPDF } from "@/lib/pdf/extractText";
 import { parseFinancialData } from "@/lib/pdf/financial/parser";
+import OverviewCards from "../OverviewCards";
+import { FinancialMetrics } from "@/types/financial";
 
 export async function POST(request: Request) {
   try {

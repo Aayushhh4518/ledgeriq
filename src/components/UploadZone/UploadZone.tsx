@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import OverviewCards from "../OverviewCards";
+import { FinancialMetrics } from "@/types/financial";
+import RevenueChart from "../RevenueChart";
 
 interface FinancialData {
   company?: string;
@@ -21,7 +24,12 @@ interface UploadResponse {
 
 export default function UploadZone() {
   const [file, setFile] = useState<File | null>(null);
-  const [responseData, setResponseData] = useState<UploadResponse | null>(null);
+  const [responseData, setResponseData] =
+    useState<UploadResponse | null>(null);
+
+  const [metrics, setMetrics] =
+    useState<FinancialMetrics | null>(null);
+
   const [isUploading, setIsUploading] = useState(false);
 
   const handleUpload = async () => {
@@ -41,11 +49,21 @@ export default function UploadZone() {
         body: formData,
       });
 
-      const data = (await response.json()) as UploadResponse;
+      const data: UploadResponse = await response.json();
 
       console.log("Upload Response:", data);
 
       setResponseData(data);
+
+      if (data.financialData) {
+        setMetrics({
+          company: data.financialData.company ?? "Unknown",
+          revenue: data.financialData.revenue ?? 0,
+          grossProfit: data.financialData.grossProfit ?? 0,
+          netIncome: data.financialData.netIncome ?? 0,
+          cash: data.financialData.cash ?? 0,
+        });
+      }
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {
@@ -62,7 +80,6 @@ export default function UploadZone() {
       <input
         type="file"
         accept=".pdf"
-        suppressHydrationWarning
         onChange={(e) => {
           const selectedFile = e.target.files?.[0];
 
@@ -88,7 +105,15 @@ export default function UploadZone() {
 
       {responseData && (
         <div className="mt-6 border rounded p-4">
-          <h3 className="font-semibold mb-2">
+
+          {metrics && (
+            <>
+              <OverviewCards metrics={metrics} />
+              <RevenueChart metrics={metrics} />
+            </>
+          )}
+
+          <h3 className="font-semibold text-lg mt-6 mb-4">
             Extraction Result
           </h3>
 
@@ -101,45 +126,12 @@ export default function UploadZone() {
             {responseData.textLength}
           </p>
 
-          {responseData.financialData && (
-            <div className="mt-6 border rounded-lg p-4">
-              <h2 className="text-xl font-bold mb-4">
-                Financial Metrics
-              </h2>
-
-              <p>
-                <strong>Company:</strong>{" "}
-                {responseData.financialData.company}
-              </p>
-
-              <p>
-                <strong>Revenue:</strong>{" "}
-                {responseData.financialData.revenue?.toLocaleString()}
-              </p>
-
-              <p>
-                <strong>Gross Profit:</strong>{" "}
-                {responseData.financialData.grossProfit?.toLocaleString()}
-              </p>
-
-              <p>
-                <strong>Net Income:</strong>{" "}
-                {responseData.financialData.netIncome?.toLocaleString()}
-              </p>
-
-              <p>
-                <strong>Cash:</strong>{" "}
-                {responseData.financialData.cash?.toLocaleString()}
-              </p>
-            </div>
-          )}
-
-          <div className="mt-4">
+          <div className="mt-6">
             <h4 className="font-semibold mb-2">
               Preview
             </h4>
 
-            <pre className="whitespace-pre-wrap text-sm">
+            <pre className="whitespace-pre-wrap text-sm overflow-x-auto">
               {responseData.textPreview}
             </pre>
           </div>
