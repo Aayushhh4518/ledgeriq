@@ -7,6 +7,8 @@ import RevenueChart from "../RevenueChart";
 import HealthScore from "../HealthScore";
 import RiskPanel from "../RiskPanel";
 import ExecutiveSummary from "@/components/ExecutiveSummary/ExecutiveSummary";
+import RatioAnalysis from "@/components/RatioAnalysis/RatioAnalysis";
+
 interface FinancialData {
   company?: string;
   revenue?: number;
@@ -114,6 +116,7 @@ export default function UploadZone() {
               <RevenueChart metrics={metrics} />
               <HealthScore metrics={metrics}/>
               <RiskPanel metrics={metrics}/>
+              <RatioAnalysis metrics={metrics} />
               <ExecutiveSummary
                 company={responseData.financialData?.company ?? "Unknown"}
                 revenue={responseData.financialData?.revenue ?? 0}
