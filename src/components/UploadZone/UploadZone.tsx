@@ -9,6 +9,8 @@ import RiskPanel from "../RiskPanel";
 import ExecutiveSummary from "@/components/ExecutiveSummary/ExecutiveSummary";
 import RatioAnalysis from "@/components/RatioAnalysis/RatioAnalysis";
 import GrowthAnalysis from "@/components/GrowthAnalysis/GrowthAnalysis";
+import SegmentAnalysis from "../SegmentAnalysis/SegmentAnalysis";
+
 
 interface FinancialData {
   company?: string;
@@ -38,6 +40,7 @@ interface UploadResponse {
       previous: number;
     };
   };
+  segmentData?: SegmentData;
 }
 
 export default function UploadZone() {
@@ -50,6 +53,9 @@ export default function UploadZone() {
 
   const [historicalData, setHistoricalData] =
     useState<UploadResponse["historicalData"] | null>(null);
+
+  const [segmentData, setSegmentData] = 
+    useState<SegmentData | null>(null);
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -91,6 +97,9 @@ export default function UploadZone() {
         if (data.historicalData) {
           setHistoricalData(data.historicalData);
         } 
+        if (data.segmentData) {
+          setSegmentData(data.segmentData);
+        }
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -146,14 +155,13 @@ export default function UploadZone() {
           )}
           {historicalData && (
             <>
-             {historicalData && (
-            <GrowthAnalysis
-              revenueCurrent={historicalData.revenue.current}
-              revenuePrevious={historicalData.revenue.previous}
-              netIncomeCurrent={historicalData.netIncome.current}
-              netIncomePrevious={historicalData.netIncome.previous}
-            />
-)}
+              <GrowthAnalysis
+                revenueCurrent={historicalData.revenue.current}
+                revenuePrevious={historicalData.revenue.previous}
+                netIncomeCurrent={historicalData.netIncome.current}
+                netIncomePrevious={historicalData.netIncome.previous}
+              />
+              <SegmentAnalysis data={segmentData}/>
 
               <ExecutiveSummary
                 company={responseData.financialData?.company ?? "Unknown"}

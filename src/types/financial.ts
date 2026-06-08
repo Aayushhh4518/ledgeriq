@@ -17,3 +17,20 @@ export interface FinancialMetrics {
 
   shareholderEquity?: number;
 }
+export interface SegmentData {
+  iphone: number;
+  mac: number;
+  ipad: number;
+  wearables: number;
+  services: number;
+}
+export interface HistoricalData {
+  revenue: {
+    current: number;
+    previous: number;
+  };
+  netIncome: {
+    current: number;
+    previous: number;
+  };
+}
