@@ -8,6 +8,7 @@ import HealthScore from "../HealthScore";
 import RiskPanel from "../RiskPanel";
 import ExecutiveSummary from "@/components/ExecutiveSummary/ExecutiveSummary";
 import RatioAnalysis from "@/components/RatioAnalysis/RatioAnalysis";
+import GrowthAnalysis from "@/components/GrowthAnalysis/GrowthAnalysis";
 
 interface FinancialData {
   company?: string;
@@ -23,7 +24,20 @@ interface UploadResponse {
   fileType: string;
   textLength?: number;
   textPreview?: string;
+
   financialData?: FinancialData;
+
+  historicalData?: {
+    revenue: {
+      current: number;
+      previous: number;
+    };
+
+    netIncome: {
+      current: number;
+      previous: number;
+    };
+  };
 }
 
 export default function UploadZone() {
@@ -33,6 +47,9 @@ export default function UploadZone() {
 
   const [metrics, setMetrics] =
     useState<FinancialMetrics | null>(null);
+
+  const [historicalData, setHistoricalData] =
+    useState<UploadResponse["historicalData"] | null>(null);
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -55,7 +72,10 @@ export default function UploadZone() {
 
       const data: UploadResponse = await response.json();
 
-      console.log("Upload Response:", data);
+      console.log(
+        JSON.stringify(data, null, 2)
+      );
+      console.log(data.financialData);
 
       setResponseData(data);
 
@@ -67,6 +87,10 @@ export default function UploadZone() {
           netIncome: data.financialData.netIncome ?? 0,
           cash: data.financialData.cash ?? 0,
         });
+
+        if (data.historicalData) {
+          setHistoricalData(data.historicalData);
+        } 
       }
     } catch (error) {
       console.error("Upload failed:", error);
@@ -117,6 +141,20 @@ export default function UploadZone() {
               <HealthScore metrics={metrics}/>
               <RiskPanel metrics={metrics}/>
               <RatioAnalysis metrics={metrics} />
+                                                                                                                              
+            </>
+          )}
+          {historicalData && (
+            <>
+             {historicalData && (
+            <GrowthAnalysis
+              revenueCurrent={historicalData.revenue.current}
+              revenuePrevious={historicalData.revenue.previous}
+              netIncomeCurrent={historicalData.netIncome.current}
+              netIncomePrevious={historicalData.netIncome.previous}
+            />
+)}
+
               <ExecutiveSummary
                 company={responseData.financialData?.company ?? "Unknown"}
                 revenue={responseData.financialData?.revenue ?? 0}

@@ -41,8 +41,8 @@ export default function RevenueChart({ metrics }: Props) {
         Financial Overview
       </h2>
 
-      <div className="h-80">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="w-full h-[400px]">
+        <ResponsiveContainer width="100%" height={400}>
           <BarChart data={data}>
             <XAxis dataKey="name" />
             <YAxis />

@@ -3,6 +3,7 @@ import { extractTextFromPDF } from "@/lib/pdf/extractText";
 import { parseFinancialData } from "@/lib/pdf/financial/parser";
 import OverviewCards from "../OverviewCards";
 import { FinancialMetrics } from "@/types/financial";
+import { extractHistoricalData } from "@/lib/parser/extractHistoricalData";
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +32,10 @@ export async function POST(request: Request) {
     const financialData = 
         parseFinancialData(extractedText);
 
-    console.log(financialData);
+    const historicalData = extractHistoricalData(extractedText);
+
+    console.log(financialData, historicalData);
+    
 
 
     return NextResponse.json({
@@ -40,6 +44,7 @@ export async function POST(request: Request) {
       textPreview: extractedText.slice(0, 2000),
       textLength: extractedText.length,
       financialData,
+      historicalData,
     });
   } catch (error) {
     console.error("PDF ERROR:", error);
