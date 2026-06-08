@@ -10,7 +10,8 @@ import ExecutiveSummary from "@/components/ExecutiveSummary/ExecutiveSummary";
 import RatioAnalysis from "@/components/RatioAnalysis/RatioAnalysis";
 import GrowthAnalysis from "@/components/GrowthAnalysis/GrowthAnalysis";
 import SegmentAnalysis from "../SegmentAnalysis/SegmentAnalysis";
-
+import SegmentPieChart from "@/components/SegmentPieChart/SegmentPieChart";
+import RevenueConcentration from "@/components/RevenueConcentration/RevenueConcentration";
 
 interface FinancialData {
   company?: string;
@@ -162,6 +163,11 @@ export default function UploadZone() {
                 netIncomePrevious={historicalData.netIncome.previous}
               />
               <SegmentAnalysis data={segmentData}/>
+              <SegmentPieChart segmentData={segmentData} />
+              <RevenueConcentration
+                totalRevenue={metrics.revenue}
+                segmentData={segmentData}
+              />
 
               <ExecutiveSummary
                 company={responseData.financialData?.company ?? "Unknown"}
