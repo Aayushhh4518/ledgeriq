@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import OverviewCards from "../OverviewCards";
-import { FinancialMetrics } from "@/types/financial";
+import { FinancialMetrics, SegmentData } from "@/types/financial";
 import RevenueChart from "../RevenueChart";
 import HealthScore from "../HealthScore";
 import RiskPanel from "../RiskPanel";
@@ -12,6 +12,10 @@ import GrowthAnalysis from "@/components/GrowthAnalysis/GrowthAnalysis";
 import SegmentAnalysis from "../SegmentAnalysis/SegmentAnalysis";
 import SegmentPieChart from "@/components/SegmentPieChart/SegmentPieChart";
 import RevenueConcentration from "@/components/RevenueConcentration/RevenueConcentration";
+import DuPontAnalysis from "@/components/DuPontAnalysis/DuPontAnalysis";
+import LiquidityPanel from "@/components/LiquidityPanel/LiquidityPanel";
+import EarningsQuality from "@/components/EarningsQuality/EarningsQuality";
+import StrengthsWeaknesses from "@/components/StrengthsWeaknesses/StrengthsWeaknesses";
 
 interface FinancialData {
   company?: string;
@@ -88,6 +92,7 @@ export default function UploadZone() {
 
       if (data.financialData) {
         setMetrics({
+          ...data.financialData,
           company: data.financialData.company ?? "Unknown",
           revenue: data.financialData.revenue ?? 0,
           grossProfit: data.financialData.grossProfit ?? 0,
@@ -151,7 +156,11 @@ export default function UploadZone() {
               <HealthScore metrics={metrics}/>
               <RiskPanel metrics={metrics}/>
               <RatioAnalysis metrics={metrics} />
-                                                                                                                              
+              <DuPontAnalysis metrics={metrics} />
+              <LiquidityPanel metrics={metrics} />
+              <EarningsQuality metrics={metrics} />
+              <StrengthsWeaknesses metrics={metrics} />
+              
             </>
           )}
           {historicalData && (

@@ -1,4 +1,5 @@
 export interface FinancialMetrics {
+  company?: string;
   revenue?: number;
   grossProfit?: number;
   operatingIncome?: number;
