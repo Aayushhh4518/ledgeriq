@@ -16,6 +16,11 @@ import DuPontAnalysis from "@/components/DuPontAnalysis/DuPontAnalysis";
 import LiquidityPanel from "@/components/LiquidityPanel/LiquidityPanel";
 import EarningsQuality from "@/components/EarningsQuality/EarningsQuality";
 import StrengthsWeaknesses from "@/components/StrengthsWeaknesses/StrengthsWeaknesses";
+import InvestmentVerdict from "@/components/InvestmentVerdict/InvestmentVerdict";
+import BenchmarkPanel from "@/components/BenchmarkPanel/BenchmarkPanel";
+import TrendAnalysis from "@/components/TrendAnalysis/TrendAnalysis";
+import ScenarioSimulator from "@/components/ScenarioSimulator/ScenarioSimulator";
+import AIFinancialCopilot from "@/components/AIFinancialCopilot/AIFinancialCopilot";
 
 interface FinancialData {
   company?: string;
@@ -63,6 +68,17 @@ export default function UploadZone() {
     useState<SegmentData | null>(null);
 
   const [isUploading, setIsUploading] = useState(false);
+  const investmentScore =
+  metrics
+    ? Math.min(
+        100,
+        Math.round(
+          ((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100 +
+          ((metrics.cash ?? 0) / (metrics.revenue || 1)) * 100
+        )
+      )
+    : 0;
+   const [sentimentScore, setSentimentScore] = useState<number | null>(null);
 
   const handleUpload = async () => {
     if (!file) {
@@ -123,6 +139,7 @@ export default function UploadZone() {
       <input
         type="file"
         accept=".pdf"
+        suppressHydrationWarning
         onChange={(e) => {
           const selectedFile = e.target.files?.[0];
 
@@ -160,7 +177,12 @@ export default function UploadZone() {
               <LiquidityPanel metrics={metrics} />
               <EarningsQuality metrics={metrics} />
               <StrengthsWeaknesses metrics={metrics} />
-              
+              <InvestmentVerdict score={investmentScore} />
+              <BenchmarkPanel
+                companyMargin={
+                  ((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100
+                }
+              />
             </>
           )}
           {historicalData && (
@@ -173,11 +195,33 @@ export default function UploadZone() {
               />
               <SegmentAnalysis data={segmentData}/>
               <SegmentPieChart segmentData={segmentData} />
+              {segmentData && metrics && (
               <RevenueConcentration
-                totalRevenue={metrics.revenue}
-                segmentData={segmentData}
-              />
-
+                  totalRevenue={metrics.revenue ?? 0}
+                  segmentData={segmentData}
+                />
+              )}
+              {historicalData && (
+                  <TrendAnalysis
+                    revenueCurrent={historicalData.revenue.current}
+                    revenuePrevious={historicalData.revenue.previous}
+                    netIncomeCurrent={historicalData.netIncome.current}
+                    netIncomePrevious={historicalData.netIncome.previous}
+                  />
+              )}
+              {metrics && (
+                  <ScenarioSimulator
+                    revenue={metrics.revenue}
+                    netIncome={metrics.netIncome}
+                  />
+              )}
+              {metrics && (
+                  <AIFinancialCopilot
+                    company={metrics.company}
+                    revenue={metrics.revenue}
+                    netIncome={metrics.netIncome}
+                  />
+              )}  
               <ExecutiveSummary
                 company={responseData.financialData?.company ?? "Unknown"}
                 revenue={responseData.financialData?.revenue ?? 0}

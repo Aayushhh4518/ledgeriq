@@ -13,24 +13,32 @@ export default function RevenueConcentration({
   totalRevenue,
   segmentData,
 }: Props) {
-  const largestSegment = Math.max(
-    segmentData.iphone,
-    segmentData.mac,
-    segmentData.ipad,
-    segmentData.wearables,
-    segmentData.services
-  );
 
-  const concentration =
-    (largestSegment / totalRevenue) * 100;
+  const segments = [
+    {
+      name: "iPhone",
+      value: segmentData.iphone,
+    },
+    {
+      name: "Services",
+      value: segmentData.services,
+    },
+    {
+      name: "Mac",
+      value: segmentData.mac,
+    },
+    {
+      name: "iPad",
+      value: segmentData.ipad,
+    },
+    {
+      name: "Wearables",
+      value: segmentData.wearables,
+    },
+  ];
 
-  let risk = "LOW";
-
-  if (concentration > 60) {
-    risk = "HIGH";
-  } else if (concentration > 40) {
-    risk = "MEDIUM";
-  }
+  const iphoneShare =
+    (segmentData.iphone / totalRevenue) * 100;
 
   return (
     <div className="border rounded-lg p-6 mt-6">
@@ -38,17 +46,32 @@ export default function RevenueConcentration({
         Revenue Concentration
       </h2>
 
-      <p>
-        Largest segment contributes:
-      </p>
+      <div className="space-y-3">
+        {segments.map((segment) => (
+          <div key={segment.name}>
+            <div className="flex justify-between">
+              <span>{segment.name}</span>
 
-      <h3 className="text-4xl font-bold mt-2">
-        {concentration.toFixed(1)}%
-      </h3>
+              <span>
+                {(
+                  (segment.value / totalRevenue) *
+                  100
+                ).toFixed(1)}
+                %
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
 
-      <p className="mt-4">
-        Risk Level: <strong>{risk}</strong>
-      </p>
+      <div className="mt-6">
+        <strong>
+          Concentration Risk:
+        </strong>{" "}
+        {iphoneShare > 50
+          ? "Medium"
+          : "Low"}
+      </div>
     </div>
   );
 }
