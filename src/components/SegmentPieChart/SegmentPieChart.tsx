@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import {
   PieChart,
   Pie,
   Cell,
   Tooltip,
   ResponsiveContainer,
+  Sector
 } from "recharts";
 
 interface SegmentPieChartProps {
@@ -18,17 +20,53 @@ interface SegmentPieChartProps {
   };
 }
 
+// Premium SaaS Color Palette
 const COLORS = [
-  "#3b82f6",
-  "#22c55e",
-  "#f59e0b",
-  "#ef4444",
-  "#8b5cf6",
+  "#3b82f6", // Blue
+  "#10b981", // Emerald
+  "#f59e0b", // Amber
+  "#ef4444", // Rose
+  "#8b5cf6", // Violet
 ];
+
+const renderActiveShape = (props: any) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } = props;
+
+  return (
+    <g>
+      <text x={cx} y={cy - 10} dy={8} textAnchor="middle" fill="#f4f4f5" className="text-xl font-bold">
+        {payload.name}
+      </text>
+      <text x={cx} y={cy + 15} dy={8} textAnchor="middle" fill="#a1a1aa" className="text-sm">
+        {`$${(value / 1000).toFixed(1)}k`}
+      </text>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius + 8}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+      />
+      <Sector
+        cx={cx}
+        cy={cy}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        innerRadius={outerRadius + 12}
+        outerRadius={outerRadius + 14}
+        fill={fill}
+      />
+    </g>
+  );
+};
 
 export default function SegmentPieChart({
   segmentData,
 }: SegmentPieChartProps) {
+  const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
+
   const data = [
     { name: "iPhone", value: segmentData.iphone },
     { name: "Mac", value: segmentData.mac },
@@ -37,41 +75,60 @@ export default function SegmentPieChart({
     { name: "Services", value: segmentData.services },
   ];
 
+  const onPieEnter = (_: any, index: number) => {
+    setActiveIndex(index);
+  };
+
+  const onPieLeave = () => {
+    setActiveIndex(undefined);
+  };
+
   return (
     <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-sm p-6 relative overflow-hidden group">
       <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-6">
         Segment Revenue Distribution
       </h2>
 
-      <div className="h-80 w-full">
+      <div className="h-80 w-full relative">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
+              {...({ activeIndex, activeShape: renderActiveShape } as any)}
               data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={80}
+              outerRadius={110}
+              paddingAngle={3}
               dataKey="value"
               nameKey="name"
-              outerRadius={120}
-              label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
               stroke="none"
+              onMouseEnter={onPieEnter}
+              onMouseLeave={onPieLeave}
+              animationDuration={1500}
             >
               {data.map((_, index) => (
                 <Cell
-                  key={index}
+                  key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
+                  className="transition-all duration-300 outline-none hover:opacity-100"
+                  style={{ filter: activeIndex === index || activeIndex === undefined ? 'opacity(1)' : 'opacity(0.3)' }}
                 />
               ))}
             </Pie>
 
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: '#09090b', 
+                backgroundColor: 'rgba(9, 9, 11, 0.9)', 
+                backdropFilter: 'blur(8px)',
                 border: '1px solid #27272a', 
-                borderRadius: '8px', 
+                borderRadius: '12px', 
                 color: '#f4f4f5',
-                boxShadow: '0 4px 24px -8px rgba(0,0,0,0.5)'
+                boxShadow: '0 8px 32px -8px rgba(0,0,0,0.6)',
+                padding: '12px 16px'
               }}
-              itemStyle={{ fontWeight: 600 }}
-              formatter={(value: any) => `$${Number(value).toLocaleString()}`}
+              itemStyle={{ color: '#fff', fontWeight: 600, fontSize: '15px' }}
+              formatter={(value: any) => [`$${Number(value).toLocaleString()}`, '']}
             />
           </PieChart>
         </ResponsiveContainer>
