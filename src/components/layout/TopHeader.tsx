@@ -39,7 +39,7 @@ export default function TopHeader() {
   return (
     <>
       <CommandPalette />
-      <header className="sticky top-0 z-40 w-full h-[72px] px-6 flex items-center justify-between border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.5)] shrink-0">
+      <header className="sticky top-0 z-40 w-full h-[72px] px-6 flex items-center justify-between border-b border-white/[0.04] bg-[#0a0a0a]/50 backdrop-blur-2xl shadow-sm shrink-0">
         
         {/* Left side: Time & Status */}
         <div className="flex items-center gap-6">
@@ -67,9 +67,11 @@ export default function TopHeader() {
         <div className="flex items-center gap-4">
           
           {/* Search Trigger */}
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setIsCommandPaletteOpen(true)}
-            className="flex items-center gap-3 h-9 px-4 text-sm text-zinc-400 bg-white/[0.03] border border-white/5 rounded-lg hover:bg-white/[0.06] hover:text-zinc-200 hover:border-white/10 transition-all duration-200 group w-48 lg:w-64 shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
+            className="flex items-center gap-3 h-9 px-4 text-sm text-zinc-400 bg-white/[0.03] border border-white/5 rounded-lg hover:bg-white/[0.06] hover:text-zinc-200 hover:border-white/10 transition-colors duration-200 group w-48 lg:w-64 shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
           >
             <Search className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
             <span className="flex-1 text-left truncate text-[13px]">Search...</span>
@@ -78,34 +80,40 @@ export default function TopHeader() {
                 ⌘K
               </kbd>
             </div>
-          </button>
+          </motion.button>
 
           <div className="h-5 w-px bg-white/10 mx-1 hidden lg:block" />
 
           {/* Compare Button */}
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setIsCompareModalOpen(true)}
-            className="flex items-center justify-center h-9 px-4 text-[13px] font-semibold text-zinc-300 bg-transparent border border-white/10 rounded-lg hover:bg-white/[0.04] hover:text-white transition-all whitespace-nowrap gap-2 group shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
+            className="flex items-center justify-center h-9 px-4 text-[13px] font-semibold text-zinc-300 bg-transparent border border-white/10 rounded-lg hover:bg-white/[0.04] hover:text-white transition-colors whitespace-nowrap gap-2 group shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
           >
             <ArrowLeftRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-violet-400 transition-colors" />
             <span className="hidden sm:inline tracking-wide">Compare</span>
-          </button>
+          </motion.button>
 
           {/* Export Button */}
-          <Link 
-            href="/reports"
-            className="flex items-center justify-center h-9 px-5 text-[13px] font-semibold text-white bg-gradient-to-b from-indigo-500 to-indigo-600 border border-indigo-500/50 rounded-lg hover:from-indigo-400 hover:to-indigo-500 transition-all shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:shadow-[0_0_25px_rgba(99,102,241,0.4)] whitespace-nowrap gap-2 group"
-          >
-            <Download className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform" />
-            <span className="hidden sm:inline tracking-wide">Export</span>
-            <span className="sm:hidden">Export</span>
-          </Link>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Link 
+              href="/reports"
+              className="flex items-center justify-center h-9 px-5 text-[13px] font-semibold text-white bg-gradient-to-b from-indigo-500 to-indigo-600 border border-indigo-500/50 rounded-lg hover:from-indigo-400 hover:to-indigo-500 transition-colors shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:shadow-[0_0_25px_rgba(99,102,241,0.4)] whitespace-nowrap gap-2 group"
+            >
+              <Download className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform" />
+              <span className="hidden sm:inline tracking-wide">Export</span>
+              <span className="sm:hidden">Export</span>
+            </Link>
+          </motion.div>
 
           {/* Notification Bell */}
           <div className="relative">
-            <button 
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="relative flex items-center justify-center w-9 h-9 text-zinc-400 bg-white/[0.03] border border-white/5 rounded-lg hover:bg-white/[0.06] hover:text-zinc-200 transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
+              className="relative flex items-center justify-center w-9 h-9 text-zinc-400 bg-white/[0.03] border border-white/5 rounded-lg hover:bg-white/[0.06] hover:text-zinc-200 transition-colors duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
@@ -116,7 +124,7 @@ export default function TopHeader() {
                   </span>
                 </span>
               )}
-            </button>
+            </motion.button>
 
             {/* Notifications Dropdown */}
             <AnimatePresence>

@@ -160,8 +160,8 @@ export default function UploadZone() {
                   ? 'border-indigo-500 bg-indigo-500/[0.03] scale-[1.02] shadow-[0_0_40px_rgba(99,102,241,0.2)]' 
                   : file 
                     ? 'border-emerald-500/50 bg-emerald-500/[0.02] shadow-[0_0_30px_rgba(16,185,129,0.1)]' 
-                    : 'border-white/10 bg-[#0a0a0a]/60 hover:bg-[#0a0a0a]/80 hover:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
-              } backdrop-blur-xl p-14 text-center cursor-pointer flex flex-col items-center justify-center min-h-[320px]`}
+                    : 'border-white/5 bg-[#0a0a0a]/50 hover:bg-[#0a0a0a]/60 hover:border-white/10 shadow-[0_8px_40px_rgba(0,0,0,0.5)]'
+              } backdrop-blur-2xl p-14 text-center cursor-pointer flex flex-col items-center justify-center min-h-[320px]`}
             >
               <input
                 type="file"
@@ -213,13 +213,15 @@ export default function UploadZone() {
 
           {file && !isUploading && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8 flex justify-center">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleUpload}
-                className="px-8 py-3.5 bg-white text-black font-bold tracking-wide rounded-xl hover:bg-zinc-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:-translate-y-0.5 flex items-center gap-2"
+                className="px-8 py-3.5 bg-white text-black font-bold tracking-wide rounded-xl hover:bg-zinc-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] flex items-center gap-2"
               >
                 <FileText className="w-5 h-5" />
                 Initialize AI Extraction
-              </button>
+              </motion.button>
             </motion.div>
           )}
         </motion.div>

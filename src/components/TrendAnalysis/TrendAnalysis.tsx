@@ -37,7 +37,7 @@ export default function TrendAnalysis({
   ];
 
   return (
-    <div className="group relative bg-[#0a0a0a]/60 backdrop-blur-xl border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-500 hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] p-6 relative overflow-hidden group">
+    <div className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] hover:bg-[#0a0a0a]/60 overflow-hidden">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg font-semibold tracking-tight text-zinc-100">
           Financial Trend Analysis
@@ -96,8 +96,8 @@ export default function TrendAnalysis({
               }}
               itemStyle={{ fontWeight: 600, fontSize: '15px' }}
               labelStyle={{ color: '#a1a1aa', fontSize: '13px', marginBottom: '4px' }}
-              formatter={(value: number, name: string) => [
-                `$${Number(value).toLocaleString()}`, 
+              formatter={(value: any, name: any) => [
+                `$${Number(value || 0).toLocaleString()}`, 
                 name === 'revenue' ? 'Revenue' : 'Net Income'
               ]}
             />
