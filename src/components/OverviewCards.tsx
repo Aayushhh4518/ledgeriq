@@ -48,27 +48,33 @@ export default function OverviewCards({ metrics }: Props) {
         return (
           <div
             key={card.title}
-            className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-sm p-6 relative overflow-hidden group hover:border-zinc-700/80 transition-all duration-300"
+            className="group relative bg-[#0a0a0a]/60 backdrop-blur-xl border border-white/5 rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase">
+            {/* Subtle Hover Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10 flex items-center justify-between mb-4">
+              <p className="text-[11px] font-bold tracking-[0.2em] text-zinc-500 uppercase">
                 {card.title}
               </p>
-              <div className={`p-2 rounded-lg ${card.bg}`}>
+              <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${card.bg} border border-white/5 shadow-inner`}>
                 <Icon className={`w-4 h-4 ${card.color}`} />
               </div>
             </div>
 
-            <h2 className="text-3xl font-bold tracking-tight text-white mb-2">
+            <h2 className="relative z-10 text-[32px] font-bold tracking-tight text-white mb-3 drop-shadow-sm">
               {card.value}
             </h2>
 
-            <div className="flex items-center gap-1.5 mt-2">
-              <div className="flex items-center justify-center px-1.5 py-0.5 rounded text-[11px] font-medium text-emerald-400 bg-emerald-400/10 gap-1">
+            <div className="relative z-10 flex items-center gap-2">
+              <div className="flex items-center justify-center px-2 py-1 rounded-md text-[11px] font-bold tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 gap-1.5 shadow-inner">
                 <TrendingUp className="w-3 h-3" />
                 {card.trend}
               </div>
-              <span className="text-xs text-zinc-500">vs last period</span>
+              <span className="text-[11px] font-medium text-zinc-500 tracking-wide uppercase">
+                vs last year
+              </span>
             </div>
           </div>
         );

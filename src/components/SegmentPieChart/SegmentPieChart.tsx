@@ -29,6 +29,7 @@ const COLORS = [
   "#8b5cf6", // Violet
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderActiveShape = (props: any) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, value } = props;
 
@@ -75,7 +76,7 @@ export default function SegmentPieChart({
     { name: "Services", value: segmentData.services },
   ];
 
-  const onPieEnter = (_: any, index: number) => {
+  const onPieEnter = (_: unknown, index: number) => {
     setActiveIndex(index);
   };
 
@@ -84,7 +85,7 @@ export default function SegmentPieChart({
   };
 
   return (
-    <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-sm p-6 relative overflow-hidden group">
+    <div className="group relative bg-[#0a0a0a]/60 backdrop-blur-xl border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-500 hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] p-6 relative overflow-hidden group">
       <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-6">
         Segment Revenue Distribution
       </h2>
@@ -93,6 +94,7 @@ export default function SegmentPieChart({
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               {...({ activeIndex, activeShape: renderActiveShape } as any)}
               data={data}
               cx="50%"
@@ -128,7 +130,7 @@ export default function SegmentPieChart({
                 padding: '12px 16px'
               }}
               itemStyle={{ color: '#fff', fontWeight: 600, fontSize: '15px' }}
-              formatter={(value: any) => [`$${Number(value).toLocaleString()}`, '']}
+              formatter={(value: number) => [`$${Number(value).toLocaleString()}`, '']}
             />
           </PieChart>
         </ResponsiveContainer>

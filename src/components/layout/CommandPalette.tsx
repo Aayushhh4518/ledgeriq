@@ -96,7 +96,7 @@ export default function CommandPalette() {
             className="relative w-full max-w-xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden"
           >
             {/* Input Area */}
-            <div className="flex items-center px-4 py-4 border-b border-zinc-800/60">
+            <div className="flex items-center px-4 py-4 border-b border-white/5">
               <Search className="w-5 h-5 text-zinc-400 mr-3 shrink-0" />
               <input
                 ref={inputRef}
@@ -134,12 +134,12 @@ export default function CommandPalette() {
                 </div>
               ) : (
                 <div className="py-12 text-center">
-                  <p className="text-zinc-500">No results found for "{searchQuery}"</p>
+                  <p className="text-zinc-500">No results found for &quot;{searchQuery}&quot;</p>
                 </div>
               )}
             </div>
             
-            <div className="p-3 border-t border-zinc-800/60 flex justify-between items-center bg-zinc-900/20 text-xs text-zinc-500">
+            <div className="p-3 border-t border-white/5 flex justify-between items-center bg-zinc-900/20 text-xs text-zinc-500">
               <span>Filter sections dynamically behind the palette.</span>
               <div className="flex gap-2">
                 <span>Navigate</span>

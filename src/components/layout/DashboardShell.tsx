@@ -12,18 +12,24 @@ export default function DashboardShell({
 }: DashboardShellProps) {
   return (
     <SearchProvider>
-      <div className="min-h-screen bg-black text-white flex">
-        <Sidebar />
-
-        <div className="flex-1 flex flex-col w-full overflow-hidden">
-          <TopHeader />
-
-          <div className="flex-1 overflow-y-auto">
-            {children}
-          </div>
-        </div>
+      <div className="min-h-screen bg-[#0a0a0a] text-white flex relative">
+        {/* Background Depth Elements */}
+        <div className="absolute inset-0 bg-dot-white/[0.15] z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 z-0 pointer-events-none" />
         
-        <CompareModal />
+        <div className="relative z-10 flex w-full">
+          <Sidebar />
+
+          <div className="flex-1 flex flex-col w-full overflow-hidden">
+            <TopHeader />
+
+            <div className="flex-1 overflow-y-auto">
+              {children}
+            </div>
+          </div>
+          
+          <CompareModal />
+        </div>
       </div>
     </SearchProvider>
   );

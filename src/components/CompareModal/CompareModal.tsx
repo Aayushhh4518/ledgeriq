@@ -110,7 +110,7 @@ export default function CompareModal() {
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           className="relative w-full max-w-2xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] overflow-hidden"
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800/60">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
             <h2 className="text-lg font-bold tracking-tight text-white flex items-center gap-2">
               <ArrowLeftRight className="w-5 h-5 text-violet-500" />
               Compare Competitor

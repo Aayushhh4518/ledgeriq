@@ -145,71 +145,80 @@ export default function UploadZone() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto mt-12"
+          className="max-w-2xl mx-auto mt-16"
         >
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`relative group overflow-hidden rounded-2xl border-2 border-dashed transition-all duration-300 ${
-              isDragging 
-                ? 'border-blue-500 bg-blue-500/10 scale-[1.02]' 
-                : file 
-                  ? 'border-emerald-500/50 bg-emerald-500/5' 
-                  : 'border-zinc-700 bg-zinc-900/40 hover:bg-zinc-900/60 hover:border-zinc-500'
-            } backdrop-blur-sm p-12 text-center cursor-pointer`}
-          >
-            <input
-              type="file"
-              accept=".pdf"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-              suppressHydrationWarning
-              onChange={(e) => {
-                const selectedFile = e.target.files?.[0];
-                if (selectedFile) setFile(selectedFile);
-              }}
-              disabled={isUploading}
-            />
+          <div className="relative group">
+            {/* Animated Glow Behind Dropzone */}
+            <div className={`absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur opacity-0 group-hover:opacity-20 transition duration-1000 ${isDragging ? 'opacity-40 blur-md' : ''}`} />
             
-            <div className="relative z-0 pointer-events-none flex flex-col items-center justify-center space-y-4">
-              {isUploading ? (
-                <>
-                  <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
-                  <div>
-                    <h3 className="text-xl font-semibold text-white">Analyzing Report...</h3>
-                    <p className="text-zinc-400 mt-1">Our AI is extracting financial data</p>
-                  </div>
-                </>
-              ) : file ? (
-                <>
-                  <CheckCircle2 className="w-12 h-12 text-emerald-500" />
-                  <div>
-                    <h3 className="text-xl font-semibold text-emerald-400">Ready to Analyze</h3>
-                    <p className="text-zinc-300 mt-1 font-medium">{file.name}</p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="w-16 h-16 bg-zinc-800/50 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                    <UploadCloud className="w-8 h-8 text-zinc-400 group-hover:text-white transition-colors" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-white">Upload Financial Statement</h3>
-                    <p className="text-zinc-400 mt-2">Drag and drop your PDF here, or click to browse</p>
-                  </div>
-                </>
-              )}
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`relative overflow-hidden rounded-2xl border transition-all duration-300 ${
+                isDragging 
+                  ? 'border-indigo-500 bg-indigo-500/[0.03] scale-[1.02] shadow-[0_0_40px_rgba(99,102,241,0.2)]' 
+                  : file 
+                    ? 'border-emerald-500/50 bg-emerald-500/[0.02] shadow-[0_0_30px_rgba(16,185,129,0.1)]' 
+                    : 'border-white/10 bg-[#0a0a0a]/60 hover:bg-[#0a0a0a]/80 hover:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
+              } backdrop-blur-xl p-14 text-center cursor-pointer flex flex-col items-center justify-center min-h-[320px]`}
+            >
+              <input
+                type="file"
+                accept=".pdf"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                suppressHydrationWarning
+                onChange={(e) => {
+                  const selectedFile = e.target.files?.[0];
+                  if (selectedFile) setFile(selectedFile);
+                }}
+                disabled={isUploading}
+              />
+              
+              <div className="relative z-0 pointer-events-none flex flex-col items-center justify-center space-y-5">
+                {isUploading ? (
+                  <>
+                    <div className="relative flex items-center justify-center w-16 h-16 mb-2">
+                      <div className="absolute inset-0 border-4 border-indigo-500/20 rounded-full" />
+                      <div className="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin" />
+                      <Loader2 className="w-6 h-6 text-indigo-400 absolute opacity-0" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold tracking-tight text-white">Analyzing Intelligence...</h3>
+                      <p className="text-sm text-zinc-400 mt-2 font-medium">Extracting multi-dimensional financial signals</p>
+                    </div>
+                  </>
+                ) : file ? (
+                  <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center">
+                    <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                      <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+                    </div>
+                    <h3 className="text-xl font-bold tracking-tight text-white">Ready for Extraction</h3>
+                    <p className="text-sm text-zinc-300 mt-2 font-mono tracking-tight bg-white/5 px-3 py-1 rounded-md border border-white/10">{file.name}</p>
+                  </motion.div>
+                ) : (
+                  <>
+                    <div className="w-20 h-20 bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl flex items-center justify-center mb-2 group-hover:-translate-y-2 transition-transform duration-500 shadow-inner">
+                      <UploadCloud className="w-8 h-8 text-zinc-400 group-hover:text-indigo-400 transition-colors duration-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold tracking-tight text-white">Upload Financial Statement</h3>
+                      <p className="text-[13px] text-zinc-400 mt-2 font-medium">Drag & drop your SEC filing, 10-K, or PDF report here</p>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
           {file && !isUploading && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 flex justify-center">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8 flex justify-center">
               <button
                 onClick={handleUpload}
-                className="px-8 py-3 bg-white text-black font-semibold rounded-lg hover:bg-zinc-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center gap-2"
+                className="px-8 py-3.5 bg-white text-black font-bold tracking-wide rounded-xl hover:bg-zinc-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:-translate-y-0.5 flex items-center gap-2"
               >
                 <FileText className="w-5 h-5" />
-                Generate Analysis
+                Initialize AI Extraction
               </button>
             </motion.div>
           )}

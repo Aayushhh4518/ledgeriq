@@ -45,77 +45,82 @@ export default function RevenueChart({ metrics }: Props) {
   const benchmarkValue = (metrics.revenue ?? 0) * 0.75;
 
   return (
-    <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-sm p-6 relative overflow-hidden group">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-semibold tracking-tight text-zinc-100">
+    <div className="group relative bg-[#0a0a0a]/60 backdrop-blur-xl border border-white/5 rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      <div className="relative z-10 flex justify-between items-center mb-8">
+        <h2 className="text-[11px] font-bold tracking-[0.2em] text-zinc-500 uppercase">
           Financial Overview
         </h2>
-        <div className="flex items-center gap-2">
-          <span className="w-3 h-0.5 bg-blue-500/50 rounded-full" />
-          <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Benchmark</span>
+        <div className="flex items-center gap-3">
+          <span className="w-4 h-px bg-indigo-500/80 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
+          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.1em]">Target Benchmark</span>
         </div>
       </div>
 
-      <div className="w-full h-[400px]">
+      <div className="relative z-10 w-full h-[380px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 20, right: 10, left: -20, bottom: 0 }} maxBarSize={60}>
+          <BarChart data={data} margin={{ top: 20, right: 10, left: -20, bottom: 0 }} maxBarSize={48}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b82f6" stopOpacity={1}/>
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                <stop offset="5%" stopColor="#818cf8" stopOpacity={1}/>
+                <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.6}/>
               </linearGradient>
               <linearGradient id="colorGross" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8b5cf6" stopOpacity={1}/>
-                <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                <stop offset="5%" stopColor="#c084fc" stopOpacity={1}/>
+                <stop offset="95%" stopColor="#9333ea" stopOpacity={0.6}/>
               </linearGradient>
               <linearGradient id="colorNet" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10b981" stopOpacity={1}/>
-                <stop offset="95%" stopColor="#10b981" stopOpacity={0.3}/>
+                <stop offset="5%" stopColor="#34d399" stopOpacity={1}/>
+                <stop offset="95%" stopColor="#059669" stopOpacity={0.6}/>
               </linearGradient>
               <linearGradient id="colorCash" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#f59e0b" stopOpacity={1}/>
-                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.3}/>
+                <stop offset="5%" stopColor="#fbbf24" stopOpacity={1}/>
+                <stop offset="95%" stopColor="#d97706" stopOpacity={0.6}/>
               </linearGradient>
             </defs>
 
             <XAxis 
               dataKey="name" 
-              stroke="#71717a" 
-              fontSize={12} 
+              stroke="#52525b" 
+              fontSize={11} 
               tickLine={false} 
               axisLine={false} 
-              dy={10}
+              dy={12}
+              fontWeight={600}
             />
             <YAxis 
-              stroke="#71717a" 
-              fontSize={12} 
+              stroke="#52525b" 
+              fontSize={11} 
               tickLine={false} 
-              axisLine={false} 
+              axisLine={{ stroke: '#27272a', strokeWidth: 1 }}
               tickFormatter={(value) => `$${value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value}`}
+              fontWeight={500}
             />
             <Tooltip 
-              cursor={{ fill: '#27272a', opacity: 0.2 }}
+              cursor={{ fill: '#ffffff', opacity: 0.04 }}
               contentStyle={{ 
-                backgroundColor: 'rgba(9, 9, 11, 0.9)', 
-                backdropFilter: 'blur(8px)',
-                border: '1px solid #27272a', 
+                backgroundColor: 'rgba(10, 10, 10, 0.8)', 
+                backdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)', 
                 borderRadius: '12px', 
                 color: '#f4f4f5',
-                boxShadow: '0 8px 32px -8px rgba(0,0,0,0.6)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
                 padding: '12px 16px'
               }}
-              itemStyle={{ color: '#fff', fontWeight: 600, fontSize: '15px' }}
-              labelStyle={{ color: '#a1a1aa', fontSize: '13px', marginBottom: '4px' }}
-              formatter={(value: any) => [`$${Number(value).toLocaleString()}`, '']}
+              itemStyle={{ color: '#fff', fontWeight: 800, fontSize: '15px' }}
+              labelStyle={{ color: '#a1a1aa', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}
+              formatter={(value: number) => [`$${Number(value).toLocaleString()}`, '']}
             />
             
             {benchmarkValue > 0 && (
               <ReferenceLine 
                 y={benchmarkValue} 
-                stroke="#3b82f6" 
+                stroke="#6366f1" 
                 strokeDasharray="4 4" 
-                strokeOpacity={0.5}
-                label={{ position: 'top', value: 'Target', fill: '#71717a', fontSize: 10 }}
+                strokeOpacity={0.4}
+                label={{ position: 'top', value: 'TARGET', fill: '#71717a', fontSize: 9, fontWeight: 700, letterSpacing: '0.1em' }}
               />
             )}
 

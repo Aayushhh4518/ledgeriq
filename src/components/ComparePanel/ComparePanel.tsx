@@ -7,6 +7,46 @@ interface ComparePanelProps {
   metrics2: FinancialMetrics;
 }
 
+const getWinnerColor = (val1?: number, val2?: number, invert = false) => {
+  if (val1 === undefined || val2 === undefined) return "text-zinc-400";
+  if (val1 === val2) return "text-blue-400"; // tie
+  
+  const oneWins = invert ? val1 < val2 : val1 > val2;
+  return oneWins ? "text-emerald-400 font-bold" : "text-rose-400";
+};
+
+const getWinnerColor2 = (val1?: number, val2?: number, invert = false) => {
+  if (val1 === undefined || val2 === undefined) return "text-zinc-400";
+  if (val1 === val2) return "text-blue-400"; // tie
+  
+  const twoWins = invert ? val2 < val1 : val2 > val1;
+  return twoWins ? "text-emerald-400 font-bold" : "text-rose-400";
+};
+
+const ComparisonRow = ({
+  label,
+  val1,
+  val2,
+  formatter,
+  invert = false,
+}: {
+  label: string;
+  val1?: number;
+  val2?: number;
+  formatter: (v?: number) => string;
+  invert?: boolean;
+}) => (
+  <div className="grid grid-cols-3 gap-4 items-center p-4 border-b border-zinc-800/40 hover:bg-zinc-900/40 transition-colors">
+    <div className="text-zinc-400 font-medium text-sm">{label}</div>
+    <div className={`text-lg text-center ${getWinnerColor(val1, val2, invert)}`}>
+      {formatter(val1)}
+    </div>
+    <div className={`text-lg text-center ${getWinnerColor2(val1, val2, invert)}`}>
+      {formatter(val2)}
+    </div>
+  </div>
+);
+
 export default function ComparePanel({ metrics1, metrics2 }: ComparePanelProps) {
   const getScore = (m: FinancialMetrics) => {
     return Math.min(
@@ -24,46 +64,6 @@ export default function ComparePanel({ metrics1, metrics2 }: ComparePanelProps) 
   const formatPercentage = (value?: number) => {
     return value ? `${value.toFixed(1)}%` : "N/A";
   };
-
-  const getWinnerColor = (val1?: number, val2?: number, invert = false) => {
-    if (val1 === undefined || val2 === undefined) return "text-zinc-400";
-    if (val1 === val2) return "text-blue-400"; // tie
-    
-    const oneWins = invert ? val1 < val2 : val1 > val2;
-    return oneWins ? "text-emerald-400 font-bold" : "text-rose-400";
-  };
-
-  const getWinnerColor2 = (val1?: number, val2?: number, invert = false) => {
-    if (val1 === undefined || val2 === undefined) return "text-zinc-400";
-    if (val1 === val2) return "text-blue-400"; // tie
-    
-    const twoWins = invert ? val2 < val1 : val2 > val1;
-    return twoWins ? "text-emerald-400 font-bold" : "text-rose-400";
-  };
-
-  const ComparisonRow = ({
-    label,
-    val1,
-    val2,
-    formatter,
-    invert = false,
-  }: {
-    label: string;
-    val1?: number;
-    val2?: number;
-    formatter: (v?: number) => string;
-    invert?: boolean;
-  }) => (
-    <div className="grid grid-cols-3 gap-4 items-center p-4 border-b border-zinc-800/40 hover:bg-zinc-900/40 transition-colors">
-      <div className="text-zinc-400 font-medium text-sm">{label}</div>
-      <div className={`text-lg text-center ${getWinnerColor(val1, val2, invert)}`}>
-        {formatter(val1)}
-      </div>
-      <div className={`text-lg text-center ${getWinnerColor2(val1, val2, invert)}`}>
-        {formatter(val2)}
-      </div>
-    </div>
-  );
 
   return (
     <div className="bg-zinc-950 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl">

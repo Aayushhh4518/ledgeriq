@@ -1,4 +1,4 @@
-// @ts-ignore - The types package doesn't cover internal paths
+// @ts-expect-error - The types package doesn't cover internal paths
 import pdfParse from "pdf-parse/lib/pdf-parse.js";
 
 export async function extractTextFromPDF(
