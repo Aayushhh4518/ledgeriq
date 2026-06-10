@@ -56,6 +56,7 @@ interface UploadResponse {
 import { motion, AnimatePresence } from "framer-motion";
 import { UploadCloud, FileText, CheckCircle2, Loader2 } from "lucide-react";
 import HeroSummary from "../HeroSummary/HeroSummary";
+import { useSearch } from "../layout/SearchContext";
 
 export default function UploadZone() {
   const [file, setFile] = useState<File | null>(null);
@@ -65,6 +66,20 @@ export default function UploadZone() {
   const [segmentData, setSegmentData] = useState<SegmentData | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const { searchQuery } = useSearch();
+
+  const lowerQuery = searchQuery.toLowerCase();
+  const matches = (keywords: string[]) => {
+    if (!lowerQuery) return true;
+    return keywords.some(k => k.toLowerCase().includes(lowerQuery));
+  };
+
+  const showDashboard = matches(["dashboard", "overview", "revenue", "health", "verdict"]);
+  const showFinancial = matches(["financial", "ratio", "dupont", "liquidity", "earnings", "benchmark", "deep dive"]);
+  const showRisk = matches(["risk", "simulation", "scenario", "concentration"]);
+  const showGrowth = matches(["growth", "segments", "trend", "pie"]);
+  const showAI = matches(["ai", "insights", "copilot", "strengths", "weaknesses"]);
+  const showReports = matches(["reports", "export", "summary", "reporting"]);
 
   const investmentScore = metrics
     ? Math.min(
@@ -249,53 +264,64 @@ export default function UploadZone() {
           {/* 12-COLUMN DASHBOARD GRID */}
           <div className="grid grid-cols-12 gap-6">
             
-            {/* Overview & Core */}
-            <div className="col-span-12 lg:col-span-8 space-y-6">
-              <OverviewCards metrics={metrics} />
-              <RevenueChart metrics={metrics} />
-              <StrengthsWeaknesses metrics={metrics} />
-            </div>
+            {/* Overview & Core & AI */}
+            {(showDashboard || showAI) && (
+              <>
+                <div className="col-span-12 lg:col-span-8 space-y-6">
+                  {showDashboard && <OverviewCards metrics={metrics} />}
+                  {showDashboard && <RevenueChart metrics={metrics} />}
+                  {showAI && <StrengthsWeaknesses metrics={metrics} />}
+                </div>
 
-            {/* Health & Copilot */}
-            <div className="col-span-12 lg:col-span-4 space-y-6">
-              <HealthScore metrics={metrics} />
-              <InvestmentVerdict score={investmentScore} />
-              <AIFinancialCopilot company={metrics.company ?? "Unknown"} revenue={metrics.revenue ?? 0} netIncome={metrics.netIncome ?? 0} />
-            </div>
+                <div className="col-span-12 lg:col-span-4 space-y-6">
+                  {showDashboard && <HealthScore metrics={metrics} />}
+                  {showDashboard && <InvestmentVerdict score={investmentScore} />}
+                  {showAI && <AIFinancialCopilot company={metrics.company ?? "Unknown"} revenue={metrics.revenue ?? 0} netIncome={metrics.netIncome ?? 0} />}
+                </div>
+              </>
+            )}
 
-            {/* Financial Analysis Section Header */}
-            <div className="col-span-12 mt-8" id="Financial Analysis">
-              <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-zinc-500" /> Financial Deep Dive
-              </h3>
-            </div>
+            {/* Financial Analysis */}
+            {showFinancial && (
+              <>
+                <div className="col-span-12 mt-8" id="Financial Analysis">
+                  <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-zinc-500" /> Financial Deep Dive
+                  </h3>
+                </div>
 
-            <div className="col-span-12 lg:col-span-4"><RatioAnalysis metrics={metrics} /></div>
-            <div className="col-span-12 lg:col-span-4"><DuPontAnalysis metrics={metrics} /></div>
-            <div className="col-span-12 lg:col-span-4"><LiquidityPanel metrics={metrics} /></div>
-            <div className="col-span-12 lg:col-span-6"><EarningsQuality metrics={metrics} /></div>
-            <div className="col-span-12 lg:col-span-6">
-               <BenchmarkPanel companyMargin={((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100} />
-            </div>
+                <div className="col-span-12 lg:col-span-4"><RatioAnalysis metrics={metrics} /></div>
+                <div className="col-span-12 lg:col-span-4"><DuPontAnalysis metrics={metrics} /></div>
+                <div className="col-span-12 lg:col-span-4"><LiquidityPanel metrics={metrics} /></div>
+                <div className="col-span-12 lg:col-span-6"><EarningsQuality metrics={metrics} /></div>
+                <div className="col-span-12 lg:col-span-6">
+                   <BenchmarkPanel companyMargin={((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100} />
+                </div>
+              </>
+            )}
 
-            {/* Risk Section Header */}
-            <div className="col-span-12 mt-8" id="Risk Analysis">
-              <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
-                 Risk & Simulation
-              </h3>
-            </div>
-            
-            <div className="col-span-12 lg:col-span-6 space-y-6">
-              <RiskPanel metrics={metrics}/>
-              <ScenarioSimulator revenue={metrics.revenue ?? 0} netIncome={metrics.netIncome ?? 0} />
-            </div>
-            
-            <div className="col-span-12 lg:col-span-6 space-y-6">
-              {segmentData && <RevenueConcentration totalRevenue={metrics.revenue ?? 0} segmentData={segmentData} />}
-            </div>
+            {/* Risk Section */}
+            {showRisk && (
+              <>
+                <div className="col-span-12 mt-8" id="Risk Analysis">
+                  <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
+                     Risk & Simulation
+                  </h3>
+                </div>
+                
+                <div className="col-span-12 lg:col-span-6 space-y-6">
+                  <RiskPanel metrics={metrics}/>
+                  <ScenarioSimulator revenue={metrics.revenue ?? 0} netIncome={metrics.netIncome ?? 0} />
+                </div>
+                
+                <div className="col-span-12 lg:col-span-6 space-y-6">
+                  {segmentData && <RevenueConcentration totalRevenue={metrics.revenue ?? 0} segmentData={segmentData} />}
+                </div>
+              </>
+            )}
 
             {/* Growth & Segments */}
-            {historicalData && (
+            {showGrowth && historicalData && (
               <>
                 <div className="col-span-12 mt-8" id="Growth Analysis">
                   <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
@@ -330,22 +356,26 @@ export default function UploadZone() {
             )}
 
             {/* Reports */}
-            <div className="col-span-12 mt-8" id="Reports">
-              <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
-                Reporting & Export
-              </h3>
-            </div>
-            <div className="col-span-12 lg:col-span-8">
-              <ExecutiveSummary
-                company={responseData.financialData?.company ?? "Unknown"}
-                revenue={responseData.financialData?.revenue ?? 0}
-                netIncome={responseData.financialData?.netIncome ?? 0}
-                cash={responseData.financialData?.cash ?? 0}
-              />
-            </div>
-            <div className="col-span-12 lg:col-span-4">
-              <ExportReport company={responseData.financialData?.company ?? "Unknown"}/>
-            </div>
+            {showReports && (
+              <>
+                <div className="col-span-12 mt-8" id="Reports">
+                  <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
+                    Reporting & Export
+                  </h3>
+                </div>
+                <div className="col-span-12 lg:col-span-8">
+                  <ExecutiveSummary
+                    company={responseData.financialData?.company ?? "Unknown"}
+                    revenue={responseData.financialData?.revenue ?? 0}
+                    netIncome={responseData.financialData?.netIncome ?? 0}
+                    cash={responseData.financialData?.cash ?? 0}
+                  />
+                </div>
+                <div className="col-span-12 lg:col-span-4">
+                  <ExportReport company={responseData.financialData?.company ?? "Unknown"}/>
+                </div>
+              </>
+            )}
           </div>
         </motion.div>
       )}

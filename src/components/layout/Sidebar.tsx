@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Wallet
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard },
@@ -33,7 +34,6 @@ export default function Sidebar() {
         const element = document.getElementById(item.name);
         if (element) {
           const rect = element.getBoundingClientRect();
-          // When the section reaches near the top of the viewport (offset for header)
           if (rect.top <= 150) {
             currentActive = item.name;
           }
@@ -43,7 +43,7 @@ export default function Sidebar() {
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initial check on mount
+    handleScroll();
     
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -52,7 +52,6 @@ export default function Sidebar() {
     setActiveItem(id);
     const element = document.getElementById(id);
     if (element) {
-      // Offset by 100px to account for the top header and breathing room
       const y = element.getBoundingClientRect().top + window.scrollY - 100;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
@@ -60,7 +59,7 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className={`relative sticky top-0 h-screen flex flex-col border-r border-zinc-800 bg-black transition-all duration-300 ease-in-out shrink-0 ${
+      className={`relative sticky top-0 h-screen flex flex-col border-r border-zinc-800/80 bg-black transition-all duration-300 ease-in-out shrink-0 ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
@@ -79,9 +78,9 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+      <nav className="flex-1 py-6 px-3 space-y-1.5 overflow-y-auto">
         {!isCollapsed && (
-          <p className="px-3 text-[11px] font-semibold tracking-wider text-zinc-500 uppercase mb-3">
+          <p className="px-3 text-[11px] font-semibold tracking-wider text-zinc-500 uppercase mb-4">
             Platform
           </p>
         )}
@@ -94,12 +93,20 @@ export default function Sidebar() {
             <button
               key={item.name}
               onClick={() => scrollToSection(item.name)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group relative ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${
                 isActive 
-                  ? "bg-zinc-800/80 text-white font-medium" 
-                  : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200"
+                  ? "text-white font-medium" 
+                  : "text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200"
               }`}
             >
+              {isActive && (
+                <motion.div 
+                  layoutId="sidebar-active"
+                  className="absolute inset-0 bg-zinc-800/80 rounded-lg -z-10"
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
+              )}
+              
               <Icon 
                 className={`w-[18px] h-[18px] shrink-0 transition-colors duration-200 ${
                   isActive ? "text-blue-500" : "text-zinc-400 group-hover:text-zinc-300"
@@ -112,7 +119,11 @@ export default function Sidebar() {
 
               {/* Active Indicator Line (Left Edge) */}
               {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-blue-500 rounded-r-full shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+                <motion.div 
+                  layoutId="sidebar-active-line"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-blue-500 rounded-r-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
               )}
             </button>
           );
@@ -123,7 +134,7 @@ export default function Sidebar() {
       <div className="p-4 border-t border-zinc-800/60">
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} w-full p-2.5 rounded-md text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200 transition-colors group`}
+          className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} w-full p-2.5 rounded-lg text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200 transition-colors group`}
         >
           {!isCollapsed && (
             <span className="text-sm font-medium">Collapse</span>
