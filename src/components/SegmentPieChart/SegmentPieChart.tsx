@@ -38,12 +38,12 @@ export default function SegmentPieChart({
   ];
 
   return (
-    <div className="border rounded-lg p-6 mt-6">
-      <h2 className="text-2xl font-bold mb-4">
+    <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-sm p-6 relative overflow-hidden group">
+      <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-6">
         Segment Revenue Distribution
       </h2>
 
-      <div className="h-80">
+      <div className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -51,7 +51,8 @@ export default function SegmentPieChart({
               dataKey="value"
               nameKey="name"
               outerRadius={120}
-              label
+              label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+              stroke="none"
             >
               {data.map((_, index) => (
                 <Cell
@@ -61,7 +62,17 @@ export default function SegmentPieChart({
               ))}
             </Pie>
 
-            <Tooltip />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#09090b', 
+                border: '1px solid #27272a', 
+                borderRadius: '8px', 
+                color: '#f4f4f5',
+                boxShadow: '0 4px 24px -8px rgba(0,0,0,0.5)'
+              }}
+              itemStyle={{ fontWeight: 600 }}
+              formatter={(value: any) => `$${Number(value).toLocaleString()}`}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>

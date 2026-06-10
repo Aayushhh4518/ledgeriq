@@ -164,43 +164,29 @@ export default function UploadZone() {
       </button>
 
       {responseData && (
-        <div className="mt-6 border rounded p-4">
-
+        <div className="mt-6 border rounded-lg p-6 space-y-12">
           {metrics && (
-            <>
+            <div id="Dashboard" className="space-y-6 scroll-mt-24">
+              <h3 className="text-2xl font-bold border-b border-zinc-800 pb-2">Dashboard</h3>
               <OverviewCards metrics={metrics} />
               <RevenueChart metrics={metrics} />
               <HealthScore metrics={metrics}/>
-              <RiskPanel metrics={metrics}/>
+            </div>
+          )}
+
+          {metrics && (
+            <div id="Financial Analysis" className="space-y-6 pt-6 scroll-mt-24">
+              <h3 className="text-2xl font-bold border-b border-zinc-800 pb-2">Financial Analysis</h3>
               <RatioAnalysis metrics={metrics} />
               <DuPontAnalysis metrics={metrics} />
               <LiquidityPanel metrics={metrics} />
               <EarningsQuality metrics={metrics} />
-              <StrengthsWeaknesses metrics={metrics} />
-              <InvestmentVerdict score={investmentScore} />
               <BenchmarkPanel
                 companyMargin={
                   ((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100
                 }
               />
-            </>
-          )}
-          {historicalData && (
-            <>
-              <GrowthAnalysis
-                revenueCurrent={historicalData.revenue.current}
-                revenuePrevious={historicalData.revenue.previous}
-                netIncomeCurrent={historicalData.netIncome.current}
-                netIncomePrevious={historicalData.netIncome.previous}
-              />
-              <SegmentAnalysis data={segmentData}/>
-              <SegmentPieChart segmentData={segmentData} />
-              {segmentData && metrics && (
-              <RevenueConcentration
-                  totalRevenue={metrics.revenue ?? 0}
-                  segmentData={segmentData}
-                />
-              )}
+              <InvestmentVerdict score={investmentScore} />
               {historicalData && (
                   <TrendAnalysis
                     revenueCurrent={historicalData.revenue.current}
@@ -209,19 +195,59 @@ export default function UploadZone() {
                     netIncomePrevious={historicalData.netIncome.previous}
                   />
               )}
-              {metrics && (
-                  <ScenarioSimulator
-                    revenue={metrics.revenue ?? 0}
-                    netIncome={metrics.netIncome ?? 0}
+              <ScenarioSimulator
+                revenue={metrics.revenue ?? 0}
+                netIncome={metrics.netIncome ?? 0}
+              />
+            </div>
+          )}
+
+          {(metrics || (segmentData && metrics)) && (
+            <div id="Risk Analysis" className="space-y-6 pt-6 scroll-mt-24">
+              <h3 className="text-2xl font-bold border-b border-zinc-800 pb-2">Risk Analysis</h3>
+              {metrics && <RiskPanel metrics={metrics}/>}
+              {segmentData && metrics && (
+                <RevenueConcentration
+                    totalRevenue={metrics.revenue ?? 0}
+                    segmentData={segmentData}
                   />
               )}
-              {metrics && (
-                  <AIFinancialCopilot
-                    company={metrics.company ?? "Unknown"}
-                    revenue={metrics.revenue ?? 0}
-                    netIncome={metrics.netIncome ?? 0}
-                  />
-              )}  
+            </div>
+          )}
+
+          {historicalData && (
+            <div id="Growth Analysis" className="space-y-6 pt-6 scroll-mt-24">
+              <h3 className="text-2xl font-bold border-b border-zinc-800 pb-2">Growth Analysis</h3>
+              <GrowthAnalysis
+                revenueCurrent={historicalData.revenue.current}
+                revenuePrevious={historicalData.revenue.previous}
+                netIncomeCurrent={historicalData.netIncome.current}
+                netIncomePrevious={historicalData.netIncome.previous}
+              />
+              {segmentData && (
+                <>
+                  <SegmentAnalysis data={segmentData}/>
+                  <SegmentPieChart segmentData={segmentData} />
+                </>
+              )}
+            </div>
+          )}
+
+          {metrics && (
+            <div id="AI Insights" className="space-y-6 pt-6 scroll-mt-24">
+              <h3 className="text-2xl font-bold border-b border-zinc-800 pb-2">AI Insights</h3>
+              <StrengthsWeaknesses metrics={metrics} />
+              <AIFinancialCopilot
+                company={metrics.company ?? "Unknown"}
+                revenue={metrics.revenue ?? 0}
+                netIncome={metrics.netIncome ?? 0}
+              />
+            </div>
+          )}
+
+          {responseData && (
+            <div id="Reports" className="space-y-6 pt-6 scroll-mt-24">
+              <h3 className="text-2xl font-bold border-b border-zinc-800 pb-2">Reports</h3>
               <ExecutiveSummary
                 company={responseData.financialData?.company ?? "Unknown"}
                 revenue={responseData.financialData?.revenue ?? 0}
@@ -229,30 +255,32 @@ export default function UploadZone() {
                 cash={responseData.financialData?.cash ?? 0}
               />
               <ExportReport company={responseData.financialData?.company ?? "Unknown"}/>
-            </>
+            </div>
           )}
 
-          <h3 className="font-semibold text-lg mt-6 mb-4">
-            Extraction Result
-          </h3>
+          <div className="mt-12 pt-12 border-t border-zinc-800">
+            <h3 className="font-semibold text-lg mb-4">
+              Extraction Result
+            </h3>
 
-          <p>
-            <strong>File:</strong> {responseData.fileName}
-          </p>
+            <p>
+              <strong>File:</strong> {responseData.fileName}
+            </p>
 
-          <p>
-            <strong>Characters Extracted:</strong>{" "}
-            {responseData.textLength}
-          </p>
+            <p>
+              <strong>Characters Extracted:</strong>{" "}
+              {responseData.textLength}
+            </p>
 
-          <div className="mt-6">
-            <h4 className="font-semibold mb-2">
-              Preview
-            </h4>
+            <div className="mt-6">
+              <h4 className="font-semibold mb-2">
+                Preview
+              </h4>
 
-            <pre className="whitespace-pre-wrap text-sm overflow-x-auto">
-              {responseData.textPreview}
-            </pre>
+              <pre className="whitespace-pre-wrap text-sm overflow-x-auto">
+                {responseData.textPreview}
+              </pre>
+            </div>
           </div>
         </div>
       )}

@@ -7,9 +7,9 @@ interface Props {
 export default function EarningsQuality({ metrics }: Props) {
   if (!metrics.operatingCashFlow || !metrics.netIncome) {
     return (
-      <div className="border rounded-lg p-6 mt-6 opacity-50">
-        <h2 className="text-2xl font-bold mb-4 text-gray-400">Earnings Quality</h2>
-        <p className="text-sm text-gray-500">Insufficient data extracted from PDF (missing Operating Cash Flow).</p>
+      <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-6 relative overflow-hidden group opacity-50">
+        <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-2">Earnings Quality</h2>
+        <p className="text-sm text-zinc-500">Insufficient data extracted from PDF (missing Operating Cash Flow).</p>
       </div>
     );
   }
@@ -17,28 +17,31 @@ export default function EarningsQuality({ metrics }: Props) {
   const qualityRatio = metrics.operatingCashFlow / metrics.netIncome;
 
   return (
-    <div className="border rounded-lg p-6 mt-6">
-      <h2 className="text-2xl font-bold mb-4">Earnings Quality</h2>
+    <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-sm p-6 relative overflow-hidden group">
+      <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-6">Earnings Quality</h2>
 
-      <div className="flex items-center space-x-6">
-        <div>
-          <p className="text-sm text-gray-500">OCF to Net Income Ratio</p>
-          <p className="font-semibold text-3xl">
+      <div className="flex flex-col md:flex-row md:items-stretch gap-4">
+        <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex-1 flex flex-col justify-center">
+          <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase mb-2">OCF to Net Income Ratio</p>
+          <p className="text-4xl font-bold tracking-tight text-white mb-4">
             {qualityRatio.toFixed(2)}x
           </p>
+          <p className="text-[11px] text-zinc-500 bg-zinc-950/50 p-2 rounded inline-block border border-zinc-800/30">
+            Values &gt; 1.0 indicate strong cash generation supporting reported earnings.
+          </p>
         </div>
-        <div>
-          <p className="text-sm text-gray-500">Operating Cash Flow</p>
-          <p className="font-semibold text-lg">${metrics.operatingCashFlow.toLocaleString()}</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-500">Net Income</p>
-          <p className="font-semibold text-lg">${metrics.netIncome.toLocaleString()}</p>
+
+        <div className="flex flex-col gap-4 flex-1">
+          <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex-1 flex flex-col justify-center">
+            <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase mb-1">Operating Cash Flow</p>
+            <p className="text-xl font-bold tracking-tight text-zinc-300">${metrics.operatingCashFlow.toLocaleString()}</p>
+          </div>
+          <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex-1 flex flex-col justify-center">
+            <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase mb-1">Net Income</p>
+            <p className="text-xl font-bold tracking-tight text-zinc-300">${metrics.netIncome.toLocaleString()}</p>
+          </div>
         </div>
       </div>
-      <p className="text-xs text-gray-400 mt-4">
-        Values &gt; 1.0 indicate strong cash generation supporting reported earnings.
-      </p>
     </div>
   );
 }

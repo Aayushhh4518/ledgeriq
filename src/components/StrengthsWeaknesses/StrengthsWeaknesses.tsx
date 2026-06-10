@@ -1,5 +1,6 @@
 import { FinancialMetrics } from "@/types/financial";
 import { generateInsights } from "@/lib/analysis/insights";
+import { TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 
 interface Props {
   metrics: FinancialMetrics;
@@ -10,9 +11,9 @@ export default function StrengthsWeaknesses({ metrics }: Props) {
 
   if (insights.length === 0) {
     return (
-      <div className="border rounded-lg p-6 mt-6 opacity-50">
-        <h2 className="text-2xl font-bold mb-6 text-gray-400">AI Insights Engine</h2>
-        <p className="text-sm text-gray-500">Not enough data to generate insights.</p>
+      <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl p-6 relative overflow-hidden group opacity-50">
+        <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-2">AI Insights Engine</h2>
+        <p className="text-sm text-zinc-500">Not enough data to generate insights.</p>
       </div>
     );
   }
@@ -21,37 +22,40 @@ export default function StrengthsWeaknesses({ metrics }: Props) {
   const weaknesses = insights.filter((i) => i.type === "weakness");
 
   return (
-    <div className="border rounded-lg p-6 mt-6">
-      <h2 className="text-2xl font-bold mb-6">AI Insights Engine</h2>
+    <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-xl shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-sm p-6 relative overflow-hidden group">
+      <div className="flex items-center gap-2 mb-6">
+        <Sparkles className="w-5 h-5 text-indigo-400" />
+        <h2 className="text-lg font-semibold tracking-tight text-zinc-100">AI Insights Engine</h2>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
-          <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 mb-4 flex items-center">
-            <span className="mr-2">↑</span> Key Strengths
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-emerald-400 flex items-center gap-2 uppercase tracking-wider">
+            <TrendingUp className="w-4 h-4" /> Key Strengths
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {strengths.map((s, idx) => (
-              <div key={idx} className="bg-green-50 dark:bg-green-900/20 p-4 rounded">
-                <p className="font-semibold text-green-800 dark:text-green-300">{s.title}</p>
-                <p className="text-sm text-green-700 dark:text-green-400 mt-1">{s.description}</p>
+              <div key={idx} className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-lg hover:bg-emerald-500/20 transition-colors">
+                <p className="font-semibold text-emerald-300 mb-1">{s.title}</p>
+                <p className="text-sm text-emerald-200/70">{s.description}</p>
               </div>
             ))}
-            {strengths.length === 0 && <p className="text-sm text-gray-500">No significant strengths detected.</p>}
+            {strengths.length === 0 && <p className="text-sm text-zinc-500 italic">No significant strengths detected.</p>}
           </div>
         </div>
 
-        <div>
-          <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4 flex items-center">
-            <span className="mr-2">↓</span> Key Weaknesses
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-rose-400 flex items-center gap-2 uppercase tracking-wider">
+            <TrendingDown className="w-4 h-4" /> Key Weaknesses
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {weaknesses.map((w, idx) => (
-              <div key={idx} className="bg-red-50 dark:bg-red-900/20 p-4 rounded">
-                <p className="font-semibold text-red-800 dark:text-red-300">{w.title}</p>
-                <p className="text-sm text-red-700 dark:text-red-400 mt-1">{w.description}</p>
+              <div key={idx} className="bg-rose-500/10 border border-rose-500/20 p-4 rounded-lg hover:bg-rose-500/20 transition-colors">
+                <p className="font-semibold text-rose-300 mb-1">{w.title}</p>
+                <p className="text-sm text-rose-200/70">{w.description}</p>
               </div>
             ))}
-            {weaknesses.length === 0 && <p className="text-sm text-gray-500">No significant weaknesses detected.</p>}
+            {weaknesses.length === 0 && <p className="text-sm text-zinc-500 italic">No significant weaknesses detected.</p>}
           </div>
         </div>
       </div>
