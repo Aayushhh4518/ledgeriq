@@ -211,15 +211,15 @@ export default function UploadZone() {
               )}
               {metrics && (
                   <ScenarioSimulator
-                    revenue={metrics.revenue}
-                    netIncome={metrics.netIncome}
+                    revenue={metrics.revenue ?? 0}
+                    netIncome={metrics.netIncome ?? 0}
                   />
               )}
               {metrics && (
                   <AIFinancialCopilot
-                    company={metrics.company}
-                    revenue={metrics.revenue}
-                    netIncome={metrics.netIncome}
+                    company={metrics.company ?? "Unknown"}
+                    revenue={metrics.revenue ?? 0}
+                    netIncome={metrics.netIncome ?? 0}
                   />
               )}  
               <ExecutiveSummary
