@@ -1,27 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import OverviewCards from "../OverviewCards";
 import { FinancialMetrics, SegmentData } from "@/types/financial";
-import RevenueChart from "../RevenueChart";
-import HealthScore from "../HealthScore";
-import RiskPanel from "../RiskPanel";
-import ExecutiveSummary from "@/components/ExecutiveSummary/ExecutiveSummary";
-import RatioAnalysis from "@/components/RatioAnalysis/RatioAnalysis";
-import GrowthAnalysis from "@/components/GrowthAnalysis/GrowthAnalysis";
-import SegmentAnalysis from "../SegmentAnalysis/SegmentAnalysis";
-import SegmentPieChart from "@/components/SegmentPieChart/SegmentPieChart";
-import RevenueConcentration from "@/components/RevenueConcentration/RevenueConcentration";
-import DuPontAnalysis from "@/components/DuPontAnalysis/DuPontAnalysis";
-import LiquidityPanel from "@/components/LiquidityPanel/LiquidityPanel";
-import EarningsQuality from "@/components/EarningsQuality/EarningsQuality";
-import StrengthsWeaknesses from "@/components/StrengthsWeaknesses/StrengthsWeaknesses";
-import InvestmentVerdict from "@/components/InvestmentVerdict/InvestmentVerdict";
-import BenchmarkPanel from "@/components/BenchmarkPanel/BenchmarkPanel";
-import TrendAnalysis from "@/components/TrendAnalysis/TrendAnalysis";
-import ScenarioSimulator from "@/components/ScenarioSimulator/ScenarioSimulator";
-import AIFinancialCopilot from "@/components/AIFinancialCopilot/AIFinancialCopilot";
-import ExportReport from "@/components/ExportReport/ExportReport";
 interface FinancialData {
   company?: string;
   revenue?: number;
@@ -56,16 +36,19 @@ interface UploadResponse {
 import { motion, AnimatePresence } from "framer-motion";
 import { UploadCloud, FileText, CheckCircle2, Loader2 } from "lucide-react";
 import HeroSummary from "../HeroSummary/HeroSummary";
+import { useFinancialData } from "@/contexts/FinancialContext";
 import { useSearch } from "../layout/SearchContext";
 
 export default function UploadZone() {
-  const [file, setFile] = useState<File | null>(null);
-  const [responseData, setResponseData] = useState<UploadResponse | null>(null);
-  const [metrics, setMetrics] = useState<FinancialMetrics | null>(null);
-  const [historicalData, setHistoricalData] = useState<UploadResponse["historicalData"] | null>(null);
-  const [segmentData, setSegmentData] = useState<SegmentData | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const {
+    file, setFile,
+    responseData, setResponseData,
+    metrics, setMetrics,
+    historicalData, setHistoricalData,
+    segmentData, setSegmentData,
+    isUploading, setIsUploading
+  } = useFinancialData();
   const { searchQuery } = useSearch();
 
   const lowerQuery = searchQuery.toLowerCase();
@@ -247,138 +230,6 @@ export default function UploadZone() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Dashboard Grid View */}
-      {responseData && metrics && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="space-y-8"
-        >
-          {/* Hero Section */}
-          <section id="Hero" className="scroll-mt-24">
-            <HeroSummary metrics={metrics} investmentScore={investmentScore} />
-          </section>
-
-          {/* 12-COLUMN DASHBOARD GRID */}
-          <div className="grid grid-cols-12 gap-6">
-            
-            {/* Overview & Core & AI */}
-            {(showDashboard || showAI) && (
-              <>
-                <div className="col-span-12 lg:col-span-8 space-y-6">
-                  {showDashboard && <OverviewCards metrics={metrics} />}
-                  {showDashboard && <RevenueChart metrics={metrics} />}
-                  {showAI && <StrengthsWeaknesses metrics={metrics} />}
-                </div>
-
-                <div className="col-span-12 lg:col-span-4 space-y-6">
-                  {showDashboard && <HealthScore metrics={metrics} />}
-                  {showDashboard && <InvestmentVerdict score={investmentScore} />}
-                  {showAI && <AIFinancialCopilot company={metrics.company ?? "Unknown"} revenue={metrics.revenue ?? 0} netIncome={metrics.netIncome ?? 0} />}
-                </div>
-              </>
-            )}
-
-            {/* Financial Analysis */}
-            {showFinancial && (
-              <>
-                <div className="col-span-12 mt-8" id="Financial Analysis">
-                  <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-zinc-500" /> Financial Deep Dive
-                  </h3>
-                </div>
-
-                <div className="col-span-12 lg:col-span-4"><RatioAnalysis metrics={metrics} /></div>
-                <div className="col-span-12 lg:col-span-4"><DuPontAnalysis metrics={metrics} /></div>
-                <div className="col-span-12 lg:col-span-4"><LiquidityPanel metrics={metrics} /></div>
-                <div className="col-span-12 lg:col-span-6"><EarningsQuality metrics={metrics} /></div>
-                <div className="col-span-12 lg:col-span-6">
-                   <BenchmarkPanel companyMargin={((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100} />
-                </div>
-              </>
-            )}
-
-            {/* Risk Section */}
-            {showRisk && (
-              <>
-                <div className="col-span-12 mt-8" id="Risk Analysis">
-                  <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
-                     Risk & Simulation
-                  </h3>
-                </div>
-                
-                <div className="col-span-12 lg:col-span-6 space-y-6">
-                  <RiskPanel metrics={metrics}/>
-                  <ScenarioSimulator revenue={metrics.revenue ?? 0} netIncome={metrics.netIncome ?? 0} />
-                </div>
-                
-                <div className="col-span-12 lg:col-span-6 space-y-6">
-                  {segmentData && <RevenueConcentration totalRevenue={metrics.revenue ?? 0} segmentData={segmentData} />}
-                </div>
-              </>
-            )}
-
-            {/* Growth & Segments */}
-            {showGrowth && historicalData && (
-              <>
-                <div className="col-span-12 mt-8" id="Growth Analysis">
-                  <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
-                    Growth & Segments
-                  </h3>
-                </div>
-                <div className="col-span-12 lg:col-span-4">
-                  <GrowthAnalysis
-                    revenueCurrent={historicalData.revenue.current}
-                    revenuePrevious={historicalData.revenue.previous}
-                    netIncomeCurrent={historicalData.netIncome.current}
-                    netIncomePrevious={historicalData.netIncome.previous}
-                  />
-                  {historicalData && (
-                    <div className="mt-6">
-                      <TrendAnalysis
-                        revenueCurrent={historicalData.revenue.current}
-                        revenuePrevious={historicalData.revenue.previous}
-                        netIncomeCurrent={historicalData.netIncome.current}
-                        netIncomePrevious={historicalData.netIncome.previous}
-                      />
-                    </div>
-                  )}
-                </div>
-                {segmentData && (
-                  <div className="col-span-12 lg:col-span-8 space-y-6">
-                    <SegmentAnalysis data={segmentData}/>
-                    <SegmentPieChart segmentData={segmentData} />
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* Reports */}
-            {showReports && (
-              <>
-                <div className="col-span-12 mt-8" id="Reports">
-                  <h3 className="text-xl font-bold border-b border-zinc-800 pb-3 text-zinc-100 flex items-center gap-2">
-                    Reporting & Export
-                  </h3>
-                </div>
-                <div className="col-span-12 lg:col-span-8">
-                  <ExecutiveSummary
-                    company={responseData.financialData?.company ?? "Unknown"}
-                    revenue={responseData.financialData?.revenue ?? 0}
-                    netIncome={responseData.financialData?.netIncome ?? 0}
-                    cash={responseData.financialData?.cash ?? 0}
-                  />
-                </div>
-                <div className="col-span-12 lg:col-span-4">
-                  <ExportReport company={responseData.financialData?.company ?? "Unknown"}/>
-                </div>
-              </>
-            )}
-          </div>
-        </motion.div>
-      )}
     </div>
   );
 }

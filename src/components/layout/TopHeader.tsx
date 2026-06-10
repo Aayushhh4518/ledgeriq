@@ -13,11 +13,16 @@ import { useEffect, useState } from "react";
 import { useSearch } from "./SearchContext";
 import CommandPalette from "./CommandPalette";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { useFinancialData } from "@/contexts/FinancialContext";
+import Link from "next/link";
 
 export default function TopHeader() {
   const [time, setTime] = useState("");
   const { setIsCommandPaletteOpen, searchQuery } = useSearch();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const { notifications, unreadCount, markAllAsRead } = useNotifications();
+  const { setIsCompareModalOpen } = useFinancialData();
 
   // Hydration-safe clock
   useEffect(() => {
@@ -90,17 +95,23 @@ export default function TopHeader() {
             <div className="h-5 w-px bg-zinc-800 mx-1 hidden lg:block" />
 
             {/* Compare Button */}
-            <button className="flex items-center justify-center h-9 px-3.5 text-sm font-medium text-zinc-300 bg-zinc-900/40 border border-zinc-800 rounded-lg hover:bg-zinc-800 hover:text-white transition-all whitespace-nowrap gap-2">
+            <button 
+              onClick={() => setIsCompareModalOpen(true)}
+              className="flex items-center justify-center h-9 px-3.5 text-sm font-medium text-zinc-300 bg-zinc-900/40 border border-zinc-800 rounded-lg hover:bg-zinc-800 hover:text-white transition-all whitespace-nowrap gap-2"
+            >
               <ArrowLeftRight className="w-4 h-4 text-zinc-400" />
               <span className="hidden sm:inline">Compare</span>
             </button>
 
             {/* Export Button */}
-            <button className="flex items-center justify-center h-9 px-4 text-sm font-medium text-white bg-blue-600 border border-blue-500/50 rounded-lg hover:bg-blue-500 transition-all shadow-[0_0_15px_rgba(37,99,235,0.15)] hover:shadow-[0_0_20px_rgba(37,99,235,0.3)] whitespace-nowrap gap-2">
+            <Link 
+              href="/reports"
+              className="flex items-center justify-center h-9 px-4 text-sm font-medium text-white bg-blue-600 border border-blue-500/50 rounded-lg hover:bg-blue-500 transition-all shadow-[0_0_15px_rgba(37,99,235,0.15)] hover:shadow-[0_0_20px_rgba(37,99,235,0.3)] whitespace-nowrap gap-2"
+            >
               <Download className="w-4 h-4" />
               <span className="hidden sm:inline">Export Report</span>
               <span className="sm:hidden">Export</span>
-            </button>
+            </Link>
 
             {/* Notification Bell */}
             <div className="relative">
@@ -111,7 +122,9 @@ export default function TopHeader() {
                 }`}
               >
                 <Bell className="w-4 h-4" />
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-blue-500 rounded-full ring-2 ring-zinc-900" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-blue-500 rounded-full ring-2 ring-zinc-900" />
+                )}
               </button>
 
               {/* Notification Popover */}
@@ -126,30 +139,43 @@ export default function TopHeader() {
                   >
                     <div className="px-4 py-3 border-b border-zinc-800/80 flex items-center justify-between bg-zinc-900/50">
                       <h3 className="text-sm font-semibold text-white">Notifications</h3>
-                      <button className="text-xs text-blue-400 hover:text-blue-300 transition-colors">Mark all as read</button>
+                      {unreadCount > 0 && (
+                        <button onClick={markAllAsRead} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                          Mark all as read
+                        </button>
+                      )}
                     </div>
                     <div className="max-h-80 overflow-y-auto">
-                      {/* Notification Item */}
-                      <div className="px-4 py-3 hover:bg-zinc-900/40 transition-colors flex gap-3 items-start border-b border-zinc-800/40">
-                        <div className="mt-0.5 rounded-full bg-emerald-500/10 p-1 shrink-0">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      {notifications.length === 0 ? (
+                        <div className="px-4 py-6 text-center text-zinc-500 text-sm">
+                          No new notifications
                         </div>
-                        <div>
-                          <p className="text-sm text-zinc-200">System updated successfully</p>
-                          <p className="text-xs text-zinc-500 mt-1">Live sync connection established across all regions.</p>
-                          <p className="text-[10px] text-zinc-600 mt-1.5 font-medium">Just now</p>
-                        </div>
-                      </div>
-                      <div className="px-4 py-3 hover:bg-zinc-900/40 transition-colors flex gap-3 items-start border-b border-zinc-800/40">
-                        <div className="mt-0.5 rounded-full bg-blue-500/10 p-1 shrink-0">
-                          <Download className="w-4 h-4 text-blue-400" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-zinc-200">Report generated</p>
-                          <p className="text-xs text-zinc-500 mt-1">Your export for \"Q3 Analysis\" is ready to download.</p>
-                          <p className="text-[10px] text-zinc-600 mt-1.5 font-medium">2 hours ago</p>
-                        </div>
-                      </div>
+                      ) : (
+                        notifications.map((notif) => (
+                          <div key={notif.id} className={`px-4 py-3 hover:bg-zinc-900/40 transition-colors flex gap-3 items-start border-b border-zinc-800/40 ${!notif.read ? 'bg-zinc-900/20' : ''}`}>
+                            <div className={`mt-0.5 rounded-full p-1 shrink-0 ${
+                              notif.type === 'success' ? 'bg-emerald-500/10' :
+                              notif.type === 'info' ? 'bg-blue-500/10' :
+                              notif.type === 'compare' ? 'bg-violet-500/10' :
+                              'bg-amber-500/10'
+                            }`}>
+                              <CheckCircle2 className={`w-4 h-4 ${
+                                notif.type === 'success' ? 'text-emerald-400' :
+                                notif.type === 'info' ? 'text-blue-400' :
+                                notif.type === 'compare' ? 'text-violet-400' :
+                                'text-amber-400'
+                              }`} />
+                            </div>
+                            <div>
+                              <p className="text-sm text-zinc-200">{notif.title}</p>
+                              <p className="text-xs text-zinc-500 mt-1">{notif.description}</p>
+                              <p className="text-[10px] text-zinc-600 mt-1.5 font-medium">
+                                {notif.timestamp.toLocaleTimeString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </motion.div>
                 )}

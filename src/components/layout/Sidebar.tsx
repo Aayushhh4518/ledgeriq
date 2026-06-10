@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, 
   LineChart, 
@@ -15,47 +17,17 @@ import {
 import { motion } from "framer-motion";
 
 const navItems = [
-  { name: "Dashboard", icon: LayoutDashboard },
-  { name: "Financial Analysis", icon: LineChart },
-  { name: "Risk Analysis", icon: ShieldAlert },
-  { name: "Growth Analysis", icon: TrendingUp },
-  { name: "AI Insights", icon: BrainCircuit },
-  { name: "Reports", icon: FileText },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Financial Analysis", href: "/financial-analysis", icon: LineChart },
+  { name: "Risk Analysis", href: "/risk-analysis", icon: ShieldAlert },
+  { name: "Growth Analysis", href: "/growth-analysis", icon: TrendingUp },
+  { name: "AI Insights", href: "/ai-insights", icon: BrainCircuit },
+  { name: "Reports", href: "/reports", icon: FileText },
 ];
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [activeItem, setActiveItem] = useState("Dashboard");
-
-  useEffect(() => {
-    const handleScroll = () => {
-      let currentActive = "Dashboard";
-      for (const item of navItems) {
-        const element = document.getElementById(item.name);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 150) {
-            currentActive = item.name;
-          }
-        }
-      }
-      setActiveItem(currentActive);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollToSection = (id: string) => {
-    setActiveItem(id);
-    const element = document.getElementById(id);
-    if (element) {
-      const y = element.getBoundingClientRect().top + window.scrollY - 100;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
-  };
+  const pathname = usePathname();
 
   return (
     <aside 
@@ -86,13 +58,13 @@ export default function Sidebar() {
         )}
         
         {navItems.map((item) => {
-          const isActive = activeItem === item.name;
+          const isActive = pathname === item.href;
           const Icon = item.icon;
           
           return (
-            <button
+            <Link
               key={item.name}
-              onClick={() => scrollToSection(item.name)}
+              href={item.href}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${
                 isActive 
                   ? "text-white font-medium" 
@@ -125,7 +97,7 @@ export default function Sidebar() {
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               )}
-            </button>
+            </Link>
           );
         })}
       </nav>

@@ -1,22 +1,29 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, LayoutDashboard, LineChart, ShieldAlert, TrendingUp, BrainCircuit, FileText } from "lucide-react";
 import { useSearch } from "./SearchContext";
+import { useRouter } from "next/navigation";
 
 const sections = [
-  { id: "Dashboard", title: "Overview Dashboard", icon: LayoutDashboard },
-  { id: "Financial Analysis", title: "Financial Deep Dive", icon: LineChart },
-  { id: "Risk Analysis", title: "Risk & Simulation", icon: ShieldAlert },
-  { id: "Growth Analysis", title: "Growth & Segments", icon: TrendingUp },
-  { id: "AI Insights", title: "AI Copilot & Insights", icon: BrainCircuit },
-  { id: "Reports", title: "Reporting & Export", icon: FileText },
+  { id: "Hero", path: "/", title: "Overview Dashboard", icon: LayoutDashboard },
+  { id: "ratio-analysis", path: "/financial-analysis", title: "Financial Ratios (ROE, Margins)", icon: LineChart },
+  { id: "earnings-quality", path: "/financial-analysis", title: "Earnings Quality", icon: LineChart },
+  { id: "benchmark", path: "/financial-analysis", title: "Industry Benchmark", icon: LineChart },
+  { id: "risk-panel", path: "/risk-analysis", title: "Risk & Simulation", icon: ShieldAlert },
+  { id: "liquidity", path: "/risk-analysis", title: "Liquidity & Solvency", icon: ShieldAlert },
+  { id: "revenue-concentration", path: "/risk-analysis", title: "Revenue Concentration", icon: ShieldAlert },
+  { id: "growth-analysis", path: "/growth-analysis", title: "Growth Analysis", icon: TrendingUp },
+  { id: "segment-analysis", path: "/growth-analysis", title: "Segment Analysis", icon: TrendingUp },
+  { id: "ai-insights", path: "/ai-insights", title: "AI Insights & Copilot", icon: BrainCircuit },
+  { id: "reports", path: "/reports", title: "Reporting & Export", icon: FileText },
 ];
 
 export default function CommandPalette() {
   const { searchQuery, setSearchQuery, isCommandPaletteOpen, setIsCommandPaletteOpen } = useSearch();
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -36,11 +43,7 @@ export default function CommandPalette() {
 
   useEffect(() => {
     if (isCommandPaletteOpen) {
-      // Small timeout to allow animation to start before focusing to avoid scroll jumps
       setTimeout(() => inputRef.current?.focus(), 100);
-    } else {
-      // Clear query when closed if we just want it to be a temporary search
-      // Optional: keep it if we want to filter the background. Let's keep it to filter background!
     }
   }, [isCommandPaletteOpen]);
 
@@ -49,13 +52,26 @@ export default function CommandPalette() {
     s.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSelect = (id: string) => {
+  const handleSelect = (section: typeof sections[0]) => {
     setIsCommandPaletteOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      const y = element.getBoundingClientRect().top + window.scrollY - 100;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
+    
+    // Navigate to the path
+    router.push(section.path);
+
+    // Wait a brief moment for the page to render, then scroll to the element
+    setTimeout(() => {
+      const element = document.getElementById(section.id);
+      if (element) {
+        const y = element.getBoundingClientRect().top + window.scrollY - 100;
+        window.scrollTo({ top: y, behavior: "smooth" });
+        
+        // Highlight effect
+        element.classList.add("ring-2", "ring-blue-500", "ring-offset-4", "ring-offset-black", "transition-all", "duration-1000", "rounded-xl");
+        setTimeout(() => {
+          element.classList.remove("ring-2", "ring-blue-500", "ring-offset-4", "ring-offset-black");
+        }, 2000);
+      }
+    }, 300); // 300ms delay to ensure page transition completes
   };
 
   return (
@@ -107,7 +123,7 @@ export default function CommandPalette() {
                     return (
                       <button
                         key={section.id}
-                        onClick={() => handleSelect(section.id)}
+                        onClick={() => handleSelect(section)}
                         className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-blue-500/10 hover:text-blue-400 text-zinc-300 transition-colors text-left group"
                       >
                         <Icon className="w-5 h-5 text-zinc-500 group-hover:text-blue-400 transition-colors" />
