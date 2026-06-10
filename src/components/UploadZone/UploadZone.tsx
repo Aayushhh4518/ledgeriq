@@ -21,7 +21,7 @@ import BenchmarkPanel from "@/components/BenchmarkPanel/BenchmarkPanel";
 import TrendAnalysis from "@/components/TrendAnalysis/TrendAnalysis";
 import ScenarioSimulator from "@/components/ScenarioSimulator/ScenarioSimulator";
 import AIFinancialCopilot from "@/components/AIFinancialCopilot/AIFinancialCopilot";
-
+import ExportReport from "@/components/ExportReport/ExportReport";
 interface FinancialData {
   company?: string;
   revenue?: number;
@@ -228,6 +228,7 @@ export default function UploadZone() {
                 netIncome={responseData.financialData?.netIncome ?? 0}
                 cash={responseData.financialData?.cash ?? 0}
               />
+              <ExportReport company={responseData.financialData?.company ?? "Unknown"}/>
             </>
           )}
 
