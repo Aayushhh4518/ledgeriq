@@ -57,6 +57,10 @@ interface FinancialContextType {
   setIsCompareModalOpen: (isOpen: boolean) => void;
   isCompareUploading: boolean;
   setIsCompareUploading: (status: boolean) => void;
+  compareHistoricalData: UploadResponse["historicalData"] | null;
+  setCompareHistoricalData: (data: UploadResponse["historicalData"] | null) => void;
+  compareSegmentData: SegmentData | null;
+  setCompareSegmentData: (data: SegmentData | null) => void;
 }
 
 const FinancialContext = createContext<FinancialContextType | undefined>(undefined);
@@ -72,6 +76,8 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
   const [compareFile, setCompareFile] = useState<File | null>(null);
   const [compareResponseData, setCompareResponseData] = useState<UploadResponse | null>(null);
   const [compareMetrics, setCompareMetrics] = useState<FinancialMetrics | null>(null);
+  const [compareHistoricalData, setCompareHistoricalData] = useState<UploadResponse["historicalData"] | null>(null);
+  const [compareSegmentData, setCompareSegmentData] = useState<SegmentData | null>(null);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [isCompareUploading, setIsCompareUploading] = useState(false);
 
@@ -96,6 +102,10 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
         setCompareResponseData,
         compareMetrics,
         setCompareMetrics,
+        compareHistoricalData,
+        setCompareHistoricalData,
+        compareSegmentData,
+        setCompareSegmentData,
         isCompareModalOpen,
         setIsCompareModalOpen,
         isCompareUploading,

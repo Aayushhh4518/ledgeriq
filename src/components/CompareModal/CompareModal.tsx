@@ -18,7 +18,9 @@ export default function CompareModal() {
     setCompareMetrics,
     isCompareUploading,
     setIsCompareUploading,
-    metrics
+    metrics,
+    setCompareHistoricalData,
+    setCompareSegmentData
   } = useFinancialData();
   
   const { addNotification } = useNotifications();
@@ -74,6 +76,13 @@ export default function CompareModal() {
           netIncome: data.financialData.netIncome ?? 0,
           cash: data.financialData.cash ?? 0,
         });
+
+        if (data.historicalData) {
+          setCompareHistoricalData(data.historicalData);
+        }
+        if (data.segmentData) {
+          setCompareSegmentData(data.segmentData);
+        }
 
         addNotification(
           "Comparison Ready",

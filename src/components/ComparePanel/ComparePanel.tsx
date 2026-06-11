@@ -2,9 +2,13 @@ import { FinancialMetrics } from "@/types/financial";
 import { formatCurrency } from "@/lib/utils";
 import { TrendingUp, TrendingDown, Minus, DollarSign, Activity, Percent } from "lucide-react";
 
+import { UploadResponse } from "@/contexts/FinancialContext";
+
 interface ComparePanelProps {
   metrics1: FinancialMetrics;
   metrics2: FinancialMetrics;
+  hist1?: UploadResponse["historicalData"] | null;
+  hist2?: UploadResponse["historicalData"] | null;
 }
 
 const getWinnerColor = (val1?: number, val2?: number, invert = false) => {
@@ -47,7 +51,7 @@ const ComparisonRow = ({
   </div>
 );
 
-export default function ComparePanel({ metrics1, metrics2 }: ComparePanelProps) {
+export default function ComparePanel({ metrics1, metrics2, hist1, hist2 }: ComparePanelProps) {
   const getScore = (m: FinancialMetrics) => {
     return Math.min(
       100,
@@ -64,6 +68,15 @@ export default function ComparePanel({ metrics1, metrics2 }: ComparePanelProps) 
   const formatPercentage = (value?: number) => {
     return value ? `${value.toFixed(1)}%` : "N/A";
   };
+  
+  const formatRatio = (value?: number) => {
+    return value ? `${value.toFixed(2)}x` : "N/A";
+  };
+
+  const revGrowth1 = hist1 ? ((hist1.revenue.current - hist1.revenue.previous) / hist1.revenue.previous) * 100 : undefined;
+  const revGrowth2 = hist2 ? ((hist2.revenue.current - hist2.revenue.previous) / hist2.revenue.previous) * 100 : undefined;
+  const niGrowth1 = hist1 ? ((hist1.netIncome.current - hist1.netIncome.previous) / hist1.netIncome.previous) * 100 : undefined;
+  const niGrowth2 = hist2 ? ((hist2.netIncome.current - hist2.netIncome.previous) / hist2.netIncome.previous) * 100 : undefined;
 
   return (
     <div className="bg-zinc-950 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl">
@@ -111,7 +124,7 @@ export default function ComparePanel({ metrics1, metrics2 }: ComparePanelProps) 
         
         {/* Calculated Metrics */}
         <div className="bg-zinc-900/20 py-2 px-4 border-b border-zinc-800/40">
-          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Derived Analytics</span>
+          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Profitability & Growth</span>
         </div>
 
         <ComparisonRow 
@@ -126,6 +139,53 @@ export default function ComparePanel({ metrics1, metrics2 }: ComparePanelProps) 
           val2={metrics2.revenue && metrics2.grossProfit ? (metrics2.grossProfit / metrics2.revenue) * 100 : undefined} 
           formatter={formatPercentage} 
         />
+        <ComparisonRow 
+          label="Revenue Growth (YoY)" 
+          val1={revGrowth1} 
+          val2={revGrowth2} 
+          formatter={formatPercentage} 
+        />
+        <ComparisonRow 
+          label="Net Income Growth (YoY)" 
+          val1={niGrowth1} 
+          val2={niGrowth2} 
+          formatter={formatPercentage} 
+        />
+
+        <div className="bg-zinc-900/20 py-2 px-4 border-b border-zinc-800/40">
+          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Risk & Efficiency Ratios</span>
+        </div>
+
+        <ComparisonRow 
+          label="Return on Equity (ROE)" 
+          val1={metrics1.netIncome && metrics1.shareholderEquity ? (metrics1.netIncome / metrics1.shareholderEquity) * 100 : undefined} 
+          val2={metrics2.netIncome && metrics2.shareholderEquity ? (metrics2.netIncome / metrics2.shareholderEquity) * 100 : undefined} 
+          formatter={formatPercentage} 
+        />
+        <ComparisonRow 
+          label="Return on Assets (ROA)" 
+          val1={metrics1.netIncome && metrics1.totalAssets ? (metrics1.netIncome / metrics1.totalAssets) * 100 : undefined} 
+          val2={metrics2.netIncome && metrics2.totalAssets ? (metrics2.netIncome / metrics2.totalAssets) * 100 : undefined} 
+          formatter={formatPercentage} 
+        />
+        <ComparisonRow 
+          label="Current Ratio" 
+          val1={metrics1.currentAssets && metrics1.currentLiabilities ? (metrics1.currentAssets / metrics1.currentLiabilities) : undefined} 
+          val2={metrics2.currentAssets && metrics2.currentLiabilities ? (metrics2.currentAssets / metrics2.currentLiabilities) : undefined} 
+          formatter={formatRatio} 
+        />
+        <ComparisonRow 
+          label="Debt-to-Equity Ratio" 
+          val1={metrics1.totalDebt && metrics1.shareholderEquity ? (metrics1.totalDebt / metrics1.shareholderEquity) : undefined} 
+          val2={metrics2.totalDebt && metrics2.shareholderEquity ? (metrics2.totalDebt / metrics2.shareholderEquity) : undefined} 
+          formatter={formatRatio} 
+          invert={true} // Lower is better for debt
+        />
+
+        <div className="bg-zinc-900/20 py-2 px-4 border-b border-zinc-800/40">
+          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Overall</span>
+        </div>
+
         <ComparisonRow 
           label="Overall Health Score" 
           val1={score1} 

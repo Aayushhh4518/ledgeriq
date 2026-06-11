@@ -8,7 +8,7 @@ import { ArrowLeftRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ComparePage() {
-  const { metrics, compareMetrics } = useFinancialData();
+  const { metrics, compareMetrics, historicalData, compareHistoricalData } = useFinancialData();
   const router = useRouter();
 
   useEffect(() => {
@@ -37,7 +37,12 @@ export default function ComparePage() {
           </p>
         </div>
 
-        <ComparePanel metrics1={metrics} metrics2={compareMetrics} />
+        <ComparePanel 
+          metrics1={metrics} 
+          metrics2={compareMetrics} 
+          hist1={historicalData} 
+          hist2={compareHistoricalData} 
+        />
       </motion.div>
     </main>
   );
