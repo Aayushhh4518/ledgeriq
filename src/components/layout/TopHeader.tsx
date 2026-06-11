@@ -21,7 +21,7 @@ export default function TopHeader() {
   const [time, setTime] = useState("");
   const { setIsCommandPaletteOpen } = useSearch();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const { notifications, unreadCount, markAllAsRead } = useNotifications();
+  const { notifications, unreadCount, markAllAsRead, clearAll } = useNotifications();
   const { setIsCompareModalOpen } = useFinancialData();
 
   // Hydration-safe clock
@@ -138,14 +138,24 @@ export default function TopHeader() {
                 >
                   <div className="flex items-center justify-between p-4 border-b border-white/5 bg-white/[0.02]">
                     <h3 className="text-sm font-bold text-white tracking-wide">Notifications</h3>
-                    {unreadCount > 0 && (
-                      <button 
-                        onClick={markAllAsRead}
-                        className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 transition-colors uppercase tracking-wider"
-                      >
-                        Mark all read
-                      </button>
-                    )}
+                    <div className="flex items-center gap-3">
+                      {unreadCount > 0 && (
+                        <button 
+                          onClick={markAllAsRead}
+                          className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 transition-colors uppercase tracking-wider"
+                        >
+                          Mark all read
+                        </button>
+                      )}
+                      {notifications.length > 0 && (
+                        <button 
+                          onClick={clearAll}
+                          className="text-[11px] font-semibold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="max-h-80 overflow-y-auto">
                     {notifications.length === 0 ? (

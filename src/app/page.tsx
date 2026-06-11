@@ -4,10 +4,19 @@ import UploadZone from "@/components/UploadZone/UploadZone";
 import { useFinancialData } from "@/contexts/FinancialContext";
 import HeroSummary from "@/components/HeroSummary/HeroSummary";
 import OverviewCards from "@/components/OverviewCards";
-import RevenueChart from "@/components/RevenueChart";
-import HealthScore from "@/components/HealthScore";
 import InvestmentVerdict from "@/components/InvestmentVerdict/InvestmentVerdict";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+
+const RevenueChart = dynamic(() => import("@/components/RevenueChart"), { 
+  ssr: false, 
+  loading: () => <SkeletonLoader className="w-full h-80" /> 
+});
+const HealthScore = dynamic(() => import("@/components/HealthScore"), { 
+  ssr: false, 
+  loading: () => <SkeletonLoader className="w-full h-64" /> 
+});
 
 export default function Home() {
   const { responseData, metrics } = useFinancialData();

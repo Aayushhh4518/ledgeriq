@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, LayoutDashboard, LineChart, ShieldAlert, TrendingUp, BrainCircuit, FileText } from "lucide-react";
 import { useSearch } from "./SearchContext";
-import { useRouter } from "next/navigation";
+import { useFinancialData } from "@/contexts/FinancialContext";
+import { useRouter, usePathname } from "next/navigation";
 
 const sections = [
   { id: "Hero", path: "/", title: "Overview Dashboard", icon: LayoutDashboard },
@@ -22,8 +23,23 @@ const sections = [
 
 export default function CommandPalette() {
   const { searchQuery, setSearchQuery, isCommandPaletteOpen, setIsCommandPaletteOpen } = useSearch();
+  const { metrics } = useFinancialData();
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Dynamically generate sections based on available data
+  const dynamicSections = [...sections];
+
+  if (metrics) {
+    dynamicSections.push(
+      { id: "revenue-chart", path: "/", title: `Revenue: $${metrics.revenue?.toLocaleString()}`, icon: TrendingUp },
+      { id: "overview-cards", path: "/", title: `Net Income: $${metrics.netIncome?.toLocaleString()}`, icon: TrendingUp },
+      { id: "overview-cards", path: "/", title: `Total Assets: $${metrics.totalAssets?.toLocaleString()}`, icon: LayoutDashboard },
+      { id: "overview-cards", path: "/", title: `Total Liabilities: $${metrics.totalLiabilities?.toLocaleString()}`, icon: LayoutDashboard },
+      { id: "overview-cards", path: "/", title: `Cash Position: $${metrics.cash?.toLocaleString()}`, icon: LayoutDashboard }
+    );
+  }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -47,19 +63,23 @@ export default function CommandPalette() {
     }
   }, [isCommandPaletteOpen]);
 
-  const filteredSections = sections.filter((s) => 
+  const filteredSections = dynamicSections.filter((s) => 
     s.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
     s.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSelect = (section: typeof sections[0]) => {
+  const handleSelect = (section: typeof dynamicSections[0]) => {
     setIsCommandPaletteOpen(false);
     
-    // Navigate to the path
-    router.push(section.path);
+    // If we are already on the page, don't push, just scroll
+    if (pathname !== section.path) {
+      router.push(section.path);
+    }
 
-    // Wait a brief moment for the page to render, then scroll to the element
+    // Wait a brief moment for the page to render (or just scroll immediately if already there)
     setTimeout(() => {
+      // In a real app we'd need a robust way to ensure elements are mounted,
+      // but for this UI prototype a timeout handles the React render lifecycle well.
       const element = document.getElementById(section.id);
       if (element) {
         const y = element.getBoundingClientRect().top + window.scrollY - 100;
@@ -71,7 +91,7 @@ export default function CommandPalette() {
           element.classList.remove("ring-2", "ring-blue-500", "ring-offset-4", "ring-offset-black");
         }, 2000);
       }
-    }, 300); // 300ms delay to ensure page transition completes
+    }, pathname === section.path ? 50 : 400); // Shorter delay if staying on same page
   };
 
   return (
@@ -122,7 +142,7 @@ export default function CommandPalette() {
                     const Icon = section.icon;
                     return (
                       <button
-                        key={section.id}
+                        key={`${section.id}-${section.title}`}
                         onClick={() => handleSelect(section)}
                         className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-blue-500/10 hover:text-blue-400 text-zinc-300 transition-colors text-left group"
                       >

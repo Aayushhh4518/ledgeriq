@@ -34,6 +34,7 @@ interface UploadResponse {
 }
 
 import { motion, AnimatePresence } from "framer-motion";
+import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { UploadCloud, FileText, CheckCircle2, Loader2 } from "lucide-react";
 import HeroSummary from "../HeroSummary/HeroSummary";
 import { useFinancialData } from "@/contexts/FinancialContext";
@@ -234,10 +235,10 @@ export default function UploadZone() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="max-w-6xl mx-auto grid grid-cols-12 gap-6 mt-12"
           >
-             <div className="col-span-12 h-40 bg-zinc-900/50 rounded-xl animate-pulse" />
-             <div className="col-span-12 lg:col-span-8 h-96 bg-zinc-900/50 rounded-xl animate-pulse" />
-             <div className="col-span-12 lg:col-span-4 h-96 bg-zinc-900/50 rounded-xl animate-pulse" />
-             <div className="col-span-12 h-64 bg-zinc-900/50 rounded-xl animate-pulse" />
+             <SkeletonLoader className="col-span-12 h-40" />
+             <SkeletonLoader className="col-span-12 lg:col-span-8 h-96" />
+             <SkeletonLoader className="col-span-12 lg:col-span-4 h-96" />
+             <SkeletonLoader className="col-span-12 h-64" />
           </motion.div>
         )}
       </AnimatePresence>

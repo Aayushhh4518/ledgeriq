@@ -4,8 +4,7 @@ import { Download, Loader2 } from "lucide-react";
 import { useState, useRef } from "react";
 import { useFinancialData } from "@/contexts/FinancialContext";
 import { useNotifications } from "@/contexts/NotificationContext";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { exportToPDF } from "@/utils/exportPDF";
 
 // We import the key panels to render them off-screen for the PDF
 import HeroSummary from "../HeroSummary/HeroSummary";
@@ -34,44 +33,9 @@ export default function ExportReport({
     
     setIsExporting(true);
     try {
-      // Small delay to ensure Recharts animations finish if they just mounted
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const element = printRef.current;
-      const canvas = await html2canvas(element, {
-        scale: 2, // higher resolution
-        useCORS: true,
-        backgroundColor: "#000000",
-        windowWidth: 1200,
-      });
-
-      const imgData = canvas.toDataURL("image/jpeg", 1.0);
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      let position = 0;
-      let heightLeft = pdfHeight;
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      // First page
-      pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
-      heightLeft -= pageHeight;
-
-      // Add new pages if the content is taller than A4
-      while (heightLeft >= 0) {
-        position = heightLeft - pdfHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
-        heightLeft -= pageHeight;
-      }
-
-      pdf.save(`${company.replace(/\s+/g, '_')}_Financial_Analysis.pdf`);
+      // Use the reusable utility
+      await exportToPDF(element, `${company.replace(/\s+/g, '_')}_Financial_Analysis.pdf`);
       
       addNotification(
         "Export Complete",

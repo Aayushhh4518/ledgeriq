@@ -4,12 +4,21 @@ import { useFinancialData } from "@/contexts/FinancialContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import GrowthAnalysis from "@/components/GrowthAnalysis/GrowthAnalysis";
-import TrendAnalysis from "@/components/TrendAnalysis/TrendAnalysis";
 import SegmentAnalysis from "@/components/SegmentAnalysis/SegmentAnalysis";
-import SegmentPieChart from "@/components/SegmentPieChart/SegmentPieChart";
 import ScenarioSimulator from "@/components/ScenarioSimulator/ScenarioSimulator";
 import { TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+
+const TrendAnalysis = dynamic(() => import("@/components/TrendAnalysis/TrendAnalysis"), { 
+  ssr: false, 
+  loading: () => <SkeletonLoader className="w-full h-80" /> 
+});
+const SegmentPieChart = dynamic(() => import("@/components/SegmentPieChart/SegmentPieChart"), { 
+  ssr: false, 
+  loading: () => <SkeletonLoader className="w-full h-80" /> 
+});
 
 export default function GrowthAnalysisPage() {
   const { responseData, metrics, historicalData, segmentData } = useFinancialData();
