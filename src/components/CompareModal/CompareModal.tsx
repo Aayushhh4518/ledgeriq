@@ -63,6 +63,14 @@ export default function CompareModal() {
         body: formData,
       });
 
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("Upload failed:", text);
+        alert(`Upload failed. The file might be too large or invalid. Error: ${text.slice(0, 100)}`);
+        setIsCompareUploading(false);
+        return;
+      }
+
       const data: UploadResponse = await response.json();
 
       setCompareResponseData(data);

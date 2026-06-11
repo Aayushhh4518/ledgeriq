@@ -112,6 +112,14 @@ export default function UploadZone() {
         body: formData,
       });
 
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("Upload failed:", text);
+        alert(`Upload failed. The file might be too large or invalid. Error: ${text.slice(0, 100)}`);
+        setIsUploading(false);
+        return;
+      }
+
       const data: UploadResponse = await response.json();
 
       setResponseData(data);

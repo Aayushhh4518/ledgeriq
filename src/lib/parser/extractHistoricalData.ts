@@ -7,6 +7,7 @@ export interface HistoricalData {
     current: number;
     previous: number;
   };
+  isValid?: boolean;
 }
 
 export function extractHistoricalData(text: string): HistoricalData {
@@ -38,6 +39,24 @@ export function extractHistoricalData(text: string): HistoricalData {
       result.netIncome.previous = Number(netIncomeMatch[2].replace(/,/g, "")) || 0;
     }
   }
+
+  // Validation: If growth is > 1000% or previous is tiny/0 while current is massive, flag as invalid
+  const validateGrowth = (current: number, previous: number) => {
+    if (previous === 0 && current > 1000) return false; // Prevent divide by zero leading to infinity
+    if (previous > 0) {
+      const growth = Math.abs((current - previous) / previous);
+      if (growth > 10) return false; // > 1000% anomaly
+    }
+    return true;
+  };
+
+  const isRevValid = validateGrowth(result.revenue.current, result.revenue.previous);
+  const isNiValid = validateGrowth(result.netIncome.current, result.netIncome.previous);
+  
+  // Exclude 0, 0 matches which are invalid default states
+  const hasData = result.revenue.current > 0 || result.netIncome.current > 0;
+  
+  result.isValid = hasData && isRevValid && isNiValid;
 
   return result;
 }

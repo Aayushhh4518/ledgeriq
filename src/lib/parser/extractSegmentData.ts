@@ -10,20 +10,24 @@ export function extractSegmentData(text: string): SegmentData {
   };
 
   // Apple product lines regex
-  const iphoneMatch = text.match(/iPhone\s+\$?\s*([\d,]+)/i);
-  if (iphoneMatch) result.iphone = Number(iphoneMatch[1].replace(/,/g, "")) || 0;
+  // Negative lookahead (?!\s+\d{1,2}\b) ensures we don't capture "iPhone 16"
+  // We look for larger numbers or numbers preceded by $ or located further in the line
+  
+  const extractValue = (pattern: RegExp) => {
+    const match = text.match(pattern);
+    if (match) {
+      const val = Number(match[1].replace(/,/g, ""));
+      // Basic validation: segments should be large numbers, not '16'
+      return val > 1000 ? val : 0;
+    }
+    return 0;
+  };
 
-  const macMatch = text.match(/Mac\s+\$?\s*([\d,]+)/i);
-  if (macMatch) result.mac = Number(macMatch[1].replace(/,/g, "")) || 0;
-
-  const ipadMatch = text.match(/iPad\s+\$?\s*([\d,]+)/i);
-  if (ipadMatch) result.ipad = Number(ipadMatch[1].replace(/,/g, "")) || 0;
-
-  const wearablesMatch = text.match(/Wearables(?:, Home and Accessories)?\s+\$?\s*([\d,]+)/i);
-  if (wearablesMatch) result.wearables = Number(wearablesMatch[1].replace(/,/g, "")) || 0;
-
-  const servicesMatch = text.match(/Services\s+\$?\s*([\d,]+)/i);
-  if (servicesMatch) result.services = Number(servicesMatch[1].replace(/,/g, "")) || 0;
+  result.iphone = extractValue(/iPhone(?!\s+\d{1,2}\b)[^\d]*([\d,]+)/i);
+  result.mac = extractValue(/Mac(?!\s+\d{1,2}\b)[^\d]*([\d,]+)/i);
+  result.ipad = extractValue(/iPad(?!\s+\d{1,2}\b)[^\d]*([\d,]+)/i);
+  result.wearables = extractValue(/Wearables(?:, Home and Accessories)?(?!\s+\d{1,2}\b)[^\d]*([\d,]+)/i);
+  result.services = extractValue(/Services(?!\s+\d{1,2}\b)[^\d]*([\d,]+)/i);
 
   return result;
 }

@@ -4,6 +4,8 @@ import { useFinancialData } from "@/contexts/FinancialContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ComparePanel from "@/components/ComparePanel/ComparePanel";
+import CompareCharts from "@/components/CompareCharts/CompareCharts";
+import CompareExecutiveSummary from "@/components/CompareExecutiveSummary/CompareExecutiveSummary";
 import { ArrowLeftRight } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -20,12 +22,12 @@ export default function ComparePage() {
   if (!metrics || !compareMetrics) return null;
 
   return (
-    <main className="p-8 lg:p-10">
+    <main className="p-4 lg:p-6 min-h-screen">
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="space-y-8 max-w-[1600px] mx-auto"
+        className="space-y-4 max-w-[1600px] mx-auto"
       >
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3 border-b border-zinc-800 pb-4">
@@ -36,6 +38,10 @@ export default function ComparePage() {
             Side-by-side analysis of key financial metrics, health scores, and risk factors.
           </p>
         </div>
+
+        <CompareExecutiveSummary metrics1={metrics} metrics2={compareMetrics} />
+        
+        <CompareCharts metrics1={metrics} metrics2={compareMetrics} />
 
         <ComparePanel 
           metrics1={metrics} 

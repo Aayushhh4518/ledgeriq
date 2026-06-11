@@ -32,24 +32,33 @@ const ComparisonRow = ({
   val1,
   val2,
   formatter,
+  formatter1,
+  formatter2,
   invert = false,
 }: {
   label: string;
   val1?: number;
   val2?: number;
-  formatter: (v?: number) => string;
+  formatter?: (v?: number) => string;
+  formatter1?: (v?: number) => string;
+  formatter2?: (v?: number) => string;
   invert?: boolean;
-}) => (
-  <div className="grid grid-cols-3 gap-4 items-center p-4 border-b border-zinc-800/40 hover:bg-zinc-900/40 transition-colors">
-    <div className="text-zinc-400 font-medium text-sm">{label}</div>
-    <div className={`text-lg text-center ${getWinnerColor(val1, val2, invert)}`}>
-      {formatter(val1)}
+}) => {
+  const f1 = formatter1 || formatter || ((v) => String(v));
+  const f2 = formatter2 || formatter || ((v) => String(v));
+  
+  return (
+    <div className="grid grid-cols-3 gap-4 items-center p-3 border-b border-zinc-800/40 hover:bg-zinc-900/40 transition-colors">
+      <div className="text-zinc-400 font-medium text-[13px]">{label}</div>
+      <div className={`text-base font-medium text-center ${getWinnerColor(val1, val2, invert)}`}>
+        {f1(val1)}
+      </div>
+      <div className={`text-base font-medium text-center ${getWinnerColor2(val1, val2, invert)}`}>
+        {f2(val2)}
+      </div>
     </div>
-    <div className={`text-lg text-center ${getWinnerColor2(val1, val2, invert)}`}>
-      {formatter(val2)}
-    </div>
-  </div>
-);
+  );
+};
 
 export default function ComparePanel({ metrics1, metrics2, hist1, hist2 }: ComparePanelProps) {
   const getScore = (m: FinancialMetrics) => {
@@ -65,33 +74,38 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2 }: Compa
   const score1 = getScore(metrics1);
   const score2 = getScore(metrics2);
 
-  const formatPercentage = (value?: number) => {
-    return value ? `${value.toFixed(1)}%` : "N/A";
+  const formatPercentage = (value?: number | string, isValid: boolean = true) => {
+    if (!isValid) return "⚠️ Anomaly";
+    if (typeof value === "string") return value;
+    return value !== undefined ? `${value.toFixed(1)}%` : "N/A";
   };
   
   const formatRatio = (value?: number) => {
-    return value ? `${value.toFixed(2)}x` : "N/A";
+    return value !== undefined ? `${value.toFixed(2)}x` : "N/A";
   };
 
-  const revGrowth1 = hist1 ? ((hist1.revenue.current - hist1.revenue.previous) / hist1.revenue.previous) * 100 : undefined;
-  const revGrowth2 = hist2 ? ((hist2.revenue.current - hist2.revenue.previous) / hist2.revenue.previous) * 100 : undefined;
-  const niGrowth1 = hist1 ? ((hist1.netIncome.current - hist1.netIncome.previous) / hist1.netIncome.previous) * 100 : undefined;
-  const niGrowth2 = hist2 ? ((hist2.netIncome.current - hist2.netIncome.previous) / hist2.netIncome.previous) * 100 : undefined;
+  const revGrowth1 = hist1 ? ((hist1.revenue.current - hist1.revenue.previous) / (hist1.revenue.previous || 1)) * 100 : undefined;
+  const revGrowth2 = hist2 ? ((hist2.revenue.current - hist2.revenue.previous) / (hist2.revenue.previous || 1)) * 100 : undefined;
+  const niGrowth1 = hist1 ? ((hist1.netIncome.current - hist1.netIncome.previous) / (hist1.netIncome.previous || 1)) * 100 : undefined;
+  const niGrowth2 = hist2 ? ((hist2.netIncome.current - hist2.netIncome.previous) / (hist2.netIncome.previous || 1)) * 100 : undefined;
+
+  const header1 = metrics1.company ? `${metrics1.company} ${metrics1.reportType || ''} ${metrics1.fiscalYear || ''}` : "Primary Company";
+  const header2 = metrics2.company ? `${metrics2.company} ${metrics2.reportType || ''} ${metrics2.fiscalYear || ''}` : "Competitor Company";
 
   return (
     <div className="bg-zinc-950 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl">
       {/* Header */}
-      <div className="grid grid-cols-3 gap-4 bg-zinc-900/60 p-6 border-b border-zinc-800">
+      <div className="grid grid-cols-3 gap-4 bg-zinc-900/60 p-4 lg:p-6 border-b border-zinc-800">
         <div className="text-sm font-semibold text-zinc-500 uppercase tracking-wider flex items-center">
           Metric
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-white tracking-tight">{metrics1.company}</div>
-          <div className="text-xs text-blue-400 mt-1 uppercase tracking-wider font-semibold">Primary</div>
+          <div className="text-lg lg:text-xl font-bold text-white tracking-tight leading-tight">{header1}</div>
+          <div className="text-[10px] lg:text-xs text-blue-400 mt-1 uppercase tracking-wider font-semibold">Primary</div>
         </div>
         <div className="text-center border-l border-zinc-800/80 pl-4">
-          <div className="text-2xl font-bold text-white tracking-tight">{metrics2.company}</div>
-          <div className="text-xs text-violet-400 mt-1 uppercase tracking-wider font-semibold">Competitor</div>
+          <div className="text-lg lg:text-xl font-bold text-white tracking-tight leading-tight">{header2}</div>
+          <div className="text-[10px] lg:text-xs text-violet-400 mt-1 uppercase tracking-wider font-semibold">Competitor</div>
         </div>
       </div>
 
@@ -143,13 +157,15 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2 }: Compa
           label="Revenue Growth (YoY)" 
           val1={revGrowth1} 
           val2={revGrowth2} 
-          formatter={formatPercentage} 
+          formatter1={(v) => formatPercentage(v, hist1?.isValid !== false)}
+          formatter2={(v) => formatPercentage(v, hist2?.isValid !== false)}
         />
         <ComparisonRow 
           label="Net Income Growth (YoY)" 
           val1={niGrowth1} 
           val2={niGrowth2} 
-          formatter={formatPercentage} 
+          formatter1={(v) => formatPercentage(v, hist1?.isValid !== false)}
+          formatter2={(v) => formatPercentage(v, hist2?.isValid !== false)}
         />
 
         <div className="bg-zinc-900/20 py-2 px-4 border-b border-zinc-800/40">

@@ -38,12 +38,12 @@ export default function Home() {
   );
 
   return (
-    <main className="p-8 lg:p-10">
+    <main className="p-4 lg:p-6">
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="space-y-8 max-w-[1600px] mx-auto"
+        className="space-y-4 max-w-[1600px] mx-auto"
       >
         <section id="Hero">
           <HeroSummary metrics={metrics} investmentScore={investmentScore} />

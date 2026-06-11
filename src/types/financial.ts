@@ -1,5 +1,9 @@
 export interface FinancialMetrics {
   company?: string;
+  fiscalYear?: string;
+  quarter?: string;
+  filingDate?: string;
+  reportType?: string;
   revenue?: number;
   grossProfit?: number;
   operatingIncome?: number;
@@ -34,4 +38,5 @@ export interface HistoricalData {
     current: number;
     previous: number;
   };
+  isValid?: boolean; // Flag for anomalous growth data
 }

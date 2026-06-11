@@ -5,14 +5,43 @@ export function parseFinancialData(
 ): FinancialMetrics {
   const result: FinancialMetrics = {};
 
-  // Company
-  const lines = text
-    .split("\n")
-    .map(line => line.trim())
-    .filter(Boolean);
+  // Robust Metadata Extraction
+  // Look for "Exact name of registrant" or standard headers
+  const companyMatch = text.match(/\(Exact name of registrant as specified in its charter\)\s*([^\n]+)/i) 
+                    || text.match(/(?:Company Name|Registrant):\s*([^\n]+)/i);
+  
+  if (companyMatch) {
+    result.company = companyMatch[1].trim();
+  } else {
+    // Fallback: look for lines ending in Inc., Corp., LLC, etc. near the top
+    const topText = text.slice(0, 1000);
+    const fallbackMatch = topText.match(/^([A-Z][a-zA-Z\s,&]+(?:Inc\.|Corporation|Corp\.|LLC|Ltd\.|Company))\s*$/m);
+    if (fallbackMatch) {
+      result.company = fallbackMatch[1].trim();
+    } else {
+      // Ultimate fallback: Just use "Unknown Company" instead of random PDF text
+      result.company = "Unknown Company";
+    }
+  }
 
-    if (lines.length > 0) {
-        result.company = lines[0];
+  const reportTypeMatch = text.match(/\b(FORM\s+10-[KQ])\b/i) || text.match(/\b(10-[KQ])\b/i);
+  if (reportTypeMatch) {
+    result.reportType = reportTypeMatch[1].toUpperCase();
+  }
+
+  const fiscalYearMatch = text.match(/For the fiscal year ended[\s\S]{1,50}?(20\d{2})/i) || text.match(/FY\s*(20\d{2})/i);
+  if (fiscalYearMatch) {
+    result.fiscalYear = fiscalYearMatch[1];
+  }
+
+  const quarterMatch = text.match(/For the quarterly period ended[\s\S]{1,50}?([A-Z][a-z]+\s+\d{1,2},\s*20\d{2})/i);
+  if (quarterMatch) {
+    result.quarter = quarterMatch[1];
+  }
+
+  const filingDateMatch = text.match(/Filed[\s:]+([A-Z][a-z]+\s+\d{1,2},\s*20\d{2})/i) || text.match(/Date of Report[\s:]+([A-Z][a-z]+\s+\d{1,2},\s*20\d{2})/i);
+  if (filingDateMatch) {
+    result.filingDate = filingDateMatch[1];
   }
 
   const matchValue = (regex: RegExp) => {
