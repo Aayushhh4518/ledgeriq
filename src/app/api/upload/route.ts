@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const extractedText =
       await extractTextFromPDF(buffer);
 
-    const financialData = parseFinancialData(extractedText);
+    const financialData = parseFinancialData(extractedText, file.name);
     const historicalData = extractHistoricalData(extractedText);
     const segmentData = extractSegmentData(extractedText, financialData.company);
 

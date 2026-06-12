@@ -51,7 +51,7 @@ export default function FinancialAnalysisPage() {
             <EarningsQuality metrics={metrics} />
           </div>
           <div className="col-span-12 xl:col-span-6">
-            <BenchmarkPanel companyMargin={((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100} />
+            <BenchmarkPanel companyMargin={((metrics.netIncome?.value ?? 0) / (metrics.revenue?.value || 1)) * 100} />
           </div>
         </div>
       </motion.div>

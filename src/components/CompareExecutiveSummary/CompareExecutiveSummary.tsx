@@ -4,6 +4,7 @@ import { FinancialMetrics } from "@/types/financial";
 import { formatCurrency } from "@/lib/utils";
 import { Trophy, Target, AlertTriangle, TrendingUp, TrendingDown, Activity } from "lucide-react";
 import { ComparisonContextData } from "@/contexts/FinancialContext";
+import { generateCompareNarrative } from "@/lib/analysis/narrativeEngine";
 
 interface Props {
   metrics1: FinancialMetrics;
@@ -16,8 +17,8 @@ export default function CompareExecutiveSummary({ metrics1, metrics2, context }:
     return Math.min(
       100,
       Math.round(
-        ((m.netIncome ?? 0) / (m.revenue || 1)) * 100 +
-        ((m.cash ?? 0) / (m.revenue || 1)) * 100
+        ((m.netIncome?.value ?? 0) / (m.revenue?.value || 1)) * 100 +
+        ((m.cash?.value ?? 0) / (m.revenue?.value || 1)) * 100
       )
     );
   };
@@ -37,8 +38,8 @@ export default function CompareExecutiveSummary({ metrics1, metrics2, context }:
   const winnerScore = Math.max(score1, score2);
   const loserScore = Math.min(score1, score2);
 
-  const revenueDiff = (metrics1.revenue ?? 0) - (metrics2.revenue ?? 0);
-  const revenuePercentDiff = metrics2.revenue ? (revenueDiff / metrics2.revenue) * 100 : 0;
+  const revenueDiff = (metrics1.revenue?.value ?? 0) - (metrics2.revenue?.value ?? 0);
+  const revenuePercentDiff = metrics2.revenue?.value ? (revenueDiff / metrics2.revenue.value) * 100 : 0;
 
   const isPositiveTrend = score1 > score2;
 
@@ -85,15 +86,7 @@ export default function CompareExecutiveSummary({ metrics1, metrics2, context }:
               {isYoY ? 'Trend Analysis Summary' : 'Executive Comparison Summary'}
             </h2>
             <p className="text-zinc-300 leading-relaxed text-[15px]">
-              {isYoY ? (
-                `Comparing ${name1} against its prior period (${name2}), the overall financial health score ${isPositiveTrend ? 'improved' : 'declined'} from ${score2} to ${score1}. ` +
-                `Revenue changed by ${revenuePercentDiff > 0 ? '+' : ''}${revenuePercentDiff.toFixed(1)}% year-over-year.`
-              ) : isTie ? (
-                `Both ${name1} and ${name2} present an equal fundamental profile based on our extraction, each scoring a ${winnerScore}/100.`
-              ) : (
-                `Based on our deep financial extraction and comparative analysis, **${winnerName}** exhibits a fundamentally stronger profile than ${loserName}. ` +
-                `With an overall health score of ${winnerScore} vs ${loserScore}, ${winnerName} demonstrates superior operational efficiency.`
-              )}
+              {generateCompareNarrative(metrics1, metrics2, context, score1, score2)}
             </p>
           </div>
 
@@ -104,7 +97,7 @@ export default function CompareExecutiveSummary({ metrics1, metrics2, context }:
                 {isYoY ? (
                   `Revenue shifted by ${formatCurrency(Math.abs(revenueDiff))} (${revenuePercentDiff.toFixed(1)}%).`
                 ) : revenueDiff > 0 ? (
-                  `${winnerName} generates ${formatCurrency(Math.abs((winnerMetrics.revenue ?? 0) - (loserMetrics.revenue ?? 0)))} more in revenue.`
+                  `${winnerName} generates ${formatCurrency(Math.abs((winnerMetrics.revenue?.value ?? 0) - (loserMetrics.revenue?.value ?? 0)))} more in revenue.`
                 ) : (
                   `${loserName} maintains a larger top-line scale despite a lower overall health score.`
                 )}

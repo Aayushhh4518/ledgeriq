@@ -54,8 +54,8 @@ export default function ExportReport({
     ? Math.min(
         100,
         Math.round(
-          ((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100 +
-          ((metrics.cash ?? 0) / (metrics.revenue || 1)) * 100
+          ((metrics.netIncome?.value ?? 0) / (metrics.revenue?.value || 1)) * 100 +
+          ((metrics.cash?.value ?? 0) / (metrics.revenue?.value || 1)) * 100
         )
       )
     : 0;
@@ -119,9 +119,9 @@ export default function ExportReport({
             
             <ExecutiveSummary 
               company={company} 
-              revenue={metrics.revenue ?? 0} 
-              netIncome={metrics.netIncome ?? 0} 
-              cash={metrics.cash ?? 0} 
+              revenue={metrics.revenue?.value ?? 0} 
+              netIncome={metrics.netIncome?.value ?? 0} 
+              cash={metrics.cash?.value ?? 0} 
             />
 
             <div className="mt-16 pt-8 border-t border-zinc-800 text-center text-zinc-600 text-sm">

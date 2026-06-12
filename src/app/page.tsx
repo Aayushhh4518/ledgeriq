@@ -32,8 +32,8 @@ export default function Home() {
   const investmentScore = Math.min(
     100,
     Math.round(
-      ((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100 +
-      ((metrics.cash ?? 0) / (metrics.revenue || 1)) * 100
+      ((metrics.netIncome?.value ?? 0) / (metrics.revenue?.value || 1)) * 100 +
+      ((metrics.cash?.value ?? 0) / (metrics.revenue?.value || 1)) * 100
     )
   );
 

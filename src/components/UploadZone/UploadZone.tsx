@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FinancialMetrics, SegmentData } from "@/types/financial";
-interface FinancialData {
-  company?: string;
-  revenue?: number;
-  grossProfit?: number;
-  netIncome?: number;
-  cash?: number;
-}
+import { FinancialMetrics, SegmentData, ExtractedMetric } from "@/types/financial";
 
 interface UploadResponse {
   fileName: string;
@@ -17,7 +10,7 @@ interface UploadResponse {
   textLength?: number;
   textPreview?: string;
 
-  financialData?: FinancialData;
+  financialData?: FinancialMetrics;
 
   historicalData?: {
     revenue: {
@@ -65,12 +58,14 @@ export default function UploadZone() {
   const showAI = matches(["ai", "insights", "copilot", "strengths", "weaknesses"]);
   const showReports = matches(["reports", "export", "summary", "reporting"]);
 
+  const getMetricValue = (m?: ExtractedMetric) => m?.value ?? 0;
+
   const investmentScore = metrics
     ? Math.min(
         100,
         Math.round(
-          ((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100 +
-          ((metrics.cash ?? 0) / (metrics.revenue || 1)) * 100
+          (getMetricValue(metrics.netIncome) / (getMetricValue(metrics.revenue) || 1)) * 100 +
+          (getMetricValue(metrics.cash) / (getMetricValue(metrics.revenue) || 1)) * 100
         )
       )
     : 0;
@@ -128,10 +123,6 @@ export default function UploadZone() {
         setMetrics({
           ...data.financialData,
           company: data.financialData.company ?? "Unknown",
-          revenue: data.financialData.revenue ?? 0,
-          grossProfit: data.financialData.grossProfit ?? 0,
-          netIncome: data.financialData.netIncome ?? 0,
-          cash: data.financialData.cash ?? 0,
         });
 
         if (data.historicalData) {

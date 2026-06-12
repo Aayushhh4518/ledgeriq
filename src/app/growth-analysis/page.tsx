@@ -66,7 +66,7 @@ export default function GrowthAnalysisPage() {
                 />
               </>
             )}
-            <ScenarioSimulator revenue={metrics.revenue ?? 0} netIncome={metrics.netIncome ?? 0} />
+            <ScenarioSimulator revenue={metrics.revenue?.value ?? 0} netIncome={metrics.netIncome?.value ?? 0} />
           </div>
 
           <div className="col-span-12 xl:col-span-8 space-y-6">

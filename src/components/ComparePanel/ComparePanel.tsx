@@ -68,8 +68,8 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2, context
     return Math.min(
       100,
       Math.round(
-        ((m.netIncome ?? 0) / (m.revenue || 1)) * 100 +
-        ((m.cash ?? 0) / (m.revenue || 1)) * 100
+        ((m.netIncome?.value ?? 0) / (m.revenue?.value || 1)) * 100 +
+        ((m.cash?.value ?? 0) / (m.revenue?.value || 1)) * 100
       )
     );
   };
@@ -117,29 +117,29 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2, context
       <div className="flex flex-col">
         <ComparisonRow 
           label="Total Revenue" 
-          val1={metrics1.revenue} 
-          val2={metrics2.revenue} 
+          val1={metrics1.revenue?.value} 
+          val2={metrics2.revenue?.value} 
           formatter={(v) => v ? formatCurrency(v) : "N/A"} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Net Income" 
-          val1={metrics1.netIncome} 
-          val2={metrics2.netIncome} 
+          val1={metrics1.netIncome?.value} 
+          val2={metrics2.netIncome?.value} 
           formatter={(v) => v ? formatCurrency(v) : "N/A"} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Gross Profit" 
-          val1={metrics1.grossProfit} 
-          val2={metrics2.grossProfit} 
+          val1={metrics1.grossProfit?.value} 
+          val2={metrics2.grossProfit?.value} 
           formatter={(v) => v ? formatCurrency(v) : "N/A"} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Cash Position" 
-          val1={metrics1.cash} 
-          val2={metrics2.cash} 
+          val1={metrics1.cash?.value} 
+          val2={metrics2.cash?.value} 
           formatter={(v) => v ? formatCurrency(v) : "N/A"} 
           isYoY={isYoY}
         />
@@ -151,15 +151,15 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2, context
 
         <ComparisonRow 
           label="Net Profit Margin" 
-          val1={metrics1.revenue && metrics1.netIncome ? (metrics1.netIncome / metrics1.revenue) * 100 : undefined} 
-          val2={metrics2.revenue && metrics2.netIncome ? (metrics2.netIncome / metrics2.revenue) * 100 : undefined} 
+          val1={metrics1.revenue?.value && metrics1.netIncome?.value ? (metrics1.netIncome.value / metrics1.revenue.value) * 100 : undefined} 
+          val2={metrics2.revenue?.value && metrics2.netIncome?.value ? (metrics2.netIncome.value / metrics2.revenue.value) * 100 : undefined} 
           formatter={formatPercentage} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Gross Margin" 
-          val1={metrics1.revenue && metrics1.grossProfit ? (metrics1.grossProfit / metrics1.revenue) * 100 : undefined} 
-          val2={metrics2.revenue && metrics2.grossProfit ? (metrics2.grossProfit / metrics2.revenue) * 100 : undefined} 
+          val1={metrics1.revenue?.value && metrics1.grossProfit?.value ? (metrics1.grossProfit.value / metrics1.revenue.value) * 100 : undefined} 
+          val2={metrics2.revenue?.value && metrics2.grossProfit?.value ? (metrics2.grossProfit.value / metrics2.revenue.value) * 100 : undefined} 
           formatter={formatPercentage} 
           isYoY={isYoY}
         />
@@ -186,29 +186,29 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2, context
 
         <ComparisonRow 
           label="Return on Equity (ROE)" 
-          val1={metrics1.netIncome && metrics1.shareholderEquity ? (metrics1.netIncome / metrics1.shareholderEquity) * 100 : undefined} 
-          val2={metrics2.netIncome && metrics2.shareholderEquity ? (metrics2.netIncome / metrics2.shareholderEquity) * 100 : undefined} 
+          val1={metrics1.netIncome?.value && metrics1.shareholderEquity?.value ? (metrics1.netIncome.value / metrics1.shareholderEquity.value) * 100 : undefined} 
+          val2={metrics2.netIncome?.value && metrics2.shareholderEquity?.value ? (metrics2.netIncome.value / metrics2.shareholderEquity.value) * 100 : undefined} 
           formatter={formatPercentage} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Return on Assets (ROA)" 
-          val1={metrics1.netIncome && metrics1.totalAssets ? (metrics1.netIncome / metrics1.totalAssets) * 100 : undefined} 
-          val2={metrics2.netIncome && metrics2.totalAssets ? (metrics2.netIncome / metrics2.totalAssets) * 100 : undefined} 
+          val1={metrics1.netIncome?.value && metrics1.totalAssets?.value ? (metrics1.netIncome.value / metrics1.totalAssets.value) * 100 : undefined} 
+          val2={metrics2.netIncome?.value && metrics2.totalAssets?.value ? (metrics2.netIncome.value / metrics2.totalAssets.value) * 100 : undefined} 
           formatter={formatPercentage} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Current Ratio" 
-          val1={metrics1.currentAssets && metrics1.currentLiabilities ? (metrics1.currentAssets / metrics1.currentLiabilities) : undefined} 
-          val2={metrics2.currentAssets && metrics2.currentLiabilities ? (metrics2.currentAssets / metrics2.currentLiabilities) : undefined} 
+          val1={metrics1.currentAssets?.value && metrics1.currentLiabilities?.value ? (metrics1.currentAssets.value / metrics1.currentLiabilities.value) : undefined} 
+          val2={metrics2.currentAssets?.value && metrics2.currentLiabilities?.value ? (metrics2.currentAssets.value / metrics2.currentLiabilities.value) : undefined} 
           formatter={formatRatio} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Debt-to-Equity Ratio" 
-          val1={metrics1.totalDebt && metrics1.shareholderEquity ? (metrics1.totalDebt / metrics1.shareholderEquity) : undefined} 
-          val2={metrics2.totalDebt && metrics2.shareholderEquity ? (metrics2.totalDebt / metrics2.shareholderEquity) : undefined} 
+          val1={metrics1.totalDebt?.value && metrics1.shareholderEquity?.value ? (metrics1.totalDebt.value / metrics1.shareholderEquity.value) : undefined} 
+          val2={metrics2.totalDebt?.value && metrics2.shareholderEquity?.value ? (metrics2.totalDebt.value / metrics2.shareholderEquity.value) : undefined} 
           formatter={formatRatio} 
           invert={true} // Lower is better for debt
           isYoY={isYoY}

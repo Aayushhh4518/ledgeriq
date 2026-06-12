@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { FinancialMetrics, SegmentData } from "@/types/financial";
+import { FinancialMetrics, SegmentData, ExtractedMetric } from "@/types/financial";
 
 export interface UploadResponse {
   fileName: string;
@@ -38,6 +38,13 @@ export interface ComparisonContextData {
   compareLabel: string;
 }
 
+export interface DrillDownState {
+  name: string;
+  metric?: ExtractedMetric;
+  formula?: string;
+  underlyingMetrics?: { name: string; metric?: ExtractedMetric }[];
+}
+
 interface FinancialContextType {
   file: File | null;
   setFile: (file: File | null) => void;
@@ -68,6 +75,10 @@ interface FinancialContextType {
   setCompareSegmentData: (data: SegmentData | null) => void;
   
   comparisonContext: ComparisonContextData;
+
+  drillDownMetric: DrillDownState | null;
+  openDrillDown: (state: DrillDownState) => void;
+  closeDrillDown: () => void;
 }
 
 const FinancialContext = createContext<FinancialContextType | undefined>(undefined);
@@ -87,6 +98,11 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
   const [compareSegmentData, setCompareSegmentData] = useState<SegmentData | null>(null);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [isCompareUploading, setIsCompareUploading] = useState(false);
+
+  const [drillDownMetric, setDrillDownMetric] = useState<DrillDownState | null>(null);
+
+  const openDrillDown = (state: DrillDownState) => setDrillDownMetric(state);
+  const closeDrillDown = () => setDrillDownMetric(null);
 
   const getHeaderLabel = (m: FinancialMetrics | null, defaultLabel: string) => {
     if (!m || !m.company) return defaultLabel;
@@ -153,6 +169,9 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
         isCompareUploading,
         setIsCompareUploading,
         comparisonContext,
+        drillDownMetric,
+        openDrillDown,
+        closeDrillDown,
       }}
     >
       {children}

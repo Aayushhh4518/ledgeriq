@@ -79,10 +79,10 @@ export default function CompareModal() {
         setCompareMetrics({
           ...data.financialData,
           company: data.financialData.company ?? "Unknown",
-          revenue: data.financialData.revenue ?? 0,
-          grossProfit: data.financialData.grossProfit ?? 0,
-          netIncome: data.financialData.netIncome ?? 0,
-          cash: data.financialData.cash ?? 0,
+          revenue: data.financialData.revenue ?? { value: 0, confidence: 0 },
+          grossProfit: data.financialData.grossProfit ?? { value: 0, confidence: 0 },
+          netIncome: data.financialData.netIncome ?? { value: 0, confidence: 0 },
+          cash: data.financialData.cash ?? { value: 0, confidence: 0 },
         });
 
         if (data.historicalData) {

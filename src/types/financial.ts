@@ -1,3 +1,12 @@
+export interface ExtractedMetric {
+  value: number;
+  confidence: number; // 0 to 100
+  sourcePage?: number;
+  sourceDocument?: string;
+  sourceSection?: string;
+  formula?: string;
+}
+
 export interface FinancialMetrics {
   company?: string;
   ticker?: string;
@@ -6,25 +15,30 @@ export interface FinancialMetrics {
   filingDate?: string;
   periodEndDate?: string;
   reportType?: string;
-  revenue?: number;
-  grossProfit?: number;
-  operatingIncome?: number;
-  netIncome?: number;
+  industry?: string;
+  currency?: string;
 
-  totalAssets?: number;
-  totalLiabilities?: number;
+  revenue?: ExtractedMetric;
+  grossProfit?: ExtractedMetric;
+  operatingIncome?: ExtractedMetric;
+  netIncome?: ExtractedMetric;
 
-  totalDebt?: number;
-  cash?: number;
+  totalAssets?: ExtractedMetric;
+  totalLiabilities?: ExtractedMetric;
 
-  operatingCashFlow?: number;
+  totalDebt?: ExtractedMetric;
+  cash?: ExtractedMetric;
 
-  currentAssets?: number;
-  currentLiabilities?: number;
+  operatingCashFlow?: ExtractedMetric;
 
-  shareholderEquity?: number;
+  currentAssets?: ExtractedMetric;
+  currentLiabilities?: ExtractedMetric;
+
+  shareholderEquity?: ExtractedMetric;
 }
+
 export type SegmentData = Record<string, number>;
+
 export interface HistoricalData {
   revenue: {
     current: number;

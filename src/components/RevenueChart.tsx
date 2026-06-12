@@ -21,28 +21,28 @@ export default function RevenueChart({ metrics }: Props) {
   const data = [
     {
       name: "Revenue",
-      value: metrics.revenue,
+      value: metrics.revenue?.value,
       fill: "url(#colorRevenue)",
     },
     {
       name: "Gross Profit",
-      value: metrics.grossProfit,
+      value: metrics.grossProfit?.value,
       fill: "url(#colorGross)",
     },
     {
       name: "Net Income",
-      value: metrics.netIncome,
+      value: metrics.netIncome?.value,
       fill: "url(#colorNet)",
     },
     {
       name: "Cash",
-      value: metrics.cash,
+      value: metrics.cash?.value,
       fill: "url(#colorCash)",
     },
   ];
 
   // Placeholder Industry Target (e.g. 75% of Revenue)
-  const benchmarkValue = (metrics.revenue ?? 0) * 0.75;
+  const benchmarkValue = (metrics.revenue?.value ?? 0) * 0.75;
 
   return (
     <div className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] hover:bg-[#0a0a0a]/60 overflow-hidden">

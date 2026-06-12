@@ -2,6 +2,7 @@ import { FinancialMetrics } from "@/types/financial";
 import { TrendingUp, DollarSign, BarChart3, LineChart } from "lucide-react";
 import { motion } from "framer-motion";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
+import { useFinancialData } from "@/contexts/FinancialContext";
 
 interface Props {
   metrics: FinancialMetrics;
@@ -23,10 +24,13 @@ const itemVariants: Variants = {
 };
 
 export default function OverviewCards({ metrics }: Props) {
+  const { openDrillDown } = useFinancialData();
+
   const cards = [
     {
       title: "Revenue",
-      value: metrics.revenue ?? 0,
+      metric: metrics.revenue,
+      value: metrics.revenue?.value ?? 0,
       trend: "+12.4%",
       icon: DollarSign,
       color: "text-blue-500",
@@ -34,7 +38,8 @@ export default function OverviewCards({ metrics }: Props) {
     },
     {
       title: "Gross Profit",
-      value: metrics.grossProfit ?? 0,
+      metric: metrics.grossProfit,
+      value: metrics.grossProfit?.value ?? 0,
       trend: "+8.2%",
       icon: BarChart3,
       color: "text-emerald-500",
@@ -42,7 +47,8 @@ export default function OverviewCards({ metrics }: Props) {
     },
     {
       title: "Net Income",
-      value: metrics.netIncome ?? 0,
+      metric: metrics.netIncome,
+      value: metrics.netIncome?.value ?? 0,
       trend: "+15.3%",
       icon: LineChart,
       color: "text-indigo-500",
@@ -50,7 +56,8 @@ export default function OverviewCards({ metrics }: Props) {
     },
     {
       title: "Cash Balance",
-      value: metrics.cash ?? 0,
+      metric: metrics.cash,
+      value: metrics.cash?.value ?? 0,
       trend: "+4.1%",
       icon: DollarSign,
       color: "text-amber-500",
@@ -71,7 +78,8 @@ export default function OverviewCards({ metrics }: Props) {
           <motion.div
             variants={itemVariants}
             key={card.title}
-            className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] hover:bg-[#0a0a0a]/60 overflow-hidden"
+            onClick={() => openDrillDown({ name: card.title, metric: card.metric })}
+            className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] hover:bg-[#0a0a0a]/60 overflow-hidden cursor-pointer"
           >
             {/* Subtle Hover Gradient */}
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />

@@ -22,23 +22,23 @@ export default function CompareCharts({ metrics1, metrics2 }: CompareChartsProps
   const revenueData = [
     {
       name: "Revenue",
-      [metrics1.company ?? "Company A"]: metrics1.revenue ?? 0,
-      [metrics2.company ?? "Company B"]: metrics2.revenue ?? 0,
+      [metrics1.company ?? "Company A"]: metrics1.revenue?.value ?? 0,
+      [metrics2.company ?? "Company B"]: metrics2.revenue?.value ?? 0,
     },
     {
       name: "Gross Profit",
-      [metrics1.company ?? "Company A"]: metrics1.grossProfit ?? 0,
-      [metrics2.company ?? "Company B"]: metrics2.grossProfit ?? 0,
+      [metrics1.company ?? "Company A"]: metrics1.grossProfit?.value ?? 0,
+      [metrics2.company ?? "Company B"]: metrics2.grossProfit?.value ?? 0,
     },
     {
       name: "Net Income",
-      [metrics1.company ?? "Company A"]: metrics1.netIncome ?? 0,
-      [metrics2.company ?? "Company B"]: metrics2.netIncome ?? 0,
+      [metrics1.company ?? "Company A"]: metrics1.netIncome?.value ?? 0,
+      [metrics2.company ?? "Company B"]: metrics2.netIncome?.value ?? 0,
     },
     {
       name: "Cash Position",
-      [metrics1.company ?? "Company A"]: metrics1.cash ?? 0,
-      [metrics2.company ?? "Company B"]: metrics2.cash ?? 0,
+      [metrics1.company ?? "Company A"]: metrics1.cash?.value ?? 0,
+      [metrics2.company ?? "Company B"]: metrics2.cash?.value ?? 0,
     }
   ];
 
@@ -114,18 +114,18 @@ export default function CompareCharts({ metrics1, metrics2 }: CompareChartsProps
               data={[
                 {
                   name: "ROE (%)",
-                  [c1Name]: metrics1.netIncome && metrics1.shareholderEquity ? (metrics1.netIncome / metrics1.shareholderEquity) * 100 : 0,
-                  [c2Name]: metrics2.netIncome && metrics2.shareholderEquity ? (metrics2.netIncome / metrics2.shareholderEquity) * 100 : 0,
+                  [c1Name]: metrics1.netIncome?.value && metrics1.shareholderEquity?.value ? (metrics1.netIncome.value / metrics1.shareholderEquity.value) * 100 : 0,
+                  [c2Name]: metrics2.netIncome?.value && metrics2.shareholderEquity?.value ? (metrics2.netIncome.value / metrics2.shareholderEquity.value) * 100 : 0,
                 },
                 {
                   name: "Net Margin (%)",
-                  [c1Name]: metrics1.netIncome && metrics1.revenue ? (metrics1.netIncome / metrics1.revenue) * 100 : 0,
-                  [c2Name]: metrics2.netIncome && metrics2.revenue ? (metrics2.netIncome / metrics2.revenue) * 100 : 0,
+                  [c1Name]: metrics1.netIncome?.value && metrics1.revenue?.value ? (metrics1.netIncome.value / metrics1.revenue.value) * 100 : 0,
+                  [c2Name]: metrics2.netIncome?.value && metrics2.revenue?.value ? (metrics2.netIncome.value / metrics2.revenue.value) * 100 : 0,
                 },
                 {
                   name: "Gross Margin (%)",
-                  [c1Name]: metrics1.grossProfit && metrics1.revenue ? (metrics1.grossProfit / metrics1.revenue) * 100 : 0,
-                  [c2Name]: metrics2.grossProfit && metrics2.revenue ? (metrics2.grossProfit / metrics2.revenue) * 100 : 0,
+                  [c1Name]: metrics1.grossProfit?.value && metrics1.revenue?.value ? (metrics1.grossProfit.value / metrics1.revenue.value) * 100 : 0,
+                  [c2Name]: metrics2.grossProfit?.value && metrics2.revenue?.value ? (metrics2.grossProfit.value / metrics2.revenue.value) * 100 : 0,
                 }
               ]} 
               margin={{ top: 20, right: 10, left: -20, bottom: 0 }}

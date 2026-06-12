@@ -33,11 +33,11 @@ export default function CommandPalette() {
 
   if (metrics) {
     dynamicSections.push(
-      { id: "revenue-chart", path: "/", title: `Revenue: $${metrics.revenue?.toLocaleString()}`, icon: TrendingUp },
-      { id: "overview-cards", path: "/", title: `Net Income: $${metrics.netIncome?.toLocaleString()}`, icon: TrendingUp },
-      { id: "overview-cards", path: "/", title: `Total Assets: $${metrics.totalAssets?.toLocaleString()}`, icon: LayoutDashboard },
-      { id: "overview-cards", path: "/", title: `Total Liabilities: $${metrics.totalLiabilities?.toLocaleString()}`, icon: LayoutDashboard },
-      { id: "overview-cards", path: "/", title: `Cash Position: $${metrics.cash?.toLocaleString()}`, icon: LayoutDashboard }
+      { id: "revenue-chart", path: "/", title: `Revenue: $${metrics.revenue?.value?.toLocaleString()}`, icon: TrendingUp },
+      { id: "overview-cards", path: "/", title: `Net Income: $${metrics.netIncome?.value?.toLocaleString()}`, icon: TrendingUp },
+      { id: "overview-cards", path: "/", title: `Total Assets: $${metrics.totalAssets?.value?.toLocaleString()}`, icon: LayoutDashboard },
+      { id: "overview-cards", path: "/", title: `Total Liabilities: $${metrics.totalLiabilities?.value?.toLocaleString()}`, icon: LayoutDashboard },
+      { id: "overview-cards", path: "/", title: `Cash Position: $${metrics.cash?.value?.toLocaleString()}`, icon: LayoutDashboard }
     );
   }
 

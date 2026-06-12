@@ -3,6 +3,7 @@ import TopHeader from "./TopHeader";
 import { SearchProvider } from "./SearchContext";
 import CompareModal from "../CompareModal/CompareModal";
 import DebugPanelWrapper from "../ExtractionDebugPanel/DebugPanelWrapper";
+import MetricDrillDownModal from "../ui/MetricDrillDownModal";
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -31,6 +32,7 @@ export default function DashboardShell({
           
           <CompareModal />
           <DebugPanelWrapper />
+          <MetricDrillDownModal />
         </div>
       </div>
     </SearchProvider>

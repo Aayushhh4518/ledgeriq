@@ -37,7 +37,12 @@ export default function StrengthsWeaknesses({ metrics }: Props) {
             {strengths.map((s, idx) => (
               <div key={idx} className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-lg hover:bg-emerald-500/20 transition-colors">
                 <p className="font-semibold text-emerald-300 mb-1">{s.title}</p>
-                <p className="text-sm text-emerald-200/70">{s.description}</p>
+                <p className="text-sm text-emerald-200/70 mb-2">{s.description}</p>
+                {s.generatedFrom && (
+                  <p className="text-[10px] uppercase tracking-wider text-emerald-500 font-bold border-t border-emerald-500/20 pt-2 mt-2">
+                    Generated from: <span className="text-emerald-400 font-mono">{s.generatedFrom.join(", ")}</span>
+                  </p>
+                )}
               </div>
             ))}
             {strengths.length === 0 && <p className="text-sm text-zinc-500 italic">No significant strengths detected.</p>}
@@ -52,7 +57,12 @@ export default function StrengthsWeaknesses({ metrics }: Props) {
             {weaknesses.map((w, idx) => (
               <div key={idx} className="bg-rose-500/10 border border-rose-500/20 p-4 rounded-lg hover:bg-rose-500/20 transition-colors">
                 <p className="font-semibold text-rose-300 mb-1">{w.title}</p>
-                <p className="text-sm text-rose-200/70">{w.description}</p>
+                <p className="text-sm text-rose-200/70 mb-2">{w.description}</p>
+                {w.generatedFrom && (
+                  <p className="text-[10px] uppercase tracking-wider text-rose-500 font-bold border-t border-rose-500/20 pt-2 mt-2">
+                    Generated from: <span className="text-rose-400 font-mono">{w.generatedFrom.join(", ")}</span>
+                  </p>
+                )}
               </div>
             ))}
             {weaknesses.length === 0 && <p className="text-sm text-zinc-500 italic">No significant weaknesses detected.</p>}

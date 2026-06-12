@@ -45,8 +45,8 @@ export default function AIInsightsPage() {
           <div className="col-span-12 lg:col-span-4">
             <AIFinancialCopilot 
               company={metrics.company ?? "Unknown"} 
-              revenue={metrics.revenue ?? 0} 
-              netIncome={metrics.netIncome ?? 0} 
+              revenue={metrics.revenue?.value ?? 0} 
+              netIncome={metrics.netIncome?.value ?? 0} 
             />
           </div>
         </div>

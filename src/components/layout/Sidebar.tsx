@@ -12,7 +12,8 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
-  Wallet
+  Wallet,
+  Terminal
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -23,6 +24,7 @@ const navItems = [
   { name: "Growth Analysis", href: "/growth-analysis", icon: TrendingUp },
   { name: "Strategic Insights", href: "/ai-insights", icon: Lightbulb },
   { name: "Reports", href: "/reports", icon: FileText },
+  { name: "Extraction Debug", href: "/debug", icon: Terminal },
 ];
 
 export default function Sidebar() {

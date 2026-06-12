@@ -6,12 +6,12 @@ interface Props {
 }
 
 export default function HealthScore({ metrics }: Props) {
-  const margin = ((metrics.netIncome ?? 0) / (metrics.revenue || 1)) * 100;
+  const margin = ((metrics.netIncome?.value ?? 0) / (metrics.revenue?.value || 1)) * 100;
 
   let score = 50;
   if (margin > 25) score += 20;
-  if ((metrics.cash ?? 0) > 20000) score += 15;
-  if ((metrics.grossProfit ?? 0) > (metrics.revenue ?? 0) * 0.4) score += 15;
+  if ((metrics.cash?.value ?? 0) > 20000) score += 15;
+  if ((metrics.grossProfit?.value ?? 0) > (metrics.revenue?.value ?? 0) * 0.4) score += 15;
   score = Math.min(score, 100);
 
   let color = "#10b981"; // Emerald

@@ -3,6 +3,7 @@ import { generateInsights } from "@/lib/analysis/insights";
 import { TrendingUp, TrendingDown, Activity, DollarSign, Building2, ShieldCheck, ShieldAlert } from "lucide-react";
 import { motion } from "framer-motion";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
+import { generateHeroNarrative } from "@/lib/analysis/narrativeEngine";
 
 interface Props {
   metrics: FinancialMetrics;
@@ -71,6 +72,11 @@ export default function HeroSummary({ metrics, investmentScore }: Props) {
               <strong className="text-sm text-white ml-1 font-mono"><AnimatedCounter value={investmentScore} duration={2} />/100</strong>
             </div>
           </motion.div>
+          <motion.div variants={itemVariants} className="pt-2">
+            <p className="text-zinc-400 text-sm leading-relaxed max-w-xl">
+              {generateHeroNarrative(metrics, investmentScore)}
+            </p>
+          </motion.div>
         </div>
 
         {/* Right: Core Metrics & Insights Grid */}
@@ -81,7 +87,7 @@ export default function HeroSummary({ metrics, investmentScore }: Props) {
               <DollarSign className="w-3.5 h-3.5 text-zinc-400" /> Total Revenue
             </p>
             <p className="text-2xl font-bold text-white tracking-tight">
-              $<AnimatedCounter value={metrics.revenue || 0} />
+              $<AnimatedCounter value={metrics.revenue?.value || 0} />
             </p>
           </motion.div>
 
@@ -90,7 +96,7 @@ export default function HeroSummary({ metrics, investmentScore }: Props) {
               <Activity className="w-3.5 h-3.5 text-zinc-400" /> Net Income
             </p>
             <p className="text-2xl font-bold text-white tracking-tight">
-              $<AnimatedCounter value={metrics.netIncome || 0} />
+              $<AnimatedCounter value={metrics.netIncome?.value || 0} />
             </p>
           </motion.div>
 

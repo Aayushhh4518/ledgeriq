@@ -42,9 +42,9 @@ export default function ReportsPage() {
           <div className="col-span-12 lg:col-span-8">
             <ExecutiveSummary
               company={responseData.financialData?.company ?? "Unknown"}
-              revenue={responseData.financialData?.revenue ?? 0}
-              netIncome={responseData.financialData?.netIncome ?? 0}
-              cash={responseData.financialData?.cash ?? 0}
+              revenue={metrics.revenue?.value ?? 0}
+              netIncome={metrics.netIncome?.value ?? 0}
+              cash={metrics.cash?.value ?? 0}
             />
           </div>
           <div className="col-span-12 lg:col-span-4">
