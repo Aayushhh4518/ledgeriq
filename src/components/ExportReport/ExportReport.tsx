@@ -98,7 +98,7 @@ export default function ExportReport({
             {/* Report Header */}
             <div className="border-b border-zinc-800 pb-8 text-center">
               <h1 className="text-4xl font-bold mb-2">LedgerIQ Financial Report</h1>
-              <p className="text-xl text-zinc-400">Comprehensive AI Analysis for {company}</p>
+              <p className="text-xl text-zinc-400">Comprehensive Financial Analysis for {company}</p>
             </div>
 
             <HeroSummary metrics={metrics} investmentScore={investmentScore} />

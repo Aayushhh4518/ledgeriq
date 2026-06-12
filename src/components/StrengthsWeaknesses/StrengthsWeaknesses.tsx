@@ -12,7 +12,7 @@ export default function StrengthsWeaknesses({ metrics }: Props) {
   if (insights.length === 0) {
     return (
       <div className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 opacity-50 overflow-hidden">
-        <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-2">AI Insights Engine</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-2">Strategic Insights Engine</h2>
         <p className="text-sm text-zinc-500">Not enough data to generate insights.</p>
       </div>
     );
@@ -25,7 +25,7 @@ export default function StrengthsWeaknesses({ metrics }: Props) {
     <div className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] hover:bg-[#0a0a0a]/60 overflow-hidden">
       <div className="flex items-center gap-2 mb-6">
         <Sparkles className="w-5 h-5 text-indigo-400" />
-        <h2 className="text-lg font-semibold tracking-tight text-zinc-100">AI Insights Engine</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-zinc-100">Strategic Insights Engine</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

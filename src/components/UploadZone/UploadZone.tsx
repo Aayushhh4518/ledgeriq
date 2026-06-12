@@ -229,7 +229,7 @@ export default function UploadZone() {
                 className="px-8 py-3.5 bg-white text-black font-bold tracking-wide rounded-xl hover:bg-zinc-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] flex items-center gap-2"
               >
                 <FileText className="w-5 h-5" />
-                Initialize AI Extraction
+                Initialize Financial Extraction
               </motion.button>
             </motion.div>
           )}

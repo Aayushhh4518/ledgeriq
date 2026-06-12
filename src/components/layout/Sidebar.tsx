@@ -8,7 +8,7 @@ import {
   LineChart, 
   ShieldAlert, 
   TrendingUp, 
-  BrainCircuit, 
+  Lightbulb, 
   FileText,
   ChevronLeft,
   ChevronRight,
@@ -21,7 +21,7 @@ const navItems = [
   { name: "Financial Analysis", href: "/financial-analysis", icon: LineChart },
   { name: "Risk Analysis", href: "/risk-analysis", icon: ShieldAlert },
   { name: "Growth Analysis", href: "/growth-analysis", icon: TrendingUp },
-  { name: "AI Insights", href: "/ai-insights", icon: BrainCircuit },
+  { name: "Strategic Insights", href: "/ai-insights", icon: Lightbulb },
   { name: "Reports", href: "/reports", icon: FileText },
 ];
 
@@ -36,13 +36,13 @@ export default function Sidebar() {
       } z-50 shadow-[4px_0_24px_rgba(0,0,0,0.5)]`}
     >
       {/* Header / Brand */}
-      <div className="flex items-center h-[72px] px-6 border-b border-white/5">
+      <div className="flex items-center h-[72px] px-6 border-b border-zinc-800/80">
         <div className="flex items-center gap-3 overflow-hidden text-zinc-100">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-[0_0_15px_rgba(59,130,246,0.3)] shrink-0 border border-white/10">
-            <Wallet className="w-4 h-4 text-white" />
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 shrink-0">
+            <Wallet className="w-4 h-4 text-zinc-300" />
           </div>
           {!isCollapsed && (
-            <span className="text-lg font-bold tracking-tight whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400">
+            <span className="text-lg font-bold tracking-tight whitespace-nowrap text-zinc-200">
               LedgerIQ
             </span>
           )}
@@ -74,16 +74,16 @@ export default function Sidebar() {
               {isActive ? (
                 <motion.div 
                   layoutId="sidebar-active"
-                  className="absolute inset-0 bg-white/[0.04] rounded-lg border border-white/[0.05] shadow-inner"
+                  className="absolute inset-0 bg-zinc-800/50 rounded-lg border border-zinc-700/50"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               ) : (
-                <div className="absolute inset-0 bg-white/[0.02] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-zinc-800/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
               )}
               
               <Icon 
                 className={`w-[18px] h-[18px] shrink-0 transition-colors duration-200 relative z-10 ${
-                  isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.8)]" : "text-zinc-500 group-hover:text-zinc-300"
+                  isActive ? "text-zinc-200" : "text-zinc-500 group-hover:text-zinc-400"
                 }`} 
               />
               
@@ -95,7 +95,7 @@ export default function Sidebar() {
               {isActive && (
                 <motion.div 
                   layoutId="sidebar-active-line"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-500 rounded-r-full shadow-[0_0_12px_rgba(99,102,241,0.8)] z-10"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-zinc-400 rounded-r-full z-10"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               )}

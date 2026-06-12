@@ -55,7 +55,7 @@ export default function AIFinancialCopilot({
       <div className="flex items-center gap-2 mb-6">
         <Sparkles className="w-5 h-5 text-indigo-400" />
         <h2 className="text-lg font-semibold tracking-tight text-indigo-100">
-          AI Financial Copilot
+          Research Assistant
         </h2>
       </div>
 

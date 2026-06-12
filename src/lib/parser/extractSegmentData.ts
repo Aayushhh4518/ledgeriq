@@ -1,6 +1,6 @@
 import { SegmentData } from "@/types/financial";
 
-export function extractSegmentData(text: string): SegmentData {
+export function extractSegmentData(text: string, companyName?: string): SegmentData {
   const result: SegmentData = {};
 
   const extractValue = (pattern: RegExp) => {
@@ -17,8 +17,10 @@ export function extractSegmentData(text: string): SegmentData {
     if (val > 0) result[key] = val;
   };
 
+  const safeName = (companyName || "").toLowerCase();
+
   // 1. APPLE PARSER
-  if (text.match(/Apple Inc\./i) || text.match(/iPhone(?!\s+\d{1,2}\b)[^\d]*[\d,]+/i)) {
+  if (safeName.includes("apple")) {
     addIfValid("iPhone", extractValue(/iPhone(?!\s+\d{1,2}\b)[^\d]*([\d,]+)/i));
     addIfValid("Mac", extractValue(/Mac(?!\s+\d{1,2}\b)[^\d]*([\d,]+)/i));
     addIfValid("iPad", extractValue(/iPad(?!\s+\d{1,2}\b)[^\d]*([\d,]+)/i));
@@ -28,7 +30,7 @@ export function extractSegmentData(text: string): SegmentData {
   }
 
   // 2. MICROSOFT PARSER
-  if (text.match(/Microsoft Corporation/i) || text.match(/Intelligent Cloud/i)) {
+  if (safeName.includes("microsoft")) {
     addIfValid("Productivity", extractValue(/Productivity and Business Processes[^\d]*([\d,]+)/i));
     addIfValid("Intelligent Cloud", extractValue(/Intelligent Cloud[^\d]*([\d,]+)/i));
     addIfValid("Personal Computing", extractValue(/More Personal Computing[^\d]*([\d,]+)/i));
@@ -36,7 +38,7 @@ export function extractSegmentData(text: string): SegmentData {
   }
 
   // 3. AMAZON PARSER
-  if (text.match(/Amazon\.com/i) || text.match(/AWS[^\d]*[\d,]+/i)) {
+  if (safeName.includes("amazon")) {
     addIfValid("North America", extractValue(/North America[^\d]*([\d,]+)/i));
     addIfValid("International", extractValue(/International[^\d]*([\d,]+)/i));
     addIfValid("AWS", extractValue(/AWS[^\d]*([\d,]+)/i));
@@ -44,7 +46,7 @@ export function extractSegmentData(text: string): SegmentData {
   }
 
   // 4. ALPHABET / GOOGLE PARSER
-  if (text.match(/Alphabet Inc\./i) || text.match(/Google Search/i)) {
+  if (safeName.includes("alphabet") || safeName.includes("google")) {
     addIfValid("Google Search", extractValue(/Google Search[^\d]*([\d,]+)/i));
     addIfValid("YouTube Ads", extractValue(/YouTube ads[^\d]*([\d,]+)/i));
     addIfValid("Google Network", extractValue(/Google Network[^\d]*([\d,]+)/i));
@@ -53,7 +55,7 @@ export function extractSegmentData(text: string): SegmentData {
   }
 
   // 5. META PARSER
-  if (text.match(/Meta Platforms/i) || text.match(/Family of Apps/i)) {
+  if (safeName.includes("meta") || safeName.includes("facebook")) {
     addIfValid("Family of Apps", extractValue(/Family of Apps[^\d]*([\d,]+)/i));
     addIfValid("Reality Labs", extractValue(/Reality Labs[^\d]*([\d,]+)/i));
     if (Object.keys(result).length > 0) return result;

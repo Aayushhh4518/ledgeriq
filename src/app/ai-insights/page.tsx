@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import StrengthsWeaknesses from "@/components/StrengthsWeaknesses/StrengthsWeaknesses";
 import AIFinancialCopilot from "@/components/AIFinancialCopilot/AIFinancialCopilot";
-import { BrainCircuit } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function AIInsightsPage() {
@@ -30,11 +30,11 @@ export default function AIInsightsPage() {
       >
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3 border-b border-zinc-800 pb-4">
-            <BrainCircuit className="w-6 h-6 text-violet-500" /> 
-            AI Financial Intelligence
+            <Lightbulb className="w-6 h-6 text-violet-500" /> 
+            Strategic Financial Intelligence
           </h2>
           <p className="text-zinc-400 mt-2 text-sm">
-            LLM-powered strategic insights, strengths, weaknesses, and interactive copilot.
+            Algorithmic strategic insights, strengths, weaknesses, and interactive financial analysis.
           </p>
         </div>
 

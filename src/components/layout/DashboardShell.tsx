@@ -2,6 +2,7 @@ import Sidebar from "./Sidebar";
 import TopHeader from "./TopHeader";
 import { SearchProvider } from "./SearchContext";
 import CompareModal from "../CompareModal/CompareModal";
+import DebugPanelWrapper from "../ExtractionDebugPanel/DebugPanelWrapper";
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -29,6 +30,7 @@ export default function DashboardShell({
           </div>
           
           <CompareModal />
+          <DebugPanelWrapper />
         </div>
       </div>
     </SearchProvider>

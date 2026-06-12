@@ -2,10 +2,12 @@ export interface HistoricalData {
   revenue: {
     current: number;
     previous: number;
+    growth?: number | null; // null means invalid/impossible
   };
   netIncome: {
     current: number;
     previous: number;
+    growth?: number | null;
   };
   isValid?: boolean;
 }
@@ -40,23 +42,21 @@ export function extractHistoricalData(text: string): HistoricalData {
     }
   }
 
-  // Validation: If growth is > 1000% or previous is tiny/0 while current is massive, flag as invalid
-  const validateGrowth = (current: number, previous: number) => {
-    if (previous === 0 && current > 1000) return false; // Prevent divide by zero leading to infinity
-    if (previous > 0) {
-      const growth = Math.abs((current - previous) / previous);
-      if (growth > 10) return false; // > 1000% anomaly
-    }
-    return true;
+  // Calculate and Validate Growth
+  const calculateSecureGrowth = (current: number, previous: number) => {
+    if (!previous || previous === 0) return null; // Prevent divide by zero leading to infinity
+    const growth = ((current - previous) / previous) * 100;
+    if (Math.abs(growth) > 1000) return null; // > 1000% anomaly
+    return growth;
   };
 
-  const isRevValid = validateGrowth(result.revenue.current, result.revenue.previous);
-  const isNiValid = validateGrowth(result.netIncome.current, result.netIncome.previous);
+  result.revenue.growth = calculateSecureGrowth(result.revenue.current, result.revenue.previous);
+  result.netIncome.growth = calculateSecureGrowth(result.netIncome.current, result.netIncome.previous);
   
   // Exclude 0, 0 matches which are invalid default states
   const hasData = result.revenue.current > 0 || result.netIncome.current > 0;
   
-  result.isValid = hasData && isRevValid && isNiValid;
+  result.isValid = hasData;
 
   return result;
 }

@@ -10,7 +10,7 @@ import { ArrowLeftRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ComparePage() {
-  const { metrics, compareMetrics, historicalData, compareHistoricalData } = useFinancialData();
+  const { metrics, compareMetrics, historicalData, compareHistoricalData, comparisonContext } = useFinancialData();
   const router = useRouter();
 
   useEffect(() => {
@@ -32,14 +32,14 @@ export default function ComparePage() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3 border-b border-zinc-800 pb-4">
             <ArrowLeftRight className="w-6 h-6 text-violet-500" /> 
-            Competitor Comparison
+            {comparisonContext.mode === 'YoY' ? 'Year-over-Year Trend Analysis' : 'Competitor Comparison'}
           </h2>
           <p className="text-zinc-400 mt-2 text-sm">
-            Side-by-side analysis of key financial metrics, health scores, and risk factors.
+            {comparisonContext.mode === 'YoY' ? 'Analysis of key financial metrics, health scores, and risk factors over time.' : 'Side-by-side analysis of key financial metrics, health scores, and risk factors.'}
           </p>
         </div>
 
-        <CompareExecutiveSummary metrics1={metrics} metrics2={compareMetrics} />
+        <CompareExecutiveSummary metrics1={metrics} metrics2={compareMetrics} context={comparisonContext} />
         
         <CompareCharts metrics1={metrics} metrics2={compareMetrics} />
 
@@ -48,6 +48,7 @@ export default function ComparePage() {
           metrics2={compareMetrics} 
           hist1={historicalData} 
           hist2={compareHistoricalData} 
+          context={comparisonContext}
         />
       </motion.div>
     </main>

@@ -3,14 +3,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { FinancialMetrics, SegmentData } from "@/types/financial";
 
-export interface FinancialData {
-  company?: string;
-  revenue?: number;
-  grossProfit?: number;
-  netIncome?: number;
-  cash?: number;
-}
-
 export interface UploadResponse {
   fileName: string;
   fileSize: number;
@@ -18,20 +10,32 @@ export interface UploadResponse {
   textLength?: number;
   textPreview?: string;
 
-  financialData?: FinancialData;
+  financialData?: FinancialMetrics;
 
   historicalData?: {
     revenue: {
       current: number;
       previous: number;
+      growth?: number | null;
     };
     netIncome: {
       current: number;
       previous: number;
+      growth?: number | null;
     };
     isValid?: boolean;
   };
   segmentData?: SegmentData;
+  extractionConfidence?: number;
+  missingFields?: string[];
+}
+
+export type ComparisonMode = 'YoY' | 'Competitor' | 'Custom' | 'None';
+
+export interface ComparisonContextData {
+  mode: ComparisonMode;
+  primaryLabel: string;
+  compareLabel: string;
 }
 
 interface FinancialContextType {
@@ -62,6 +66,8 @@ interface FinancialContextType {
   setCompareHistoricalData: (data: UploadResponse["historicalData"] | null) => void;
   compareSegmentData: SegmentData | null;
   setCompareSegmentData: (data: SegmentData | null) => void;
+  
+  comparisonContext: ComparisonContextData;
 }
 
 const FinancialContext = createContext<FinancialContextType | undefined>(undefined);
@@ -81,6 +87,41 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
   const [compareSegmentData, setCompareSegmentData] = useState<SegmentData | null>(null);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [isCompareUploading, setIsCompareUploading] = useState(false);
+
+  const getHeaderLabel = (m: FinancialMetrics | null, defaultLabel: string) => {
+    if (!m || !m.company) return defaultLabel;
+    const ticker = m.ticker ? ` (${m.ticker})` : "";
+    return `${m.company}${ticker} ${m.reportType || ''} ${m.fiscalYear || ''}`.trim();
+  };
+
+  const computeComparisonContext = (): ComparisonContextData => {
+    if (!metrics || !compareMetrics) {
+      return { mode: 'None', primaryLabel: getHeaderLabel(metrics, "Primary Filing"), compareLabel: getHeaderLabel(compareMetrics, "Compare Filing") };
+    }
+
+    const m1 = metrics.company?.toLowerCase().trim() || "";
+    const m2 = compareMetrics.company?.toLowerCase().trim() || "";
+    const y1 = metrics.fiscalYear?.toLowerCase().trim() || "";
+    const y2 = compareMetrics.fiscalYear?.toLowerCase().trim() || "";
+
+    let mode: ComparisonMode = 'Custom';
+
+    if (m1 && m2 && m1 === m2) {
+      mode = 'YoY';
+    } else if (m1 && m2 && m1 !== m2 && y1 === y2) {
+      mode = 'Competitor';
+    } else if (m1 && m2) {
+      mode = 'Custom';
+    }
+
+    return {
+      mode,
+      primaryLabel: getHeaderLabel(metrics, "Primary Filing"),
+      compareLabel: getHeaderLabel(compareMetrics, "Competitor Filing")
+    };
+  };
+
+  const comparisonContext = computeComparisonContext();
 
   return (
     <FinancialContext.Provider
@@ -111,6 +152,7 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
         setIsCompareModalOpen,
         isCompareUploading,
         setIsCompareUploading,
+        comparisonContext,
       }}
     >
       {children}

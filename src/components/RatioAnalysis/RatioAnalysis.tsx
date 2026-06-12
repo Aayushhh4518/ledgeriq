@@ -5,6 +5,20 @@ interface Props {
 }
 
 export default function RatioAnalysis({ metrics }: Props) {
+  if (metrics.revenue === undefined && metrics.netIncome === undefined && metrics.grossProfit === undefined && metrics.cash === undefined) {
+    return (
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
+        <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/5">
+          <svg className="w-6 h-6 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h2 className="text-base font-semibold tracking-tight text-zinc-300 mb-1">Data Unavailable</h2>
+        <p className="text-sm text-zinc-500 max-w-sm">Insufficient data extracted from PDF to perform Ratio Analysis.</p>
+      </div>
+    );
+  }
+
   const grossMargin =
     ((metrics.grossProfit ?? 0) / (metrics.revenue || 1)) * 100;
 

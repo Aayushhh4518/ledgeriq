@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, LayoutDashboard, LineChart, ShieldAlert, TrendingUp, BrainCircuit, FileText } from "lucide-react";
+import { Search, LayoutDashboard, LineChart, ShieldAlert, TrendingUp, Lightbulb, FileText } from "lucide-react";
 import { useSearch } from "./SearchContext";
 import { useFinancialData } from "@/contexts/FinancialContext";
 import { useRouter, usePathname } from "next/navigation";
@@ -17,7 +17,7 @@ const sections = [
   { id: "revenue-concentration", path: "/risk-analysis", title: "Revenue Concentration", icon: ShieldAlert },
   { id: "growth-analysis", path: "/growth-analysis", title: "Growth Analysis", icon: TrendingUp },
   { id: "segment-analysis", path: "/growth-analysis", title: "Segment Analysis", icon: TrendingUp },
-  { id: "ai-insights", path: "/ai-insights", title: "AI Insights & Copilot", icon: BrainCircuit },
+  { id: "ai-insights", path: "/ai-insights", title: "Strategic Insights", icon: Lightbulb },
   { id: "reports", path: "/reports", title: "Reporting & Export", icon: FileText },
 ];
 

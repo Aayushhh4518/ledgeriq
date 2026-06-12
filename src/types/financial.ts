@@ -4,6 +4,7 @@ export interface FinancialMetrics {
   fiscalYear?: string;
   quarter?: string;
   filingDate?: string;
+  periodEndDate?: string;
   reportType?: string;
   revenue?: number;
   grossProfit?: number;

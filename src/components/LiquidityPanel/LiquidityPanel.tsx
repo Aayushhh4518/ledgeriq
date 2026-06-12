@@ -10,9 +10,14 @@ export default function LiquidityPanel({ metrics }: Props) {
 
   if (!liquidity) {
     return (
-      <div className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 opacity-50 overflow-hidden">
-        <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-2">Liquidity & Solvency</h2>
-        <p className="text-sm text-zinc-500">Insufficient data extracted from PDF (missing Assets or Liabilities).</p>
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
+        <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/5">
+          <svg className="w-6 h-6 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h2 className="text-base font-semibold tracking-tight text-zinc-300 mb-1">Data Unavailable</h2>
+        <p className="text-sm text-zinc-500 max-w-sm">Insufficient data extracted from PDF to calculate Liquidity & Solvency.</p>
       </div>
     );
   }

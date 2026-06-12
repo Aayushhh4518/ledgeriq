@@ -29,14 +29,27 @@ export async function POST(request: Request) {
     const extractedText =
       await extractTextFromPDF(buffer);
 
-    const financialData = 
-        parseFinancialData(extractedText);
-
+    const financialData = parseFinancialData(extractedText);
     const historicalData = extractHistoricalData(extractedText);
-    const segmentData = extractSegmentData(extractedText);
+    const segmentData = extractSegmentData(extractedText, financialData.company);
 
-    console.log(financialData, historicalData, segmentData);
+    // Calculate Extraction Confidence
+    const expectedFields = [
+      'company', 'fiscalYear', 'revenue', 'netIncome', 'totalAssets', 'cash'
+    ];
+    let foundCount = 0;
+    const missingFields: string[] = [];
+    
+    expectedFields.forEach(field => {
+      if (financialData[field as keyof FinancialMetrics] !== undefined) {
+        foundCount++;
+      } else {
+        missingFields.push(field);
+      }
+    });
 
+    // Score from 0 to 100
+    const extractionConfidence = Math.round((foundCount / expectedFields.length) * 100);
 
     return NextResponse.json({
       success: true,
@@ -46,6 +59,8 @@ export async function POST(request: Request) {
       financialData,
       historicalData,
       segmentData,
+      extractionConfidence,
+      missingFields,
     });
   } catch (error) {
     console.error("PDF ERROR:", error);
