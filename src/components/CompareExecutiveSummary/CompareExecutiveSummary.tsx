@@ -20,12 +20,23 @@ export default function CompareExecutiveSummary({ metrics1, metrics2 }: Props) {
     );
   };
 
+  const getHeaderLabel = (m: FinancialMetrics, defaultLabel: string) => {
+    if (!m.company) return defaultLabel;
+    const ticker = m.ticker ? ` (${m.ticker})` : "";
+    return `${m.company}${ticker} ${m.reportType || ''} ${m.fiscalYear || ''}`.trim();
+  };
+
   const score1 = getScore(metrics1);
   const score2 = getScore(metrics2);
+
+  const name1 = getHeaderLabel(metrics1, "Primary Company");
+  const name2 = getHeaderLabel(metrics2, "Competitor Company");
 
   const isTie = score1 === score2;
   const winnerMetrics = score1 > score2 ? metrics1 : metrics2;
   const loserMetrics = score1 > score2 ? metrics2 : metrics1;
+  const winnerName = score1 > score2 ? name1 : name2;
+  const loserName = score1 > score2 ? name2 : name1;
   const winnerScore = Math.max(score1, score2);
   const loserScore = Math.min(score1, score2);
 
@@ -44,7 +55,7 @@ export default function CompareExecutiveSummary({ metrics1, metrics2 }: Props) {
           <Trophy className="w-12 h-12 text-yellow-500 mb-4 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]" />
           <h3 className="text-sm font-bold tracking-[0.2em] text-zinc-500 uppercase mb-2">Overall Winner</h3>
           <div className="text-3xl font-black text-white tracking-tight text-center">
-            {isTie ? "TIE" : winnerMetrics.company}
+            {isTie ? "TIE" : winnerName}
           </div>
           <div className="mt-4 flex items-center gap-2 bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20">
             <span className="text-emerald-400 font-bold text-lg">{winnerScore}</span>
@@ -61,10 +72,10 @@ export default function CompareExecutiveSummary({ metrics1, metrics2 }: Props) {
             </h2>
             <p className="text-zinc-300 leading-relaxed text-[15px]">
               {isTie ? (
-                `Both ${metrics1.company} and ${metrics2.company} present an equal fundamental profile based on our extraction, each scoring a ${winnerScore}/100.`
+                `Both ${name1} and ${name2} present an equal fundamental profile based on our extraction, each scoring a ${winnerScore}/100.`
               ) : (
-                `Based on our deep financial extraction and comparative analysis, **${winnerMetrics.company}** exhibits a fundamentally stronger profile than ${loserMetrics.company}. ` +
-                `With an overall health score of ${winnerScore} vs ${loserScore}, ${winnerMetrics.company} demonstrates superior operational efficiency.`
+                `Based on our deep financial extraction and comparative analysis, **${winnerName}** exhibits a fundamentally stronger profile than ${loserName}. ` +
+                `With an overall health score of ${winnerScore} vs ${loserScore}, ${winnerName} demonstrates superior operational efficiency.`
               )}
             </p>
           </div>
@@ -74,8 +85,8 @@ export default function CompareExecutiveSummary({ metrics1, metrics2 }: Props) {
               <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Scale Advantage</div>
               <div className="text-sm text-zinc-300">
                 {revenueDiff > 0 
-                  ? `${winnerMetrics.company} generates ${formatCurrency(revenueDiff)} more in revenue (${revenuePercentDiff.toFixed(1)}% larger).`
-                  : `${loserMetrics.company} maintains a larger top-line scale despite a lower overall health score.`}
+                  ? `${winnerName} generates ${formatCurrency(revenueDiff)} more in revenue (${revenuePercentDiff.toFixed(1)}% larger).`
+                  : `${loserName} maintains a larger top-line scale despite a lower overall health score.`}
               </div>
             </div>
             <div className="bg-zinc-950/50 border border-white/5 rounded-lg p-4">
@@ -86,7 +97,7 @@ export default function CompareExecutiveSummary({ metrics1, metrics2 }: Props) {
               <div className="text-sm text-amber-400/90 font-medium">
                 {isTie 
                   ? "Diversify. Both assets show equal merit." 
-                  : `Overweight ${winnerMetrics.company} in capital allocation strategies.`}
+                  : `Overweight ${winnerName} in capital allocation strategies.`}
               </div>
             </div>
           </div>

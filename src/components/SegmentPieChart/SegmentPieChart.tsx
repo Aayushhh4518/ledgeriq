@@ -11,13 +11,7 @@ import {
 } from "recharts";
 
 interface SegmentPieChartProps {
-  segmentData: {
-    iphone: number;
-    mac: number;
-    ipad: number;
-    wearables: number;
-    services: number;
-  };
+  segmentData: Record<string, number>;
 }
 
 // Premium SaaS Color Palette
@@ -27,6 +21,9 @@ const COLORS = [
   "#f59e0b", // Amber
   "#ef4444", // Rose
   "#8b5cf6", // Violet
+  "#ec4899", // Pink
+  "#06b6d4", // Cyan
+  "#f97316", // Orange
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,13 +65,10 @@ export default function SegmentPieChart({
 }: SegmentPieChartProps) {
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
 
-  const data = [
-    { name: "iPhone", value: segmentData.iphone },
-    { name: "Mac", value: segmentData.mac },
-    { name: "iPad", value: segmentData.ipad },
-    { name: "Wearables", value: segmentData.wearables },
-    { name: "Services", value: segmentData.services },
-  ];
+  const data = Object.entries(segmentData || {}).map(([key, value]) => ({
+    name: key,
+    value,
+  }));
 
   const onPieEnter = (_: unknown, index: number) => {
     setActiveIndex(index);

@@ -1,5 +1,6 @@
 export interface FinancialMetrics {
   company?: string;
+  ticker?: string;
   fiscalYear?: string;
   quarter?: string;
   filingDate?: string;
@@ -22,13 +23,7 @@ export interface FinancialMetrics {
 
   shareholderEquity?: number;
 }
-export interface SegmentData {
-  iphone: number;
-  mac: number;
-  ipad: number;
-  wearables: number;
-  services: number;
-}
+export type SegmentData = Record<string, number>;
 export interface HistoricalData {
   revenue: {
     current: number;

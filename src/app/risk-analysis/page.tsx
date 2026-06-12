@@ -45,8 +45,8 @@ export default function RiskAnalysisPage() {
             <LiquidityPanel metrics={metrics} />
           </div>
           <div className="col-span-12 lg:col-span-6 space-y-6">
-            {segmentData && (
-              <RevenueConcentration totalRevenue={metrics.revenue ?? 0} segmentData={segmentData} />
+            {segmentData && Object.keys(segmentData).length > 0 && (
+              <RevenueConcentration segmentData={segmentData} />
             )}
           </div>
         </div>

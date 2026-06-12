@@ -19,26 +19,12 @@ export default function SegmentAnalysis({ data }: SegmentAnalysisProps) {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex flex-col justify-center">
-          <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase mb-2">iPhone</p>
-          <p className="text-xl font-bold tracking-tight text-white">${data.iphone.toLocaleString()}</p>
-        </div>
-        <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex flex-col justify-center">
-          <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase mb-2">Mac</p>
-          <p className="text-xl font-bold tracking-tight text-white">${data.mac.toLocaleString()}</p>
-        </div>
-        <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex flex-col justify-center">
-          <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase mb-2">iPad</p>
-          <p className="text-xl font-bold tracking-tight text-white">${data.ipad.toLocaleString()}</p>
-        </div>
-        <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex flex-col justify-center col-span-2 md:col-span-1">
-          <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase mb-2 truncate" title="Wearables, Home & Accessories">Wearables</p>
-          <p className="text-xl font-bold tracking-tight text-white">${data.wearables.toLocaleString()}</p>
-        </div>
-        <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex flex-col justify-center col-span-2 md:col-span-1">
-          <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase mb-2">Services</p>
-          <p className="text-xl font-bold tracking-tight text-white">${data.services.toLocaleString()}</p>
-        </div>
+        {Object.entries(data).map(([key, value]) => (
+          <div key={key} className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex flex-col justify-center">
+            <p className="text-xs font-semibold tracking-wider text-zinc-500 uppercase mb-2 truncate" title={key}>{key}</p>
+            <p className="text-xl font-bold tracking-tight text-white">${value.toLocaleString()}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

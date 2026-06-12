@@ -29,6 +29,7 @@ export interface UploadResponse {
       current: number;
       previous: number;
     };
+    isValid?: boolean;
   };
   segmentData?: SegmentData;
 }

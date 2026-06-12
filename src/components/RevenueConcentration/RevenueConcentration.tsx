@@ -1,44 +1,22 @@
-interface Props {
-  totalRevenue: number;
-  segmentData: {
-    iphone: number;
-    mac: number;
-    ipad: number;
-    wearables: number;
-    services: number;
-  };
+interface RevenueConcentrationProps {
+  segmentData: Record<string, number>;
 }
 
 export default function RevenueConcentration({
-  totalRevenue,
   segmentData,
-}: Props) {
+}: RevenueConcentrationProps) {
+  const segments = Object.entries(segmentData || {})
+    .map(([key, value]) => ({
+      name: key,
+      value,
+    }))
+    .sort((a, b) => b.value - a.value);
 
-  const segments = [
-    {
-      name: "iPhone",
-      value: segmentData.iphone,
-    },
-    {
-      name: "Services",
-      value: segmentData.services,
-    },
-    {
-      name: "Mac",
-      value: segmentData.mac,
-    },
-    {
-      name: "iPad",
-      value: segmentData.ipad,
-    },
-    {
-      name: "Wearables",
-      value: segmentData.wearables,
-    },
-  ];
+  const totalRevenue = segments.reduce((sum, seg) => sum + seg.value, 0);
 
-  const iphoneShare =
-    (segmentData.iphone / totalRevenue) * 100;
+  const highestConcentration = segments.length > 0
+    ? (segments[0].value / totalRevenue) * 100
+    : 0;
 
   return (
     <div className="border rounded-lg p-6 mt-6">
@@ -68,7 +46,7 @@ export default function RevenueConcentration({
         <strong>
           Concentration Risk:
         </strong>{" "}
-        {iphoneShare > 50
+        {highestConcentration > 50
           ? "Medium"
           : "Low"}
       </div>

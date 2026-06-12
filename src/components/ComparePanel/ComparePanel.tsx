@@ -84,13 +84,24 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2 }: Compa
     return value !== undefined ? `${value.toFixed(2)}x` : "N/A";
   };
 
-  const revGrowth1 = hist1 ? ((hist1.revenue.current - hist1.revenue.previous) / (hist1.revenue.previous || 1)) * 100 : undefined;
-  const revGrowth2 = hist2 ? ((hist2.revenue.current - hist2.revenue.previous) / (hist2.revenue.previous || 1)) * 100 : undefined;
-  const niGrowth1 = hist1 ? ((hist1.netIncome.current - hist1.netIncome.previous) / (hist1.netIncome.previous || 1)) * 100 : undefined;
-  const niGrowth2 = hist2 ? ((hist2.netIncome.current - hist2.netIncome.previous) / (hist2.netIncome.previous || 1)) * 100 : undefined;
+  const getGrowth = (current: number, previous: number) => {
+    if (!previous || previous === 0) return undefined; // Return undefined if previous is missing or 0
+    return ((current - previous) / previous) * 100;
+  };
 
-  const header1 = metrics1.company ? `${metrics1.company} ${metrics1.reportType || ''} ${metrics1.fiscalYear || ''}` : "Primary Company";
-  const header2 = metrics2.company ? `${metrics2.company} ${metrics2.reportType || ''} ${metrics2.fiscalYear || ''}` : "Competitor Company";
+  const revGrowth1 = hist1 ? getGrowth(hist1.revenue.current, hist1.revenue.previous) : undefined;
+  const revGrowth2 = hist2 ? getGrowth(hist2.revenue.current, hist2.revenue.previous) : undefined;
+  const niGrowth1 = hist1 ? getGrowth(hist1.netIncome.current, hist1.netIncome.previous) : undefined;
+  const niGrowth2 = hist2 ? getGrowth(hist2.netIncome.current, hist2.netIncome.previous) : undefined;
+
+  const getHeaderLabel = (m: FinancialMetrics, defaultLabel: string) => {
+    if (!m.company) return defaultLabel;
+    const ticker = m.ticker ? ` (${m.ticker})` : "";
+    return `${m.company}${ticker} ${m.reportType || ''} ${m.fiscalYear || ''}`.trim();
+  };
+
+  const header1 = getHeaderLabel(metrics1, "Primary Company");
+  const header2 = getHeaderLabel(metrics2, "Competitor Company");
 
   return (
     <div className="bg-zinc-950 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl">

@@ -6,12 +6,25 @@ export function parseFinancialData(
   const result: FinancialMetrics = {};
 
   // Robust Metadata Extraction
+  
+  // Ticker symbol (e.g. NASDAQ: AAPL)
+  const tickerMatch = text.match(/\(\s*(?:NASDAQ|NYSE|AMEX)\s*:\s*([A-Z]+)\s*\)/i);
+  if (tickerMatch) {
+    result.ticker = tickerMatch[1].toUpperCase();
+  }
+
   // Look for "Exact name of registrant" or standard headers
   const companyMatch = text.match(/\(Exact name of registrant as specified in its charter\)\s*([^\n]+)/i) 
                     || text.match(/(?:Company Name|Registrant):\s*([^\n]+)/i);
   
   if (companyMatch) {
-    result.company = companyMatch[1].trim();
+    const rawName = companyMatch[1].trim();
+    // Filter out states, tax IDs or garbage text like California94-2404110
+    if (!/^[a-zA-Z0-9\s,&.-]+$/.test(rawName) || rawName.includes("California94") || rawName === "UNITED STATES") {
+        result.company = "Unknown Company";
+    } else {
+        result.company = rawName;
+    }
   } else {
     // Fallback: look for lines ending in Inc., Corp., LLC, etc. near the top
     const topText = text.slice(0, 1000);

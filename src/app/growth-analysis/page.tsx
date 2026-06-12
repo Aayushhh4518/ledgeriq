@@ -72,7 +72,7 @@ export default function GrowthAnalysisPage() {
           </div>
 
           <div className="col-span-12 xl:col-span-8 space-y-6">
-            {segmentData && (
+            {segmentData && Object.keys(segmentData).length > 0 && (
               <>
                 <SegmentAnalysis data={segmentData} />
                 <SegmentPieChart segmentData={segmentData} />
