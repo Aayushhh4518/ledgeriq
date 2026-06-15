@@ -289,29 +289,31 @@ export function generateExecutiveIntelligence(
   // Calculate Investment View
   let view: "Strong Buy" | "Buy" | "Hold" | "Caution" | "Avoid" = "Hold";
   let reasoning = "Financials present a mixed or stable profile without a compelling edge.";
-  let bullCase = { title: "Bull Case", drivers: ["Stable market position", "Predictable baseline revenues"] };
-  let bearCase = { title: "Bear Case", drivers: ["Lack of clear growth catalysts", "Potential margin compression"] };
+  
+  const strengthDrivers = insights.filter(i => i.type === "strength").map(i => `${i.title} (${i.evidence})`);
+  const riskDrivers = insights.filter(i => i.type === "risk").map(i => `${i.title} (${i.evidence})`);
+  
+  let bullCase = { 
+    title: scoreSum >= 2 ? "Aggressive Upside" : "Bull Case", 
+    drivers: strengthDrivers.length > 0 ? strengthDrivers : ["Stable market position", "Predictable baseline revenues"] 
+  };
+  let bearCase = { 
+    title: scoreSum <= -2 ? "Systemic Decline" : "Bear Case", 
+    drivers: riskDrivers.length > 0 ? riskDrivers : ["Lack of clear growth catalysts", "Potential margin compression"] 
+  };
 
   if (scoreSum >= 4) {
     view = "Strong Buy";
     reasoning = "Exceptional profitability and strong growth indicators outweigh any minor risks.";
-    bullCase = { title: "Aggressive Upside", drivers: ["Exceptional net margin expansion", "Robust top-line revenue growth YoY", "Highly efficient capital utilization"] };
-    bearCase = { title: "Macro Risks", drivers: ["Broad market downturn", "Unforeseen supply chain disruptions"] };
   } else if (scoreSum >= 2) {
     view = "Buy";
     reasoning = "Solid financial foundation with positive momentum in core metrics.";
-    bullCase = { title: "Steady Compounding", drivers: ["Solid margin profile", "Healthy liquidity buffers"] };
-    bearCase = { title: "Execution Risk", drivers: ["Failure to maintain current growth trajectory", "Increased competitive pricing pressure"] };
   } else if (scoreSum <= -4) {
     view = "Avoid";
     reasoning = "Significant red flags across profitability, growth, or liquidity.";
-    bullCase = { title: "Turnaround Potential", drivers: ["Aggressive debt restructuring", "Sale of underperforming assets"] };
-    bearCase = { title: "Systemic Decline", drivers: ["Severe liquidity crunch (Current Ratio < 1)", "Negative revenue momentum", "Deteriorating margins"] };
   } else if (scoreSum <= -2) {
     view = "Caution";
     reasoning = "Declining momentum or balance sheet pressures warrant careful monitoring.";
-    bullCase = { title: "Cost Cutting Optimization", drivers: ["Successful margin expansion initiatives", "Stabilized top-line revenue"] };
-    bearCase = { title: "Downward Spiral", drivers: ["Continued margin compression", "Increasing debt burdens"] };
   }
 
   // Sort drivers by impact rank

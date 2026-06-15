@@ -78,10 +78,11 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2, context
   const score2 = getScore(metrics2);
   const isYoY = context.mode === 'YoY';
 
-  const formatPercentage = (value?: number | string, isValid: boolean = true) => {
+  const formatPercentage = (value?: number | string | null, isValid: boolean = true) => {
     if (!isValid) return "Anomaly";
     if (typeof value === "string") return value;
-    return value !== undefined ? `${value.toFixed(1)}%` : "N/A";
+    if (value === null || value === undefined) return "N/A";
+    return `${value.toFixed(1)}%`;
   };
   
   const formatRatio = (value?: number) => {
@@ -186,29 +187,29 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2, context
 
         <ComparisonRow 
           label="Return on Equity (ROE)" 
-          val1={metrics1.netIncome?.value && metrics1.shareholderEquity?.value ? (metrics1.netIncome.value / metrics1.shareholderEquity.value) * 100 : undefined} 
-          val2={metrics2.netIncome?.value && metrics2.shareholderEquity?.value ? (metrics2.netIncome.value / metrics2.shareholderEquity.value) * 100 : undefined} 
+          val1={metrics1.netIncome?.value !== undefined && metrics1.shareholderEquity?.value ? (metrics1.netIncome.value / metrics1.shareholderEquity.value) * 100 : undefined} 
+          val2={metrics2.netIncome?.value !== undefined && metrics2.shareholderEquity?.value ? (metrics2.netIncome.value / metrics2.shareholderEquity.value) * 100 : undefined} 
           formatter={formatPercentage} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Return on Assets (ROA)" 
-          val1={metrics1.netIncome?.value && metrics1.totalAssets?.value ? (metrics1.netIncome.value / metrics1.totalAssets.value) * 100 : undefined} 
-          val2={metrics2.netIncome?.value && metrics2.totalAssets?.value ? (metrics2.netIncome.value / metrics2.totalAssets.value) * 100 : undefined} 
+          val1={metrics1.netIncome?.value !== undefined && metrics1.totalAssets?.value ? (metrics1.netIncome.value / metrics1.totalAssets.value) * 100 : undefined} 
+          val2={metrics2.netIncome?.value !== undefined && metrics2.totalAssets?.value ? (metrics2.netIncome.value / metrics2.totalAssets.value) * 100 : undefined} 
           formatter={formatPercentage} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Current Ratio" 
-          val1={metrics1.currentAssets?.value && metrics1.currentLiabilities?.value ? (metrics1.currentAssets.value / metrics1.currentLiabilities.value) : undefined} 
-          val2={metrics2.currentAssets?.value && metrics2.currentLiabilities?.value ? (metrics2.currentAssets.value / metrics2.currentLiabilities.value) : undefined} 
+          val1={metrics1.currentAssets?.value !== undefined && metrics1.currentLiabilities?.value ? (metrics1.currentAssets.value / metrics1.currentLiabilities.value) : undefined} 
+          val2={metrics2.currentAssets?.value !== undefined && metrics2.currentLiabilities?.value ? (metrics2.currentAssets.value / metrics2.currentLiabilities.value) : undefined} 
           formatter={formatRatio} 
           isYoY={isYoY}
         />
         <ComparisonRow 
           label="Debt-to-Equity Ratio" 
-          val1={metrics1.totalDebt?.value && metrics1.shareholderEquity?.value ? (metrics1.totalDebt.value / metrics1.shareholderEquity.value) : undefined} 
-          val2={metrics2.totalDebt?.value && metrics2.shareholderEquity?.value ? (metrics2.totalDebt.value / metrics2.shareholderEquity.value) : undefined} 
+          val1={metrics1.totalDebt?.value !== undefined && metrics1.shareholderEquity?.value ? (metrics1.totalDebt.value / metrics1.shareholderEquity.value) : undefined} 
+          val2={metrics2.totalDebt?.value !== undefined && metrics2.shareholderEquity?.value ? (metrics2.totalDebt.value / metrics2.shareholderEquity.value) : undefined} 
           formatter={formatRatio} 
           invert={true} // Lower is better for debt
           isYoY={isYoY}
@@ -230,11 +231,17 @@ export default function ComparePanel({ metrics1, metrics2, hist1, hist2, context
       {/* Footer Verdict */}
       <div className="p-6 bg-gradient-to-t from-zinc-900/50 to-zinc-950 border-t border-zinc-800">
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Activity className="w-5 h-5 text-emerald-500" />
-          {isYoY ? 'Trend Analysis' : 'Comparison Verdict'}
+          {context.mode === 'Identical' ? (
+            <AlertTriangle className="w-5 h-5 text-amber-500" />
+          ) : (
+            <Activity className="w-5 h-5 text-emerald-500" />
+          )}
+          {isYoY ? 'Trend Analysis' : context.mode === 'Identical' ? 'Identical Documents' : 'Comparison Verdict'}
         </h3>
         <p className="text-zinc-400 text-sm leading-relaxed">
-          {isYoY ? (
+          {context.mode === 'Identical' ? (
+             <span className="text-amber-400 font-medium">You are comparing identical documents ({header1}). No comparative insights can be generated. Please upload a different filing to perform a YoY or Competitor Analysis.</span>
+          ) : isYoY ? (
             <>
               Comparing {header1} to {header2}, the fundamental health score {score1 > score2 ? 'improved' : score1 < score2 ? 'declined' : 'remained stable'} from {score2} to {score1}. 
               {score1 > score2 

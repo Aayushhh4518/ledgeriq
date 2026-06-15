@@ -31,7 +31,7 @@ export interface UploadResponse {
   documentQuality?: DocumentQualityScore;
 }
 
-export type ComparisonMode = 'YoY' | 'Competitor' | 'Custom' | 'None';
+export type ComparisonMode = 'YoY' | 'Competitor' | 'Custom' | 'Identical' | 'None';
 
 export interface ComparisonContextData {
   mode: ComparisonMode;
@@ -123,7 +123,9 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
 
     let mode: ComparisonMode = 'Custom';
 
-    if (m1 && m2 && m1 === m2) {
+    if (m1 && m2 && m1 === m2 && y1 && y2 && y1 === y2) {
+      mode = 'Identical';
+    } else if (m1 && m2 && m1 === m2) {
       mode = 'YoY';
     } else if (m1 && m2 && m1 !== m2 && y1 === y2) {
       mode = 'Competitor';

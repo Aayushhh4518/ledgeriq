@@ -15,8 +15,8 @@ export function calculateLiquidity(metrics: FinancialMetrics): LiquidityMetrics 
     return null;
   }
 
-  const currentRatio = metrics.currentAssets.value / metrics.currentLiabilities.value;
-  const debtToEquity = metrics.totalLiabilities.value / metrics.shareholderEquity.value;
+  const currentRatio = metrics.currentLiabilities.value !== 0 ? metrics.currentAssets.value / metrics.currentLiabilities.value : 0;
+  const debtToEquity = metrics.shareholderEquity.value !== 0 ? metrics.totalLiabilities.value / metrics.shareholderEquity.value : 0;
 
   return {
     currentRatio,

@@ -41,6 +41,9 @@ export function parseFinancialData(
       const fallbackMatch = topText.match(/^([A-Z][a-zA-Z\s,&]+(?:Inc\.|Corporation|Corp\.|LLC|Ltd\.|Company))\s*$/m);
       if (fallbackMatch) {
         companyStr = fallbackMatch[1].trim();
+      } else {
+        // Last resort: Unidentified Filing Entity
+        companyStr = "Unidentified Filing Entity";
       }
     }
   }

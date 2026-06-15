@@ -52,7 +52,11 @@ export async function POST(request: Request) {
     });
 
     // Score from 0 to 100
-    const extractionConfidence = Math.round((foundCount / expectedFields.length) * 100);
+    let extractionConfidence = Math.round((foundCount / expectedFields.length) * 100);
+
+    if (financialData.company?.value === "Unidentified Filing Entity") {
+      extractionConfidence = Math.max(0, extractionConfidence - 20);
+    }
 
     // Cross Validation & Quality Score
     const validationResults = performCrossValidation(financialData, historicalData, segmentData);

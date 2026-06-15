@@ -17,9 +17,9 @@ export function calculateDuPont(metrics: FinancialMetrics): DuPontMetrics | null
     return null;
   }
 
-  const profitMargin = metrics.netIncome.value / metrics.revenue.value;
-  const assetTurnover = metrics.revenue.value / metrics.totalAssets.value;
-  const financialLeverage = metrics.totalAssets.value / metrics.shareholderEquity.value;
+  const profitMargin = metrics.revenue.value !== 0 ? metrics.netIncome.value / metrics.revenue.value : 0;
+  const assetTurnover = metrics.totalAssets.value !== 0 ? metrics.revenue.value / metrics.totalAssets.value : 0;
+  const financialLeverage = metrics.shareholderEquity.value !== 0 ? metrics.totalAssets.value / metrics.shareholderEquity.value : 0;
   const roe = profitMargin * assetTurnover * financialLeverage;
 
   return {
