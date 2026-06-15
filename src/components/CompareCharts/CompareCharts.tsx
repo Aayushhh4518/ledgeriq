@@ -18,32 +18,32 @@ interface CompareChartsProps {
 }
 
 export default function CompareCharts({ metrics1, metrics2 }: CompareChartsProps) {
+  const c1Name = metrics1.company?.value ?? "Company A";
+  const c2Name = metrics2.company?.value ?? "Company B";
+
   // Combine data into a single array for grouped BarChart
   const revenueData = [
     {
       name: "Revenue",
-      [metrics1.company ?? "Company A"]: metrics1.revenue?.value ?? 0,
-      [metrics2.company ?? "Company B"]: metrics2.revenue?.value ?? 0,
+      [c1Name]: metrics1.revenue?.value ?? 0,
+      [c2Name]: metrics2.revenue?.value ?? 0,
     },
     {
       name: "Gross Profit",
-      [metrics1.company ?? "Company A"]: metrics1.grossProfit?.value ?? 0,
-      [metrics2.company ?? "Company B"]: metrics2.grossProfit?.value ?? 0,
+      [c1Name]: metrics1.grossProfit?.value ?? 0,
+      [c2Name]: metrics2.grossProfit?.value ?? 0,
     },
     {
       name: "Net Income",
-      [metrics1.company ?? "Company A"]: metrics1.netIncome?.value ?? 0,
-      [metrics2.company ?? "Company B"]: metrics2.netIncome?.value ?? 0,
+      [c1Name]: metrics1.netIncome?.value ?? 0,
+      [c2Name]: metrics2.netIncome?.value ?? 0,
     },
     {
       name: "Cash Position",
-      [metrics1.company ?? "Company A"]: metrics1.cash?.value ?? 0,
-      [metrics2.company ?? "Company B"]: metrics2.cash?.value ?? 0,
+      [c1Name]: metrics1.cash?.value ?? 0,
+      [c2Name]: metrics2.cash?.value ?? 0,
     }
   ];
-
-  const c1Name = metrics1.company ?? "Company A";
-  const c2Name = metrics2.company ?? "Company B";
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

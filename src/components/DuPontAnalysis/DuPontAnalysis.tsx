@@ -5,14 +5,14 @@ interface Props {
   metrics: FinancialMetrics;
 }
 
-import { MissingDataCard } from "@/components/ui/MissingDataCard";
+import IntelligentMissingData from "@/components/ui/IntelligentMissingData";
 import { useFinancialData } from "@/contexts/FinancialContext";
 
 export default function DuPontAnalysis({ metrics }: Props) {
   const dupont = calculateDuPont(metrics);
 
   if (!dupont) {
-    return <MissingDataCard metricName="DuPont Components (ROE)" expectedSection="Balance Sheet" suggestion="Upload a complete 10-K to calculate Return on Equity." />;
+    return <IntelligentMissingData metricName="DuPont Components (ROE)" reason="The Balance Sheet and Income Statement were not fully extracted from this filing." suggestion="Upload a complete 10-K to calculate Return on Equity." />;
   }
 
   const { openDrillDown } = useFinancialData();

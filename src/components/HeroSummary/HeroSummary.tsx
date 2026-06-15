@@ -55,7 +55,7 @@ export default function HeroSummary({ metrics, investmentScore }: Props) {
             </span>
           </motion.div>
           <motion.h1 variants={itemVariants} className="text-4xl lg:text-5xl font-bold tracking-tight text-white drop-shadow-sm">
-            {metrics.company || "Unknown Entity"}
+            {metrics.company?.value || "Unknown Entity"}
           </motion.h1>
           <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4 pt-2">
             <div className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-sm backdrop-blur-md ${

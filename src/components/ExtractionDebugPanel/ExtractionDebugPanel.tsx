@@ -1,5 +1,5 @@
 import { UploadResponse } from "@/contexts/FinancialContext";
-import { CheckCircle2, AlertCircle, Terminal, Database, FileText, Percent } from "lucide-react";
+import { CheckCircle2, AlertCircle, Terminal, Database, FileText, Percent, ShieldAlert } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,7 +12,7 @@ export default function ExtractionDebugPanel({ responseData }: Props) {
 
   if (!responseData) return null;
 
-  const { financialData, extractionConfidence, missingFields, historicalData, segmentData } = responseData;
+  const { financialData, extractionConfidence, missingFields, historicalData, segmentData, documentQuality } = responseData;
 
   const getScoreColor = (score?: number) => {
     if (!score) return "text-zinc-500 bg-zinc-900";
@@ -52,15 +52,15 @@ export default function ExtractionDebugPanel({ responseData }: Props) {
                 <div className="bg-zinc-900/50 rounded-lg p-2 space-y-1">
                   <div className="flex justify-between">
                     <span className="text-zinc-400">Company:</span>
-                    <span className="text-white truncate max-w-[180px]">{financialData?.company || <span className="text-rose-400">Missing</span>}</span>
+                    <span className="text-white truncate max-w-[180px]">{financialData?.company?.value || <span className="text-rose-400">Missing</span>}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-zinc-400">Fiscal Year:</span>
-                    <span className="text-white">{financialData?.fiscalYear || <span className="text-rose-400">Missing</span>}</span>
+                    <span className="text-white">{financialData?.fiscalYear?.value || <span className="text-rose-400">Missing</span>}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-zinc-400">Ticker:</span>
-                    <span className="text-white">{financialData?.ticker || <span className="text-zinc-600">N/A</span>}</span>
+                    <span className="text-white">{financialData?.ticker?.value || <span className="text-zinc-600">N/A</span>}</span>
                   </div>
                 </div>
               </div>
@@ -104,6 +104,29 @@ export default function ExtractionDebugPanel({ responseData }: Props) {
                     <span className="text-zinc-400">Rev Growth Valid:</span>
                     <span className={historicalData?.revenue?.growth !== null ? "text-emerald-400" : "text-rose-400"}>
                       {historicalData?.revenue?.growth !== null ? "Yes" : "No / NA"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quality & Validation */}
+              <div className="space-y-2">
+                <h4 className="text-zinc-500 font-semibold flex items-center gap-2 uppercase tracking-wider text-[10px]">
+                  <ShieldAlert className="w-3 h-3" /> Document Quality
+                </h4>
+                <div className="bg-zinc-900/50 rounded-lg p-2 space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">Quality Score:</span>
+                    <span className="text-white font-bold text-indigo-400">{documentQuality?.score || 0}/100</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">Validations Passed:</span>
+                    <span className={
+                      documentQuality?.validationResults?.some(r => r.status === 'error') ? "text-rose-400" : 
+                      documentQuality?.validationResults?.some(r => r.status === 'warning') ? "text-amber-400" : 
+                      "text-emerald-400"
+                    }>
+                      {documentQuality?.validationResults?.filter(r => r.status === 'passed').length || 0} / {documentQuality?.validationResults?.length || 0}
                     </span>
                   </div>
                 </div>

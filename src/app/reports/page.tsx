@@ -41,14 +41,14 @@ export default function ReportsPage() {
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 lg:col-span-8">
             <ExecutiveSummary
-              company={responseData.financialData?.company ?? "Unknown"}
+              company={responseData.financialData?.company?.value ?? "Unknown"}
               revenue={metrics.revenue?.value ?? 0}
               netIncome={metrics.netIncome?.value ?? 0}
               cash={metrics.cash?.value ?? 0}
             />
           </div>
           <div className="col-span-12 lg:col-span-4">
-            <ExportReport company={responseData.financialData?.company ?? "Unknown"}/>
+            <ExportReport company={responseData.financialData?.company?.value ?? "Unknown"}/>
           </div>
         </div>
       </motion.div>

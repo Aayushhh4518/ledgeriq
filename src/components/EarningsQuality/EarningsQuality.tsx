@@ -4,12 +4,12 @@ interface Props {
   metrics: FinancialMetrics;
 }
 
-import { MissingDataCard } from "@/components/ui/MissingDataCard";
+import IntelligentMissingData from "@/components/ui/IntelligentMissingData";
 import { useFinancialData } from "@/contexts/FinancialContext";
 
 export default function EarningsQuality({ metrics }: Props) {
   if (!metrics.operatingCashFlow?.value || !metrics.netIncome?.value) {
-    return <MissingDataCard metricName="Earnings Quality" expectedSection="Cash Flows & Operations" suggestion="Upload a complete 10-K to analyze earnings quality." />;
+    return <IntelligentMissingData metricName="Earnings Quality" reason="Cash Flows from Operations or Net Income could not be located in this filing." suggestion="Upload a complete 10-K to analyze earnings quality." />;
   }
 
   const { openDrillDown } = useFinancialData();

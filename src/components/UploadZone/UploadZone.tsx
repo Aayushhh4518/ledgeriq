@@ -122,7 +122,7 @@ export default function UploadZone() {
       if (data.financialData) {
         setMetrics({
           ...data.financialData,
-          company: data.financialData.company ?? "Unknown",
+          company: data.financialData.company ?? { value: "Unknown", confidence: 0 },
         });
 
         if (data.historicalData) {

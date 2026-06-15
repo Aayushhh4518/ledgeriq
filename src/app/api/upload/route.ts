@@ -4,6 +4,8 @@ import { parseFinancialData } from "@/lib/pdf/financial/parser";
 import { FinancialMetrics } from "@/types/financial";
 import { extractHistoricalData } from "@/lib/parser/extractHistoricalData";
 import { extractSegmentData } from "@/lib/parser/extractSegmentData";
+import { performCrossValidation } from "@/lib/validation/crossValidation";
+import { evaluateQuality } from "@/lib/validation/qualityScore";
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +33,7 @@ export async function POST(request: Request) {
 
     const financialData = parseFinancialData(extractedText, file.name);
     const historicalData = extractHistoricalData(extractedText);
-    const segmentData = extractSegmentData(extractedText, financialData.company);
+    const segmentData = extractSegmentData(extractedText, financialData.company?.value);
 
     // Calculate Extraction Confidence
     const expectedFields = [
@@ -41,7 +43,8 @@ export async function POST(request: Request) {
     const missingFields: string[] = [];
     
     expectedFields.forEach(field => {
-      if (financialData[field as keyof FinancialMetrics] !== undefined) {
+      const metric = financialData[field as keyof FinancialMetrics] as any;
+      if (metric !== undefined && (typeof metric === 'string' || metric.value !== undefined)) {
         foundCount++;
       } else {
         missingFields.push(field);
@@ -50,6 +53,16 @@ export async function POST(request: Request) {
 
     // Score from 0 to 100
     const extractionConfidence = Math.round((foundCount / expectedFields.length) * 100);
+
+    // Cross Validation & Quality Score
+    const validationResults = performCrossValidation(financialData, historicalData, segmentData);
+    const documentQuality = evaluateQuality(
+      financialData, 
+      historicalData, 
+      segmentData, 
+      extractedText, 
+      validationResults
+    );
 
     return NextResponse.json({
       success: true,
@@ -61,6 +74,7 @@ export async function POST(request: Request) {
       segmentData,
       extractionConfidence,
       missingFields,
+      documentQuality,
     });
   } catch (error) {
     console.error("PDF ERROR:", error);

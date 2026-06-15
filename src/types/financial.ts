@@ -1,5 +1,5 @@
-export interface ExtractedMetric {
-  value: number;
+export interface ExtractedMetric<T = number> {
+  value: T;
   confidence: number; // 0 to 100
   sourcePage?: number;
   sourceDocument?: string;
@@ -8,15 +8,15 @@ export interface ExtractedMetric {
 }
 
 export interface FinancialMetrics {
-  company?: string;
-  ticker?: string;
-  fiscalYear?: string;
-  quarter?: string;
-  filingDate?: string;
-  periodEndDate?: string;
-  reportType?: string;
-  industry?: string;
-  currency?: string;
+  company?: ExtractedMetric<string>;
+  ticker?: ExtractedMetric<string>;
+  fiscalYear?: ExtractedMetric<string>;
+  quarter?: ExtractedMetric<string>;
+  filingDate?: ExtractedMetric<string>;
+  periodEndDate?: ExtractedMetric<string>;
+  reportType?: ExtractedMetric<string>;
+  industry?: ExtractedMetric<string>;
+  currency?: ExtractedMetric<string>;
 
   revenue?: ExtractedMetric;
   grossProfit?: ExtractedMetric;
@@ -49,4 +49,26 @@ export interface HistoricalData {
     previous: number;
   };
   isValid?: boolean; // Flag for anomalous growth data
+}
+
+export interface StatementCoverage {
+  incomeStatement: boolean;
+  balanceSheet: boolean;
+  cashFlowStatement: boolean;
+  segmentInformation: boolean;
+  missingNotes: boolean;
+}
+
+export interface ValidationResult {
+  rule: string;
+  status: "passed" | "warning" | "error";
+  impact: number;
+  message: string;
+  field?: string;
+}
+
+export interface DocumentQualityScore {
+  score: number; // 0 to 100
+  statementCoverage: StatementCoverage;
+  validationResults: ValidationResult[];
 }

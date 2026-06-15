@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { FinancialMetrics, SegmentData, ExtractedMetric } from "@/types/financial";
+import { FinancialMetrics, SegmentData, ExtractedMetric, DocumentQualityScore } from "@/types/financial";
 
 export interface UploadResponse {
   fileName: string;
@@ -28,6 +28,7 @@ export interface UploadResponse {
   segmentData?: SegmentData;
   extractionConfidence?: number;
   missingFields?: string[];
+  documentQuality?: DocumentQualityScore;
 }
 
 export type ComparisonMode = 'YoY' | 'Competitor' | 'Custom' | 'None';
@@ -105,9 +106,9 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
   const closeDrillDown = () => setDrillDownMetric(null);
 
   const getHeaderLabel = (m: FinancialMetrics | null, defaultLabel: string) => {
-    if (!m || !m.company) return defaultLabel;
-    const ticker = m.ticker ? ` (${m.ticker})` : "";
-    return `${m.company}${ticker} ${m.reportType || ''} ${m.fiscalYear || ''}`.trim();
+    if (!m || !m.company?.value) return defaultLabel;
+    const ticker = m.ticker?.value ? ` (${m.ticker.value})` : "";
+    return `${m.company.value}${ticker} ${m.reportType?.value || ''} ${m.fiscalYear?.value || ''}`.trim();
   };
 
   const computeComparisonContext = (): ComparisonContextData => {
@@ -115,10 +116,10 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
       return { mode: 'None', primaryLabel: getHeaderLabel(metrics, "Primary Filing"), compareLabel: getHeaderLabel(compareMetrics, "Compare Filing") };
     }
 
-    const m1 = metrics.company?.toLowerCase().trim() || "";
-    const m2 = compareMetrics.company?.toLowerCase().trim() || "";
-    const y1 = metrics.fiscalYear?.toLowerCase().trim() || "";
-    const y2 = compareMetrics.fiscalYear?.toLowerCase().trim() || "";
+    const m1 = metrics.company?.value?.toLowerCase().trim() || "";
+    const m2 = compareMetrics.company?.value?.toLowerCase().trim() || "";
+    const y1 = metrics.fiscalYear?.value?.toLowerCase().trim() || "";
+    const y2 = compareMetrics.fiscalYear?.value?.toLowerCase().trim() || "";
 
     let mode: ComparisonMode = 'Custom';
 

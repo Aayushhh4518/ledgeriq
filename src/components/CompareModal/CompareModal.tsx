@@ -78,7 +78,7 @@ export default function CompareModal() {
       if (data.financialData) {
         setCompareMetrics({
           ...data.financialData,
-          company: data.financialData.company ?? "Unknown",
+          company: data.financialData.company ?? { value: "Unknown", confidence: 0 },
           revenue: data.financialData.revenue ?? { value: 0, confidence: 0 },
           grossProfit: data.financialData.grossProfit ?? { value: 0, confidence: 0 },
           netIncome: data.financialData.netIncome ?? { value: 0, confidence: 0 },
@@ -94,7 +94,7 @@ export default function CompareModal() {
 
         addNotification(
           "Comparison Ready",
-          `Successfully analyzed ${data.financialData.company} for comparison against ${metrics?.company}.`,
+          `Successfully analyzed ${data.financialData.company?.value} for comparison against ${metrics?.company?.value}.`,
           "compare"
         );
 

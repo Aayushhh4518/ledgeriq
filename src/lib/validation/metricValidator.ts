@@ -63,3 +63,30 @@ export function validateMetric(
     sourceDocument: sourceDocument ?? "Unknown Document"
   };
 }
+
+/**
+ * Validates and converts a raw extracted metadata string into an ExtractedMetric<string>.
+ */
+export function validateMetadata(
+  rawValue: string | undefined,
+  sourceDocument: string,
+  baseConfidence: number = 80
+): ExtractedMetric<string> | undefined {
+  if (!rawValue || rawValue.trim() === "") return undefined;
+
+  let confidence = baseConfidence;
+  const trimmedValue = rawValue.trim();
+
+  // Basic validation for overly long or garbage text
+  if (trimmedValue.length > 100 || trimmedValue.includes("California94") || trimmedValue === "UNITED STATES") {
+    confidence -= 40;
+  }
+
+  return {
+    value: trimmedValue,
+    confidence: Math.max(0, Math.min(confidence, 100)),
+    sourcePage: 1, // Placeholder
+    sourceDocument: sourceDocument,
+    sourceSection: "Metadata Header"
+  };
+}
