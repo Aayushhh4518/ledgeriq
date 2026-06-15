@@ -2,11 +2,14 @@
 
 import { useFinancialData } from "@/contexts/FinancialContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import ExecutiveSummary from "@/components/ExecutiveSummary/ExecutiveSummary";
-import ExportReport from "@/components/ExportReport/ExportReport";
+import { useEffect, useMemo } from "react";
 import { FileText } from "lucide-react";
-import { motion } from "framer-motion";
+import { generateExecutiveIntelligence } from "@/lib/analysis/insights";
+
+import ReportPreview from "@/components/Reporting/ReportPreview";
+import ReportQuality from "@/components/Reporting/ReportQuality";
+import ExportHistory from "@/components/Reporting/ExportHistory";
+import ExportReport from "@/components/ExportReport/ExportReport";
 
 export default function ReportsPage() {
   const { responseData, metrics } = useFinancialData();
@@ -18,40 +21,42 @@ export default function ReportsPage() {
     }
   }, [responseData, metrics, router]);
 
-  if (!responseData || !metrics) return null;
+  const intelligence = useMemo(() => {
+    if (!metrics || !responseData?.historicalData || !responseData?.documentQuality) return null;
+    return generateExecutiveIntelligence(metrics, responseData.historicalData, responseData.documentQuality);
+  }, [metrics, responseData]);
+
+  if (!responseData || !metrics || !intelligence || !responseData.documentQuality) return null;
 
   return (
-    <main className="p-8 lg:p-10">
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="space-y-8 max-w-[1600px] mx-auto"
-      >
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-3 border-b border-zinc-800 pb-4">
-            <FileText className="w-6 h-6 text-zinc-400" /> 
-            Reporting & Export
-          </h2>
-          <p className="text-zinc-400 mt-2 text-sm">
-            Generate executive summaries and export professional PDF reports.
-          </p>
-        </div>
+    <main className="p-6 lg:p-8 bg-[#0a0a0a] min-h-screen">
+      <div className="max-w-[1600px] mx-auto space-y-6">
+        
+        {/* Header */}
+        <header className="flex items-center gap-3 border-b border-zinc-800 pb-4">
+          <FileText className="w-6 h-6 text-indigo-400" />
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-zinc-100 uppercase">Executive Reporting Center</h1>
+            <p className="text-zinc-500 text-xs font-mono mt-1">GENERATE DYNAMIC FINANCIAL REPORTS</p>
+          </div>
+        </header>
 
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-12 lg:col-span-8">
-            <ExecutiveSummary
-              company={responseData.financialData?.company?.value ?? "Unknown"}
-              revenue={metrics.revenue?.value ?? 0}
-              netIncome={metrics.netIncome?.value ?? 0}
-              cash={metrics.cash?.value ?? 0}
-            />
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          
+          {/* Left Column (Report Preview) */}
+          <div className="xl:col-span-8 h-[800px] xl:h-[900px]">
+            <ReportPreview metrics={metrics} intelligence={intelligence} />
           </div>
-          <div className="col-span-12 lg:col-span-4">
-            <ExportReport company={responseData.financialData?.company?.value ?? "Unknown"}/>
+
+          {/* Right Column (Controls) */}
+          <div className="xl:col-span-4 space-y-6 flex flex-col">
+            <ExportReport />
+            <ReportQuality quality={responseData.documentQuality} />
+            <ExportHistory />
           </div>
+
         </div>
-      </motion.div>
+      </div>
     </main>
   );
 }
