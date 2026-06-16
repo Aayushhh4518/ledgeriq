@@ -3,6 +3,8 @@
 import { FinancialMetrics } from "@/types/financial";
 import { Trophy, AlertTriangle, TrendingUp, TrendingDown, Activity } from "lucide-react";
 import { generateCompareNarrative } from "@/lib/analysis/narrativeEngine";
+import { ComparisonContextData } from "@/contexts/FinancialContext";
+import { formatCurrency } from "@/lib/utils";
 
 interface Props {
   metrics1: FinancialMetrics;
