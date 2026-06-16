@@ -124,7 +124,7 @@ export default function SegmentPieChart({
                 padding: '12px 16px'
               }}
               itemStyle={{ color: '#fff', fontWeight: 600, fontSize: '15px' }}
-              formatter={(value: any) => [`$${Number(value || 0).toLocaleString()}`, '']}
+              formatter={(value: unknown) => [`$${Number(value || 0).toLocaleString()}`, '']}
             />
           </PieChart>
         </ResponsiveContainer>

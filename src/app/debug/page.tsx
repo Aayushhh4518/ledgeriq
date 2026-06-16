@@ -1,7 +1,7 @@
 "use client";
 
 import { useFinancialData } from "@/contexts/FinancialContext";
-import { Terminal, Database, FileText, Percent, AlertCircle, CheckCircle2, ShieldCheck, ShieldAlert, FileSearch } from "lucide-react";
+import { Terminal, AlertCircle, CheckCircle2, ShieldCheck, ShieldAlert, FileSearch } from "lucide-react";
 
 export default function DebugPage() {
   const { responseData } = useFinancialData();
@@ -15,9 +15,9 @@ export default function DebugPage() {
     );
   }
 
-  const { financialData, extractionConfidence, historicalData, segmentData, missingFields, documentQuality } = responseData;
+  const { financialData, extractionConfidence, historicalData, segmentData, documentQuality } = responseData;
 
-  const renderMetricRaw = (label: string, metric: any) => {
+  const renderMetricRaw = (label: string, metric: { value?: number, confidence?: number, sourceSection?: string } | undefined | null) => {
     return (
       <div className="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800/50 mb-2 font-mono text-sm">
         <div className="flex justify-between items-center mb-2">

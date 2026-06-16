@@ -7,10 +7,10 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
-  Cell
+  Legend
 } from "recharts";
 import { FinancialMetrics } from "@/types/financial";
+import { calculateROE, calculateNetMargin, calculateGrossMargin } from "@/lib/analysis/calculations";
 
 interface CompareChartsProps {
   metrics1: FinancialMetrics;
@@ -89,7 +89,7 @@ export default function CompareCharts({ metrics1, metrics2 }: CompareChartsProps
                 }}
                 itemStyle={{ color: '#fff', fontWeight: 800, fontSize: '13px' }}
                 labelStyle={{ color: '#a1a1aa', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}
-                formatter={(value: any) => [`$${Number(value || 0).toLocaleString()}`]}
+                formatter={(value: unknown) => [`$${Number(value || 0).toLocaleString()}`]}
               />
               <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', color: '#a1a1aa' }} />
               <Bar dataKey={c1Name} fill="#4f46e5" radius={[4, 4, 0, 0]} animationDuration={1500} />
@@ -114,18 +114,18 @@ export default function CompareCharts({ metrics1, metrics2 }: CompareChartsProps
               data={[
                 {
                   name: "ROE (%)",
-                  [c1Name]: metrics1.netIncome?.value && metrics1.shareholderEquity?.value ? (metrics1.netIncome.value / metrics1.shareholderEquity.value) * 100 : 0,
-                  [c2Name]: metrics2.netIncome?.value && metrics2.shareholderEquity?.value ? (metrics2.netIncome.value / metrics2.shareholderEquity.value) * 100 : 0,
+                  [c1Name]: (calculateROE(metrics1.netIncome, metrics1.shareholderEquity)?.value ?? 0) * 100,
+                  [c2Name]: (calculateROE(metrics2.netIncome, metrics2.shareholderEquity)?.value ?? 0) * 100,
                 },
                 {
                   name: "Net Margin (%)",
-                  [c1Name]: metrics1.netIncome?.value && metrics1.revenue?.value ? (metrics1.netIncome.value / metrics1.revenue.value) * 100 : 0,
-                  [c2Name]: metrics2.netIncome?.value && metrics2.revenue?.value ? (metrics2.netIncome.value / metrics2.revenue.value) * 100 : 0,
+                  [c1Name]: (calculateNetMargin(metrics1.revenue, metrics1.netIncome)?.value ?? 0) * 100,
+                  [c2Name]: (calculateNetMargin(metrics2.revenue, metrics2.netIncome)?.value ?? 0) * 100,
                 },
                 {
                   name: "Gross Margin (%)",
-                  [c1Name]: metrics1.grossProfit?.value && metrics1.revenue?.value ? (metrics1.grossProfit.value / metrics1.revenue.value) * 100 : 0,
-                  [c2Name]: metrics2.grossProfit?.value && metrics2.revenue?.value ? (metrics2.grossProfit.value / metrics2.revenue.value) * 100 : 0,
+                  [c1Name]: (calculateGrossMargin(metrics1.revenue, metrics1.grossProfit)?.value ?? 0) * 100,
+                  [c2Name]: (calculateGrossMargin(metrics2.revenue, metrics2.grossProfit)?.value ?? 0) * 100,
                 }
               ]} 
               margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
@@ -160,7 +160,7 @@ export default function CompareCharts({ metrics1, metrics2 }: CompareChartsProps
                 }}
                 itemStyle={{ color: '#fff', fontWeight: 800, fontSize: '13px' }}
                 labelStyle={{ color: '#a1a1aa', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}
-                formatter={(value: any) => [`${Number(value || 0).toFixed(1)}%`]}
+                formatter={(value: unknown) => [`${Number(value || 0).toFixed(1)}%`]}
               />
               <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', color: '#a1a1aa' }} />
               <Bar dataKey={c1Name} fill="#34d399" radius={[4, 4, 0, 0]} animationDuration={1500} />

@@ -1,6 +1,6 @@
 import { FinancialMetrics } from "@/types/financial";
 import { formatCurrency } from "@/lib/utils";
-import { TrendingUp, TrendingDown, Minus, DollarSign, Activity, Percent, AlertTriangle } from "lucide-react";
+import { Activity, AlertTriangle } from "lucide-react";
 
 import { UploadResponse, ComparisonContextData } from "@/contexts/FinancialContext";
 

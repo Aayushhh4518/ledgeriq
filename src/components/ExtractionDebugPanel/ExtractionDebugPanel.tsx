@@ -12,7 +12,7 @@ export default function ExtractionDebugPanel({ responseData }: Props) {
 
   if (!responseData) return null;
 
-  const { financialData, extractionConfidence, missingFields, historicalData, segmentData, documentQuality } = responseData;
+  const { financialData, extractionConfidence, historicalData, segmentData, documentQuality } = responseData;
 
   const getScoreColor = (score?: number) => {
     if (!score) return "text-zinc-500 bg-zinc-900";

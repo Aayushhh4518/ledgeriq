@@ -10,7 +10,6 @@ import { evaluateQuality } from "@/lib/validation/qualityScore";
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-
     const file = formData.get("file") as File;
 
     if (!file) {
@@ -43,8 +42,8 @@ export async function POST(request: Request) {
     const missingFields: string[] = [];
     
     expectedFields.forEach(field => {
-      const metric = financialData[field as keyof FinancialMetrics] as any;
-      if (metric !== undefined && (typeof metric === 'string' || metric.value !== undefined)) {
+      const metric = financialData[field as keyof FinancialMetrics] as unknown;
+      if (metric !== undefined && (typeof metric === 'string' || (metric as { value?: number }).value !== undefined)) {
         foundCount++;
       } else {
         missingFields.push(field);

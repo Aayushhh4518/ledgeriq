@@ -40,10 +40,10 @@ export function evaluateQuality(
   // 3. Extraction Confidence & Missing Fields
   const coreMetrics = ['revenue', 'netIncome', 'totalAssets', 'cash'];
   coreMetrics.forEach(field => {
-    const metric = metrics[field as keyof FinancialMetrics] as any;
+    const metric = metrics[field as keyof FinancialMetrics] as { confidence?: number, value?: unknown } | undefined;
     if (!metric || metric.value === undefined) {
       score -= 5;
-    } else if (metric.confidence < 60) {
+    } else if (metric.confidence !== undefined && metric.confidence < 60) {
       score -= 2;
     }
   });

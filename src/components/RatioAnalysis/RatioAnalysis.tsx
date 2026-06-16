@@ -8,11 +8,11 @@ import IntelligentMissingData from "@/components/ui/IntelligentMissingData";
 import { useFinancialData } from "@/contexts/FinancialContext";
 
 export default function RatioAnalysis({ metrics }: Props) {
+  const { openDrillDown } = useFinancialData();
+
   if (metrics.revenue?.value === undefined && metrics.netIncome?.value === undefined && metrics.grossProfit?.value === undefined && metrics.cash?.value === undefined) {
     return <IntelligentMissingData metricName="Ratio Analysis" reason="The Income Statement and Balance Sheet were not fully extracted from this filing." suggestion="Upload a complete 10-K to perform Ratio Analysis." />;
   }
-
-  const { openDrillDown } = useFinancialData();
 
   const grossMargin =
     ((metrics.grossProfit?.value ?? 0) / (metrics.revenue?.value || 1)) * 100;

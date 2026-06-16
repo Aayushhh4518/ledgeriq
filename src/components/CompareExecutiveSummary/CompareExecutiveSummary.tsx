@@ -1,9 +1,7 @@
 "use client";
 
 import { FinancialMetrics } from "@/types/financial";
-import { formatCurrency } from "@/lib/utils";
-import { Trophy, Target, AlertTriangle, TrendingUp, TrendingDown, Activity } from "lucide-react";
-import { ComparisonContextData } from "@/contexts/FinancialContext";
+import { Trophy, AlertTriangle, TrendingUp, TrendingDown, Activity } from "lucide-react";
 import { generateCompareNarrative } from "@/lib/analysis/narrativeEngine";
 
 interface Props {
@@ -36,7 +34,6 @@ export default function CompareExecutiveSummary({ metrics1, metrics2, context }:
   const winnerName = score1 > score2 ? name1 : name2;
   const loserName = score1 > score2 ? name2 : name1;
   const winnerScore = Math.max(score1, score2);
-  const loserScore = Math.min(score1, score2);
 
   const revenueDiff = (metrics1.revenue?.value ?? 0) - (metrics2.revenue?.value ?? 0);
   const revenuePercentDiff = metrics2.revenue?.value ? (revenueDiff / metrics2.revenue.value) * 100 : 0;

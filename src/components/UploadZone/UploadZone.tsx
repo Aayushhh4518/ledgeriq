@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FinancialMetrics, SegmentData, ExtractedMetric } from "@/types/financial";
+import { FinancialMetrics, SegmentData } from "@/types/financial";
 
 interface UploadResponse {
   fileName: string;
@@ -29,46 +29,22 @@ interface UploadResponse {
 import { motion, AnimatePresence } from "framer-motion";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { UploadCloud, FileText, CheckCircle2, Loader2 } from "lucide-react";
-import HeroSummary from "../HeroSummary/HeroSummary";
 import { useFinancialData } from "@/contexts/FinancialContext";
-import { useSearch } from "../layout/SearchContext";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { logger } from "@/lib/logger";
 
 export default function UploadZone() {
   const [isDragging, setIsDragging] = useState(false);
   const {
     file, setFile,
     responseData, setResponseData,
-    metrics, setMetrics,
-    historicalData, setHistoricalData,
-    segmentData, setSegmentData,
+    setMetrics,
+    setHistoricalData,
+    setSegmentData,
     isUploading, setIsUploading
   } = useFinancialData();
-  const { searchQuery } = useSearch();
-
-  const lowerQuery = searchQuery.toLowerCase();
-  const matches = (keywords: string[]) => {
-    if (!lowerQuery) return true;
-    return keywords.some(k => k.toLowerCase().includes(lowerQuery));
-  };
-
-  const showDashboard = matches(["dashboard", "overview", "revenue", "health", "verdict"]);
-  const showFinancial = matches(["financial", "ratio", "dupont", "liquidity", "earnings", "benchmark", "deep dive"]);
-  const showRisk = matches(["risk", "simulation", "scenario", "concentration"]);
-  const showGrowth = matches(["growth", "segments", "trend", "pie"]);
-  const showAI = matches(["ai", "insights", "copilot", "strengths", "weaknesses"]);
-  const showReports = matches(["reports", "export", "summary", "reporting"]);
-
-  const getMetricValue = (m?: ExtractedMetric) => m?.value ?? 0;
-
-  const investmentScore = metrics
-    ? Math.min(
-        100,
-        Math.round(
-          (getMetricValue(metrics.netIncome) / (getMetricValue(metrics.revenue) || 1)) * 100 +
-          (getMetricValue(metrics.cash) / (getMetricValue(metrics.revenue) || 1)) * 100
-        )
-      )
-    : 0;
+  const { addNotification } = useNotifications();
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -86,19 +62,21 @@ export default function UploadZone() {
     const droppedFile = e.dataTransfer.files?.[0];
     if (droppedFile?.type === "application/pdf") {
       setFile(droppedFile);
+      setUploadError(null);
     } else {
-      alert("Please upload a PDF file.");
+      addNotification("Invalid File", "Please upload a valid PDF document.", "warning");
     }
   };
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Please select a PDF file first.");
+      addNotification("Missing File", "Please select a PDF file first.", "warning");
       return;
     }
 
     try {
       setIsUploading(true);
+      setUploadError(null);
       const formData = new FormData();
       formData.append("file", file);
 
@@ -109,8 +87,9 @@ export default function UploadZone() {
 
       if (!response.ok) {
         const text = await response.text();
-        console.error("Upload failed:", text);
-        alert(`Upload failed. The file might be too large or invalid. Error: ${text.slice(0, 100)}`);
+        logger.error("Upload API failed", new Error(text), { status: response.status });
+        setUploadError(`Failed to extract data. The file might be corrupted or unsupported. ${text.slice(0, 100)}`);
+        addNotification("Upload Failed", "Could not process the document.", "error");
         setIsUploading(false);
         return;
       }
@@ -133,7 +112,9 @@ export default function UploadZone() {
         }
       }
     } catch (error) {
-      console.error("Upload failed:", error);
+      logger.error("Upload failed with unhandled exception", error);
+      setUploadError(error instanceof Error ? error.message : "An unexpected network error occurred.");
+      addNotification("Upload Failed", "An unexpected error occurred during document processing.", "error");
     } finally {
       setIsUploading(false);
     }
@@ -211,7 +192,19 @@ export default function UploadZone() {
             </div>
           </div>
 
-          {file && !isUploading && (
+          {uploadError && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8 bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex flex-col items-center justify-center text-center max-w-lg mx-auto shadow-inner">
+              <p className="text-rose-400 font-medium mb-3 text-sm leading-relaxed">{uploadError}</p>
+              <button
+                onClick={() => setUploadError(null)}
+                className="px-4 py-2 bg-rose-500/20 text-rose-300 font-semibold rounded-lg hover:bg-rose-500/30 transition-colors text-sm"
+              >
+                Dismiss & Try Again
+              </button>
+            </motion.div>
+          )}
+
+          {file && !isUploading && !uploadError && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8 flex justify-center">
               <motion.button
                 whileHover={{ scale: 1.02 }}

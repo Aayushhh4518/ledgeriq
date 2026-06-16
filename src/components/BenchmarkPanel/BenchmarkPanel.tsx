@@ -2,7 +2,7 @@ import { FinancialMetrics } from "@/types/financial";
 import { evaluateAgainstBenchmark, BenchmarkMetricName, PerformanceRating, BENCHMARKS } from "@/lib/analysis/benchmarks";
 import { calculateDuPont } from "@/lib/analysis/profitability";
 import { calculateLiquidity } from "@/lib/analysis/liquidity";
-import { Activity, AlertTriangle, CheckCircle, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
+import { Activity, AlertTriangle, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 
 interface Props {
   metrics: FinancialMetrics;
@@ -18,7 +18,7 @@ export default function BenchmarkPanel({ metrics }: Props) {
         <AlertTriangle className="w-8 h-8 text-zinc-500 mb-4" />
         <h2 className="text-base font-semibold tracking-tight text-zinc-300 mb-2">Industry Benchmarks Unavailable</h2>
         <p className="text-sm text-zinc-500 max-w-md">
-          The document was classified as "{industryStr}". We currently only support benchmark comparisons for Technology, Financial Services, Healthcare, Consumer Goods, Energy, and Industrial sectors.
+          The document was classified as &quot;{industryStr}&quot;. We currently only support benchmark comparisons for Technology, Financial Services, Healthcare, Consumer Goods, Energy, and Industrial sectors.
         </p>
       </div>
     );

@@ -96,7 +96,7 @@ export default function TrendAnalysis({
               }}
               itemStyle={{ fontWeight: 600, fontSize: '15px' }}
               labelStyle={{ color: '#a1a1aa', fontSize: '13px', marginBottom: '4px' }}
-              formatter={(value: any, name: any) => [
+              formatter={(value: unknown, name: unknown) => [
                 `$${Number(value || 0).toLocaleString()}`, 
                 name === 'revenue' ? 'Revenue' : 'Net Income'
               ]}

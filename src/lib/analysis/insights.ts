@@ -111,7 +111,7 @@ export interface ExecutiveIntelligence {
   redFlags: AIRedFlag[];
 }
 
-const getVal = (metric: any) => metric?.value as number | undefined;
+const getVal = (metric?: { value?: number }) => metric?.value;
 
 export function generateExecutiveIntelligence(
   metrics: FinancialMetrics,
@@ -366,11 +366,11 @@ export function generateExecutiveIntelligence(
   const strengthDrivers = insights.filter(i => i.type === "strength").map(i => `${i.title} (${i.evidence})`);
   const riskDrivers = insights.filter(i => i.type === "risk").map(i => `${i.title} (${i.evidence})`);
   
-  let bullCase = { 
+  const bullCase = { 
     title: scoreSum >= 2 ? "Aggressive Upside" : "Bull Case", 
     drivers: strengthDrivers.length > 0 ? strengthDrivers : ["Stable market position", "Predictable baseline revenues"] 
   };
-  let bearCase = { 
+  const bearCase = { 
     title: scoreSum <= -2 ? "Systemic Decline" : "Bear Case", 
     drivers: riskDrivers.length > 0 ? riskDrivers : ["Lack of clear growth catalysts", "Potential margin compression"] 
   };

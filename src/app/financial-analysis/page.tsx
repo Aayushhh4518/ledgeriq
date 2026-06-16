@@ -9,6 +9,7 @@ import EarningsQuality from "@/components/EarningsQuality/EarningsQuality";
 import BenchmarkPanel from "@/components/BenchmarkPanel/BenchmarkPanel";
 import { FileText } from "lucide-react";
 import { motion } from "framer-motion";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 export default function FinancialAnalysisPage() {
   const { responseData, metrics } = useFinancialData();
@@ -42,16 +43,24 @@ export default function FinancialAnalysisPage() {
 
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 xl:col-span-4">
-            <RatioAnalysis metrics={metrics} />
+            <ErrorBoundary fallbackTitle="Ratio Analysis">
+              <RatioAnalysis metrics={metrics} />
+            </ErrorBoundary>
           </div>
           <div className="col-span-12 xl:col-span-4">
-            <DuPontAnalysis metrics={metrics} />
+            <ErrorBoundary fallbackTitle="DuPont Analysis">
+              <DuPontAnalysis metrics={metrics} />
+            </ErrorBoundary>
           </div>
           <div className="col-span-12 xl:col-span-4">
-            <EarningsQuality metrics={metrics} />
+            <ErrorBoundary fallbackTitle="Earnings Quality">
+              <EarningsQuality metrics={metrics} />
+            </ErrorBoundary>
           </div>
           <div className="col-span-12">
-            <BenchmarkPanel metrics={metrics} />
+            <ErrorBoundary fallbackTitle="Industry Benchmarks">
+              <BenchmarkPanel metrics={metrics} />
+            </ErrorBoundary>
           </div>
         </div>
       </motion.div>

@@ -1,4 +1,4 @@
-import { FinancialMetrics, ExtractedMetric } from "@/types/financial";
+import { FinancialMetrics } from "@/types/financial";
 import { validateMetric, validateMetadata } from "@/lib/validation/metricValidator";
 import { detectIndustry } from "./industryClassification";
 

@@ -8,6 +8,7 @@ import InvestmentVerdict from "@/components/InvestmentVerdict/InvestmentVerdict"
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 const RevenueChart = dynamic(() => import("@/components/RevenueChart"), { 
   ssr: false, 
@@ -46,18 +47,28 @@ export default function Home() {
         className="space-y-4 max-w-[1600px] mx-auto"
       >
         <section id="Hero">
-          <HeroSummary metrics={metrics} investmentScore={investmentScore} />
+          <ErrorBoundary fallbackTitle="Overview Summary">
+            <HeroSummary metrics={metrics} investmentScore={investmentScore} />
+          </ErrorBoundary>
         </section>
 
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 lg:col-span-8 space-y-6">
-            <OverviewCards metrics={metrics} />
-            <RevenueChart metrics={metrics} />
+            <ErrorBoundary fallbackTitle="Key Metrics">
+              <OverviewCards metrics={metrics} />
+            </ErrorBoundary>
+            <ErrorBoundary fallbackTitle="Revenue Chart">
+              <RevenueChart metrics={metrics} />
+            </ErrorBoundary>
           </div>
 
           <div className="col-span-12 lg:col-span-4 space-y-6">
-            <HealthScore metrics={metrics} />
-            <InvestmentVerdict score={investmentScore} />
+            <ErrorBoundary fallbackTitle="Health Score">
+              <HealthScore metrics={metrics} />
+            </ErrorBoundary>
+            <ErrorBoundary fallbackTitle="Investment Verdict">
+              <InvestmentVerdict score={investmentScore} />
+            </ErrorBoundary>
           </div>
         </div>
       </motion.div>

@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef } from "react";
 import { useFinancialData } from "@/contexts/FinancialContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { exportToPDF } from "@/utils/exportPDF";
 import ExportConfig, { ReportType } from "@/components/Reporting/ExportConfig";
-import { generateExecutiveIntelligence } from "@/lib/analysis/insights";
 
 import HeroSummary from "../HeroSummary/HeroSummary";
 import OverviewCards from "../OverviewCards";
@@ -20,6 +19,8 @@ import DuPontAnalysis from "../DuPontAnalysis/DuPontAnalysis";
 import GrowthAnalysis from "../GrowthAnalysis/GrowthAnalysis";
 import BenchmarkPanel from "../BenchmarkPanel/BenchmarkPanel";
 import ReportQuality from "@/components/Reporting/ReportQuality";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { logger } from "@/lib/logger";
 
 export default function ExportReport() {
   const [isExporting, setIsExporting] = useState(false);
@@ -48,8 +49,8 @@ export default function ExportReport() {
         "success"
       );
     } catch (error) {
-      console.error("Export failed:", error);
-      addNotification("Export Failed", "There was an error generating the PDF.", "warning");
+      logger.error("PDF Export failed", error, { reportType: type, company });
+      addNotification("Export Failed", "There was an error generating the PDF.", "error");
     } finally {
       setIsExporting(false);
     }
@@ -65,10 +66,7 @@ export default function ExportReport() {
       )
     : 0;
 
-  const intelligence = useMemo(() => {
-    if (!metrics || !responseData?.historicalData || !responseData?.documentQuality) return null;
-    return generateExecutiveIntelligence(metrics, responseData.historicalData, responseData.documentQuality);
-  }, [metrics, responseData]);
+
 
   const getReportTitle = () => {
     switch (reportType) {
@@ -97,36 +95,38 @@ export default function ExportReport() {
             {/* 1. EXECUTIVE REPORT */}
             {reportType === "executive" && (
               <div className="space-y-12">
-                <HeroSummary metrics={metrics} investmentScore={investmentScore} />
-                <ExecutiveSummary 
-                  company={company} 
-                  revenue={metrics.revenue?.value ?? 0} 
-                  netIncome={metrics.netIncome?.value ?? 0} 
-                  cash={metrics.cash?.value ?? 0} 
-                />
+                <ErrorBoundary fallbackTitle="Hero Summary"><HeroSummary metrics={metrics} investmentScore={investmentScore} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Executive Summary">
+                  <ExecutiveSummary 
+                    company={company} 
+                    revenue={metrics.revenue?.value ?? 0} 
+                    netIncome={metrics.netIncome?.value ?? 0} 
+                    cash={metrics.cash?.value ?? 0} 
+                  />
+                </ErrorBoundary>
                 <div className="grid grid-cols-2 gap-8">
-                  <HealthScore metrics={metrics} />
-                  <InvestmentVerdict score={investmentScore} />
+                  <ErrorBoundary fallbackTitle="Health Score"><HealthScore metrics={metrics} /></ErrorBoundary>
+                  <ErrorBoundary fallbackTitle="Investment Verdict"><InvestmentVerdict score={investmentScore} /></ErrorBoundary>
                 </div>
-                <StrengthsWeaknesses metrics={metrics} />
-                <BenchmarkPanel metrics={metrics} />
+                <ErrorBoundary fallbackTitle="Strengths & Weaknesses"><StrengthsWeaknesses metrics={metrics} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Industry Benchmarks"><BenchmarkPanel metrics={metrics} /></ErrorBoundary>
               </div>
             )}
 
             {/* 2. RISK REPORT */}
             {reportType === "risk" && (
               <div className="space-y-12">
-                <HeroSummary metrics={metrics} investmentScore={investmentScore} />
+                <ErrorBoundary fallbackTitle="Hero Summary"><HeroSummary metrics={metrics} investmentScore={investmentScore} /></ErrorBoundary>
                 <div className="grid grid-cols-1 gap-8">
-                  <LiquidityPanel metrics={metrics} />
-                  <RiskPanel metrics={metrics} />
+                  <ErrorBoundary fallbackTitle="Liquidity Panel"><LiquidityPanel metrics={metrics} /></ErrorBoundary>
+                  <ErrorBoundary fallbackTitle="Risk Panel"><RiskPanel metrics={metrics} /></ErrorBoundary>
                 </div>
-                <StrengthsWeaknesses metrics={metrics} />
+                <ErrorBoundary fallbackTitle="Strengths & Weaknesses"><StrengthsWeaknesses metrics={metrics} /></ErrorBoundary>
                 
                 {responseData?.documentQuality && (
                   <div className="mt-12">
                     <h2 className="text-2xl font-bold mb-6">Validation Results & Extraction Flags</h2>
-                    <ReportQuality quality={responseData.documentQuality} />
+                    <ErrorBoundary fallbackTitle="Report Quality"><ReportQuality quality={responseData.documentQuality} /></ErrorBoundary>
                   </div>
                 )}
               </div>
@@ -135,57 +135,63 @@ export default function ExportReport() {
             {/* 3. INVESTOR REPORT */}
             {reportType === "investor" && (
               <div className="space-y-12">
-                <HeroSummary metrics={metrics} investmentScore={investmentScore} />
-                <OverviewCards metrics={metrics} />
+                <ErrorBoundary fallbackTitle="Hero Summary"><HeroSummary metrics={metrics} investmentScore={investmentScore} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Overview Cards"><OverviewCards metrics={metrics} /></ErrorBoundary>
                 <div className="grid grid-cols-12 gap-8">
                   <div className="col-span-8">
-                    <RevenueChart metrics={metrics} />
+                    <ErrorBoundary fallbackTitle="Revenue Chart"><RevenueChart metrics={metrics} /></ErrorBoundary>
                   </div>
                   <div className="col-span-4">
-                    <InvestmentVerdict score={investmentScore} />
+                    <ErrorBoundary fallbackTitle="Investment Verdict"><InvestmentVerdict score={investmentScore} /></ErrorBoundary>
                   </div>
                 </div>
-                <GrowthAnalysis 
-                  revenueGrowth={responseData?.historicalData?.revenue?.growth} 
-                  netIncomeGrowth={responseData?.historicalData?.netIncome?.growth} 
-                />
-                <DuPontAnalysis metrics={metrics} />
-                <BenchmarkPanel metrics={metrics} />
-                <StrengthsWeaknesses metrics={metrics} />
+                <ErrorBoundary fallbackTitle="Growth Analysis">
+                  <GrowthAnalysis 
+                    revenueGrowth={responseData?.historicalData?.revenue?.growth} 
+                    netIncomeGrowth={responseData?.historicalData?.netIncome?.growth} 
+                  />
+                </ErrorBoundary>
+                <ErrorBoundary fallbackTitle="DuPont Analysis"><DuPontAnalysis metrics={metrics} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Industry Benchmarks"><BenchmarkPanel metrics={metrics} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Strengths & Weaknesses"><StrengthsWeaknesses metrics={metrics} /></ErrorBoundary>
               </div>
             )}
 
             {/* 4. FULL INTELLIGENCE REPORT */}
             {reportType === "full" && (
               <div className="space-y-12">
-                <HeroSummary metrics={metrics} investmentScore={investmentScore} />
-                <ExecutiveSummary 
-                  company={company} 
-                  revenue={metrics.revenue?.value ?? 0} 
-                  netIncome={metrics.netIncome?.value ?? 0} 
-                  cash={metrics.cash?.value ?? 0} 
-                />
-                <OverviewCards metrics={metrics} />
+                <ErrorBoundary fallbackTitle="Hero Summary"><HeroSummary metrics={metrics} investmentScore={investmentScore} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Executive Summary">
+                  <ExecutiveSummary 
+                    company={company} 
+                    revenue={metrics.revenue?.value ?? 0} 
+                    netIncome={metrics.netIncome?.value ?? 0} 
+                    cash={metrics.cash?.value ?? 0} 
+                  />
+                </ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Overview Cards"><OverviewCards metrics={metrics} /></ErrorBoundary>
                 
                 <div className="grid grid-cols-12 gap-8">
                   <div className="col-span-8 space-y-8">
-                    <RevenueChart metrics={metrics} />
+                    <ErrorBoundary fallbackTitle="Revenue Chart"><RevenueChart metrics={metrics} /></ErrorBoundary>
                   </div>
                   <div className="col-span-4 space-y-8">
-                    <HealthScore metrics={metrics} />
-                    <InvestmentVerdict score={investmentScore} />
+                    <ErrorBoundary fallbackTitle="Health Score"><HealthScore metrics={metrics} /></ErrorBoundary>
+                    <ErrorBoundary fallbackTitle="Investment Verdict"><InvestmentVerdict score={investmentScore} /></ErrorBoundary>
                   </div>
                 </div>
 
-                <GrowthAnalysis 
-                  revenueGrowth={responseData?.historicalData?.revenue?.growth} 
-                  netIncomeGrowth={responseData?.historicalData?.netIncome?.growth} 
-                />
-                <DuPontAnalysis metrics={metrics} />
-                <BenchmarkPanel metrics={metrics} />
-                <LiquidityPanel metrics={metrics} />
-                <RiskPanel metrics={metrics} />
-                <StrengthsWeaknesses metrics={metrics} />
+                <ErrorBoundary fallbackTitle="Growth Analysis">
+                  <GrowthAnalysis 
+                    revenueGrowth={responseData?.historicalData?.revenue?.growth} 
+                    netIncomeGrowth={responseData?.historicalData?.netIncome?.growth} 
+                  />
+                </ErrorBoundary>
+                <ErrorBoundary fallbackTitle="DuPont Analysis"><DuPontAnalysis metrics={metrics} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Industry Benchmarks"><BenchmarkPanel metrics={metrics} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Liquidity Panel"><LiquidityPanel metrics={metrics} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Risk Panel"><RiskPanel metrics={metrics} /></ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Strengths & Weaknesses"><StrengthsWeaknesses metrics={metrics} /></ErrorBoundary>
               </div>
             )}
 

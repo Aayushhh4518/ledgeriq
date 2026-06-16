@@ -10,6 +10,7 @@ import { TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 const TrendAnalysis = dynamic(() => import("@/components/TrendAnalysis/TrendAnalysis"), { 
   ssr: false, 
@@ -54,26 +55,36 @@ export default function GrowthAnalysisPage() {
           <div className="col-span-12 xl:col-span-4 space-y-6">
             {historicalData && (
               <>
-                <GrowthAnalysis
-                  revenueGrowth={historicalData.revenue.growth}
-                  netIncomeGrowth={historicalData.netIncome.growth}
-                />
-                <TrendAnalysis
-                  revenueCurrent={historicalData.revenue.current}
-                  revenuePrevious={historicalData.revenue.previous}
-                  netIncomeCurrent={historicalData.netIncome.current}
-                  netIncomePrevious={historicalData.netIncome.previous}
-                />
+                <ErrorBoundary fallbackTitle="Growth Analysis">
+                  <GrowthAnalysis
+                    revenueGrowth={historicalData.revenue.growth}
+                    netIncomeGrowth={historicalData.netIncome.growth}
+                  />
+                </ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Trend Analysis">
+                  <TrendAnalysis
+                    revenueCurrent={historicalData.revenue.current}
+                    revenuePrevious={historicalData.revenue.previous}
+                    netIncomeCurrent={historicalData.netIncome.current}
+                    netIncomePrevious={historicalData.netIncome.previous}
+                  />
+                </ErrorBoundary>
               </>
             )}
-            <ScenarioSimulator revenue={metrics.revenue?.value ?? 0} netIncome={metrics.netIncome?.value ?? 0} />
+            <ErrorBoundary fallbackTitle="Scenario Simulator">
+              <ScenarioSimulator revenue={metrics.revenue?.value ?? 0} netIncome={metrics.netIncome?.value ?? 0} />
+            </ErrorBoundary>
           </div>
 
           <div className="col-span-12 xl:col-span-8 space-y-6">
             {segmentData && Object.keys(segmentData).length > 0 ? (
               <>
-                <SegmentAnalysis data={segmentData} />
-                <SegmentPieChart segmentData={segmentData} />
+                <ErrorBoundary fallbackTitle="Segment Analysis">
+                  <SegmentAnalysis data={segmentData} />
+                </ErrorBoundary>
+                <ErrorBoundary fallbackTitle="Segment Revenue Breakdown">
+                  <SegmentPieChart segmentData={segmentData} />
+                </ErrorBoundary>
               </>
             ) : (
               <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full min-h-[300px]">

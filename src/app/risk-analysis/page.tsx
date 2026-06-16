@@ -8,6 +8,7 @@ import LiquidityPanel from "@/components/LiquidityPanel/LiquidityPanel";
 import RevenueConcentration from "@/components/RevenueConcentration/RevenueConcentration";
 import { ShieldAlert } from "lucide-react";
 import { motion } from "framer-motion";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 export default function RiskAnalysisPage() {
   const { responseData, metrics, segmentData } = useFinancialData();
@@ -41,12 +42,18 @@ export default function RiskAnalysisPage() {
 
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 lg:col-span-6 space-y-6">
-            <RiskPanel metrics={metrics} />
-            <LiquidityPanel metrics={metrics} />
+            <ErrorBoundary fallbackTitle="Risk Assessment">
+              <RiskPanel metrics={metrics} />
+            </ErrorBoundary>
+            <ErrorBoundary fallbackTitle="Liquidity Profile">
+              <LiquidityPanel metrics={metrics} />
+            </ErrorBoundary>
           </div>
           <div className="col-span-12 lg:col-span-6 space-y-6">
             {segmentData && Object.keys(segmentData).length > 0 ? (
-              <RevenueConcentration segmentData={segmentData} />
+              <ErrorBoundary fallbackTitle="Revenue Concentration">
+                <RevenueConcentration segmentData={segmentData} />
+              </ErrorBoundary>
             ) : (
               <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full min-h-[300px]">
                 <div className="text-zinc-500 mb-2">

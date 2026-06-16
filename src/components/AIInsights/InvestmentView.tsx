@@ -1,5 +1,5 @@
 import { InvestmentRecommendation, KeyDriver } from "@/lib/analysis/insights";
-import { Target, TrendingDown, TrendingUp, AlertTriangle } from "lucide-react";
+import { Target, TrendingDown, TrendingUp } from "lucide-react";
 
 interface Props {
   recommendation: InvestmentRecommendation;

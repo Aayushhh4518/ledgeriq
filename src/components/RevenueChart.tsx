@@ -111,7 +111,7 @@ export default function RevenueChart({ metrics }: Props) {
               }}
               itemStyle={{ color: '#fff', fontWeight: 800, fontSize: '15px' }}
               labelStyle={{ color: '#a1a1aa', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}
-              formatter={(value: any) => [`$${Number(value || 0).toLocaleString()}`, '']}
+              formatter={(value: unknown) => [`$${Number(value || 0).toLocaleString()}`, '']}
             />
             
             {benchmarkValue > 0 && (

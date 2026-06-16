@@ -8,7 +8,7 @@ export function performCrossValidation(
   const results: ValidationResult[] = [];
 
   // Helper to extract value safely
-  const val = (metric: any) => metric?.value as number | undefined;
+  const val = (metric: unknown) => (metric as { value?: number })?.value;
 
   const assets = val(metrics.totalAssets);
   const liabilities = val(metrics.totalLiabilities);

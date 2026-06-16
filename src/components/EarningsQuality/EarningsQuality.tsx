@@ -8,11 +8,11 @@ import IntelligentMissingData from "@/components/ui/IntelligentMissingData";
 import { useFinancialData } from "@/contexts/FinancialContext";
 
 export default function EarningsQuality({ metrics }: Props) {
+  const { openDrillDown } = useFinancialData();
+
   if (!metrics.operatingCashFlow?.value || !metrics.netIncome?.value) {
     return <IntelligentMissingData metricName="Earnings Quality" reason="Cash Flows from Operations or Net Income could not be located in this filing." suggestion="Upload a complete 10-K to analyze earnings quality." />;
   }
-
-  const { openDrillDown } = useFinancialData();
 
   const qualityRatio = metrics.operatingCashFlow.value / metrics.netIncome.value;
 

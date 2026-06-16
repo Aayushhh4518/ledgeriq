@@ -11,6 +11,7 @@ import AISignals from "@/components/AIInsights/AISignals";
 import InvestmentView from "@/components/AIInsights/InvestmentView";
 import HealthBreakdown from "@/components/AIInsights/HealthBreakdown";
 import OpportunitiesAndFlags from "@/components/AIInsights/OpportunitiesAndFlags";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 export default function AIInsightsPage() {
   const { responseData, metrics } = useFinancialData();
@@ -43,13 +44,17 @@ export default function AIInsightsPage() {
         </header>
 
         {/* Top Level Summary */}
-        <ExecutiveSummary 
-          summary={intelligence.summary} 
-          companyName={metrics.company?.value || "The company"} 
-        />
+        <ErrorBoundary fallbackTitle="Executive Summary">
+          <ExecutiveSummary 
+            summary={intelligence.summary} 
+            companyName={metrics.company?.value || "The company"} 
+          />
+        </ErrorBoundary>
 
         {/* 5-Factor Signals */}
-        <AISignals signals={intelligence.signals} />
+        <ErrorBoundary fallbackTitle="AI Signals">
+          <AISignals signals={intelligence.signals} />
+        </ErrorBoundary>
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
@@ -58,34 +63,42 @@ export default function AIInsightsPage() {
           <div className="xl:col-span-8 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
-                <InvestmentView 
-                  recommendation={intelligence.recommendation} 
-                  drivers={intelligence.drivers} 
-                />
+                <ErrorBoundary fallbackTitle="Investment View">
+                  <InvestmentView 
+                    recommendation={intelligence.recommendation} 
+                    drivers={intelligence.drivers} 
+                  />
+                </ErrorBoundary>
               </div>
               <div className="md:col-span-1">
-                <HealthBreakdown 
-                  breakdown={intelligence.healthBreakdown} 
-                  finalScore={intelligence.summary.confidenceScore} 
-                />
+                <ErrorBoundary fallbackTitle="Health Breakdown">
+                  <HealthBreakdown 
+                    breakdown={intelligence.healthBreakdown} 
+                    finalScore={intelligence.summary.confidenceScore} 
+                  />
+                </ErrorBoundary>
               </div>
             </div>
 
-            <OpportunitiesAndFlags 
-              opportunities={intelligence.opportunities} 
-              redFlags={intelligence.redFlags} 
-              insights={intelligence.insights} 
-            />
+            <ErrorBoundary fallbackTitle="Opportunities & Risks">
+              <OpportunitiesAndFlags 
+                opportunities={intelligence.opportunities} 
+                redFlags={intelligence.redFlags} 
+                insights={intelligence.insights} 
+              />
+            </ErrorBoundary>
           </div>
 
           {/* Right Column (Copilot Sidebar) */}
           <div className="xl:col-span-4 flex flex-col h-[800px] xl:h-auto">
-            <AIFinancialCopilot 
-              company={metrics.company?.value ?? "Unknown"} 
-              revenue={metrics.revenue?.value !== undefined ? `$${metrics.revenue.value.toLocaleString()}` : "N/A"} 
-              netIncome={metrics.netIncome?.value !== undefined ? `$${metrics.netIncome.value.toLocaleString()}` : "N/A"} 
-              intelligence={intelligence}
-            />
+            <ErrorBoundary fallbackTitle="Financial Copilot">
+              <AIFinancialCopilot 
+                company={metrics.company?.value ?? "Unknown"} 
+                revenue={metrics.revenue?.value !== undefined ? `$${metrics.revenue.value.toLocaleString()}` : "N/A"} 
+                netIncome={metrics.netIncome?.value !== undefined ? `$${metrics.netIncome.value.toLocaleString()}` : "N/A"} 
+                intelligence={intelligence}
+              />
+            </ErrorBoundary>
           </div>
 
         </div>

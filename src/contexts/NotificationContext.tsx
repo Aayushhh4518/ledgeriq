@@ -1,9 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { CheckCircle2, Download, AlertCircle, ArrowLeftRight } from "lucide-react";
 
-export type NotificationType = "success" | "info" | "warning" | "compare";
+
+export type NotificationType = "success" | "info" | "warning" | "compare" | "error";
 
 export interface NotificationItem {
   id: string;

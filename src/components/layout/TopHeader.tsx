@@ -3,9 +3,7 @@
 import { 
   Search, 
   Download, 
-  ArrowLeftRight, 
-  Clock, 
-  Building2,
+  ArrowLeftRight,
   Bell,
   CheckCircle2
 } from "lucide-react";

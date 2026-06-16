@@ -24,7 +24,11 @@ export default function AnimatedCounter({
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
     springValue.set(value);
   }, [value, springValue]);
 

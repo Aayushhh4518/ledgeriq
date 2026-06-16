@@ -7,7 +7,6 @@ interface Props {
 
 import IntelligentMissingData from "@/components/ui/IntelligentMissingData";
 import { PieChart, DollarSign, Activity, TrendingUp } from "lucide-react";
-import { useFinancialData } from "@/contexts/FinancialContext";
 
 export default function DuPontAnalysis({ metrics }: Props) {
   const dupont = calculateDuPont(metrics);
@@ -15,8 +14,6 @@ export default function DuPontAnalysis({ metrics }: Props) {
   if (!dupont) {
     return <IntelligentMissingData metricName="DuPont Components (ROE)" reason="The Balance Sheet and Income Statement were not fully extracted from this filing." suggestion="Upload a complete 10-K to calculate Return on Equity." />;
   }
-
-  const { openDrillDown } = useFinancialData();
 
   return (
     <div className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl transition-all duration-700 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] overflow-hidden">
