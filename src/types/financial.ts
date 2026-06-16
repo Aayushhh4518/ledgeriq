@@ -4,6 +4,7 @@ export interface ExtractedMetric<T = number> {
   sourcePage?: number;
   sourceDocument?: string;
   sourceSection?: string;
+  source?: string;
   formula?: string;
 }
 

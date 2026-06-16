@@ -1,8 +1,9 @@
-import { FinancialMetrics } from "@/types/financial";
+import { FinancialMetrics, ExtractedMetric } from "@/types/financial";
+import { calculateCurrentRatio, calculateDebtToEquity } from "./calculations";
 
 export interface LiquidityMetrics {
-  currentRatio: number; // Current Assets / Current Liabilities
-  debtToEquity: number; // Total Debt or Total Liabilities / Shareholder Equity
+  currentRatio: ExtractedMetric<number> | null;
+  debtToEquity: ExtractedMetric<number> | null;
 }
 
 export function calculateLiquidity(metrics: FinancialMetrics): LiquidityMetrics | null {
@@ -15,8 +16,8 @@ export function calculateLiquidity(metrics: FinancialMetrics): LiquidityMetrics 
     return null;
   }
 
-  const currentRatio = metrics.currentLiabilities.value !== 0 ? metrics.currentAssets.value / metrics.currentLiabilities.value : 0;
-  const debtToEquity = metrics.shareholderEquity.value !== 0 ? metrics.totalLiabilities.value / metrics.shareholderEquity.value : 0;
+  const currentRatio = calculateCurrentRatio(metrics.currentAssets, metrics.currentLiabilities);
+  const debtToEquity = calculateDebtToEquity(metrics.totalLiabilities, metrics.shareholderEquity);
 
   return {
     currentRatio,

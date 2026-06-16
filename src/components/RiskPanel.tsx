@@ -1,5 +1,6 @@
 import { FinancialMetrics } from "@/types/financial";
 import { ShieldAlert, ShieldCheck, Shield } from "lucide-react";
+import { calculateNetMargin } from "@/lib/analysis/calculations";
 
 interface Props {
   metrics: FinancialMetrics;
@@ -12,8 +13,8 @@ export default function RiskPanel({ metrics }: Props) {
     return <MissingDataCard metricName="Risk Metrics" expectedSection="Income Statement & Balance Sheet" suggestion="Please upload a complete financial statement." />;
   }
 
-  const netMargin =
-    ((metrics.netIncome?.value ?? 0) / (metrics.revenue?.value || 1)) * 100;
+  const netMarginMetrics = calculateNetMargin(metrics.revenue, metrics.netIncome);
+  const netMargin = netMarginMetrics?.value ? netMarginMetrics.value * 100 : 0;
 
   const liquidityRisk =
     (metrics.cash?.value ?? 0) > 20000 ? "LOW" : "HIGH";

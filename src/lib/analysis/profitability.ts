@@ -1,10 +1,11 @@
-import { FinancialMetrics } from "@/types/financial";
+import { FinancialMetrics, ExtractedMetric } from "@/types/financial";
+import { calculateNetMargin, calculateAssetTurnover, calculateFinancialLeverage, calculateROE } from "./calculations";
 
 export interface DuPontMetrics {
-  profitMargin: number; // Net Income / Revenue
-  assetTurnover: number; // Revenue / Total Assets
-  financialLeverage: number; // Total Assets / Shareholder Equity
-  roe: number; // profitMargin * assetTurnover * financialLeverage
+  profitMargin: ExtractedMetric<number> | null; 
+  assetTurnover: ExtractedMetric<number> | null; 
+  financialLeverage: ExtractedMetric<number> | null; 
+  roe: ExtractedMetric<number> | null; 
 }
 
 export function calculateDuPont(metrics: FinancialMetrics): DuPontMetrics | null {
@@ -17,10 +18,10 @@ export function calculateDuPont(metrics: FinancialMetrics): DuPontMetrics | null
     return null;
   }
 
-  const profitMargin = metrics.revenue.value !== 0 ? metrics.netIncome.value / metrics.revenue.value : 0;
-  const assetTurnover = metrics.totalAssets.value !== 0 ? metrics.revenue.value / metrics.totalAssets.value : 0;
-  const financialLeverage = metrics.shareholderEquity.value !== 0 ? metrics.totalAssets.value / metrics.shareholderEquity.value : 0;
-  const roe = profitMargin * assetTurnover * financialLeverage;
+  const profitMargin = calculateNetMargin(metrics.revenue, metrics.netIncome);
+  const assetTurnover = calculateAssetTurnover(metrics.revenue, metrics.totalAssets);
+  const financialLeverage = calculateFinancialLeverage(metrics.totalAssets, metrics.shareholderEquity);
+  const roe = calculateROE(metrics.netIncome, metrics.shareholderEquity);
 
   return {
     profitMargin,

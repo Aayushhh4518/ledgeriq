@@ -20,20 +20,20 @@ export function generateInsights(metrics: FinancialMetrics): Insight[] {
   const liquidity = calculateLiquidity(metrics);
 
   if (dupont) {
-    if (dupont.roe > 0.15) {
-      insights.push({ type: "strength", title: "Strong Return on Equity", description: `Company generates excellent returns (ROE: ${(dupont.roe * 100).toFixed(1)}%).`, generatedFrom: ["Net Income", "Shareholder Equity"] });
-    } else if (dupont.roe < 0.05) {
-      insights.push({ type: "weakness", title: "Weak Return on Equity", description: `Company struggles to generate returns (ROE: ${(dupont.roe * 100).toFixed(1)}%).`, generatedFrom: ["Net Income", "Shareholder Equity"] });
+    if (dupont.roe?.value !== undefined && dupont.roe.value > 0.15) {
+      insights.push({ type: "strength", title: "Strong Return on Equity", description: `Company generates excellent returns (ROE: ${(dupont.roe.value * 100).toFixed(1)}%).`, generatedFrom: ["Net Income", "Shareholder Equity"] });
+    } else if (dupont.roe?.value !== undefined && dupont.roe.value < 0.05) {
+      insights.push({ type: "weakness", title: "Weak Return on Equity", description: `Company struggles to generate returns (ROE: ${(dupont.roe.value * 100).toFixed(1)}%).`, generatedFrom: ["Net Income", "Shareholder Equity"] });
     }
-    if (dupont.profitMargin > 0.20) {
+    if (dupont.profitMargin?.value !== undefined && dupont.profitMargin.value > 0.20) {
       insights.push({ type: "strength", title: "High Profit Margins", description: "Company has strong pricing power and cost control.", generatedFrom: ["Net Income", "Revenue"] });
     }
   }
 
   if (liquidity) {
-    if (liquidity.currentRatio > 1.5) {
-      insights.push({ type: "strength", title: "Healthy Liquidity", description: `Current Ratio of ${liquidity.currentRatio.toFixed(2)} indicates strong short-term solvency.`, generatedFrom: ["Current Assets", "Current Liabilities"] });
-    } else if (liquidity.currentRatio < 1.0) {
+    if (liquidity.currentRatio?.value !== undefined && liquidity.currentRatio.value > 1.5) {
+      insights.push({ type: "strength", title: "Healthy Liquidity", description: `Current Ratio of ${liquidity.currentRatio.value.toFixed(2)} indicates strong short-term solvency.`, generatedFrom: ["Current Assets", "Current Liabilities"] });
+    } else if (liquidity.currentRatio?.value !== undefined && liquidity.currentRatio.value < 1.0) {
       insights.push({ type: "weakness", title: "Liquidity Warning", description: `Current Ratio below 1.0 indicates potential short-term cash flow issues.`, generatedFrom: ["Current Assets", "Current Liabilities"] });
     }
   }
@@ -135,12 +135,12 @@ export function generateExecutiveIntelligence(
   // Benchmarking Engine Evaluation
   const rawMetrics: Record<string, number | null> = {
     "Gross Margin": metrics.revenue?.value && metrics.grossProfit?.value ? (metrics.grossProfit.value / metrics.revenue.value) * 100 : null,
-    "Net Margin": dupont ? dupont.profitMargin * 100 : null,
-    "ROE": dupont ? dupont.roe * 100 : null,
-    "ROA": dupont ? (dupont.profitMargin * dupont.assetTurnover) * 100 : null,
-    "Current Ratio": liquidity ? liquidity.currentRatio : null,
+    "Net Margin": dupont?.profitMargin?.value !== undefined ? dupont.profitMargin.value * 100 : null,
+    "ROE": dupont?.roe?.value !== undefined ? dupont.roe.value * 100 : null,
+    "ROA": dupont?.profitMargin?.value !== undefined && dupont?.assetTurnover?.value !== undefined ? (dupont.profitMargin.value * dupont.assetTurnover.value) * 100 : null,
+    "Current Ratio": liquidity?.currentRatio?.value ?? null,
     "Debt to Equity": metrics.totalDebt?.value !== undefined && metrics.shareholderEquity?.value ? (metrics.totalDebt.value / metrics.shareholderEquity.value) : null,
-    "Asset Turnover": dupont ? dupont.assetTurnover : null,
+    "Asset Turnover": dupont?.assetTurnover?.value ?? null,
   };
 
   let benchmarkStrongCount = 0;
@@ -207,28 +207,28 @@ export function generateExecutiveIntelligence(
   if (dupont) {
     let status: "Strong" | "Moderate" | "Weak" = "Moderate";
     let explanation = "Profitability is average.";
-    let analystReasoning = `Net margin of ${(dupont.profitMargin * 100).toFixed(1)}% is in line with baseline expectations.`;
+    let analystReasoning = `Net margin of ${dupont.profitMargin?.value !== undefined ? (dupont.profitMargin.value * 100).toFixed(1) : "N/A"}% is in line with baseline expectations.`;
     
-    if (dupont.profitMargin > 0.15) {
+    if (dupont.profitMargin?.value !== undefined && dupont.profitMargin.value > 0.15) {
       status = "Strong";
-      explanation = `Exceptional net margin of ${(dupont.profitMargin * 100).toFixed(1)}%.`;
-      analystReasoning = `The company demonstrates strong pricing power and cost efficiency, converting ${(dupont.profitMargin * 100).toFixed(1)}% of top-line revenue directly to bottom-line net income.`;
+      explanation = `Exceptional net margin of ${(dupont.profitMargin.value * 100).toFixed(1)}%.`;
+      analystReasoning = `The company demonstrates strong pricing power and cost efficiency, converting ${(dupont.profitMargin.value * 100).toFixed(1)}% of top-line revenue directly to bottom-line net income.`;
       scoreSum += 2;
-      insights.push({ type: "strength", title: "Strong Profitability", evidence: `Net margin ${(dupont.profitMargin * 100).toFixed(1)}%` });
-    } else if (dupont.profitMargin < 0.05) {
+      insights.push({ type: "strength", title: "Strong Profitability", evidence: `Net margin ${(dupont.profitMargin.value * 100).toFixed(1)}%` });
+    } else if (dupont.profitMargin?.value !== undefined && dupont.profitMargin.value < 0.05) {
       status = "Weak";
-      explanation = `Thin net margin of ${(dupont.profitMargin * 100).toFixed(1)}%.`;
-      analystReasoning = `High operating costs or lack of pricing power are compressing margins down to ${(dupont.profitMargin * 100).toFixed(1)}%, limiting capital available for reinvestment.`;
+      explanation = `Thin net margin of ${(dupont.profitMargin.value * 100).toFixed(1)}%.`;
+      analystReasoning = `High operating costs or lack of pricing power are compressing margins down to ${(dupont.profitMargin.value * 100).toFixed(1)}%, limiting capital available for reinvestment.`;
       scoreSum -= 2;
-      insights.push({ type: "risk", title: "Weak Profitability", evidence: `Net margin ${(dupont.profitMargin * 100).toFixed(1)}%` });
-      opportunities.push({ title: "Margin Expansion", description: "Implement stringent OPEX controls or optimize COGS.", metricTarget: `Target net margin > 10% (Currently ${(dupont.profitMargin * 100).toFixed(1)}%)`});
+      insights.push({ type: "risk", title: "Weak Profitability", evidence: `Net margin ${(dupont.profitMargin.value * 100).toFixed(1)}%` });
+      opportunities.push({ title: "Margin Expansion", description: "Implement stringent OPEX controls or optimize COGS.", metricTarget: `Target net margin > 10% (Currently ${(dupont.profitMargin.value * 100).toFixed(1)}%)`});
     }
     signals.push({ name: "Profitability", status, explanation, analystReasoning, confidence: metrics.netIncome?.confidence || 80 });
     
     drivers.push({
       metric: "Net Margin",
-      impactRank: Math.abs(dupont.profitMargin - 0.1) * 100,
-      value: `${(dupont.profitMargin * 100).toFixed(1)}%`,
+      impactRank: dupont.profitMargin?.value !== undefined ? Math.abs(dupont.profitMargin.value - 0.1) * 100 : 0,
+      value: dupont.profitMargin?.value !== undefined ? `${(dupont.profitMargin.value * 100).toFixed(1)}%` : "N/A",
       trend: status === "Strong" ? "positive" : status === "Weak" ? "negative" : "neutral"
     });
   }
@@ -237,18 +237,18 @@ export function generateExecutiveIntelligence(
   if (liquidity) {
     let status: "Strong" | "Moderate" | "Weak" = "Moderate";
     let explanation = "Sufficient liquidity to meet obligations.";
-    let analystReasoning = `Current ratio of ${liquidity.currentRatio.toFixed(2)}x indicates standard working capital management.`;
+    let analystReasoning = `Current ratio of ${liquidity.currentRatio?.value !== undefined ? liquidity.currentRatio.value.toFixed(2) : "N/A"}x indicates standard working capital management.`;
 
-    if (liquidity.currentRatio > 1.5) {
+    if (liquidity.currentRatio?.value !== undefined && liquidity.currentRatio.value > 1.5) {
       status = "Strong";
-      explanation = `Robust current ratio of ${liquidity.currentRatio.toFixed(2)}x.`;
-      analystReasoning = `Excellent short-term solvency profile. The company holds ${liquidity.currentRatio.toFixed(2)}x in current assets for every dollar of current liabilities, heavily insulating against cash crunches.`;
+      explanation = `Robust current ratio of ${liquidity.currentRatio.value.toFixed(2)}x.`;
+      analystReasoning = `Excellent short-term solvency profile. The company holds ${liquidity.currentRatio.value.toFixed(2)}x in current assets for every dollar of current liabilities, heavily insulating against cash crunches.`;
       scoreSum += 1;
-      insights.push({ type: "strength", title: "Strong Liquidity", evidence: `Current ratio ${liquidity.currentRatio.toFixed(2)}x` });
-    } else if (liquidity.currentRatio < 1.0) {
+      insights.push({ type: "strength", title: "Strong Liquidity", evidence: `Current ratio ${liquidity.currentRatio.value.toFixed(2)}x` });
+    } else if (liquidity.currentRatio?.value !== undefined && liquidity.currentRatio.value < 1.0) {
       status = "Weak";
-      explanation = `Current ratio of ${liquidity.currentRatio.toFixed(2)}x indicates potential short-term pressure.`;
-      analystReasoning = `The balance sheet exhibits a working capital deficit. A ratio of ${liquidity.currentRatio.toFixed(2)}x means current obligations exceed easily liquidated assets.`;
+      explanation = `Current ratio of ${liquidity.currentRatio.value.toFixed(2)}x indicates potential short-term pressure.`;
+      analystReasoning = `The balance sheet exhibits a working capital deficit. A ratio of ${liquidity.currentRatio.value.toFixed(2)}x means current obligations exceed easily liquidated assets.`;
       scoreSum -= 2;
       insights.push({ type: "risk", title: "Liquidity Pressure", evidence: `Current ratio below 1.0x` });
       redFlags.push({ title: "Working Capital Deficit", description: `Current liabilities exceed current assets.`, severity: "High" });
@@ -302,17 +302,17 @@ export function generateExecutiveIntelligence(
   if (dupont) {
     let status: "Strong" | "Moderate" | "Weak" = "Moderate";
     let explanation = "Average capital efficiency.";
-    let analystReasoning = `Asset turnover of ${dupont.assetTurnover.toFixed(2)}x shows standard asset utilization.`;
+    let analystReasoning = `Asset turnover of ${dupont.assetTurnover?.value !== undefined ? dupont.assetTurnover.value.toFixed(2) : "N/A"}x shows standard asset utilization.`;
 
-    if (dupont.assetTurnover > 1.0) {
+    if (dupont.assetTurnover?.value !== undefined && dupont.assetTurnover.value > 1.0) {
       status = "Strong";
-      explanation = `High asset turnover (${dupont.assetTurnover.toFixed(2)}x) indicates efficient capital use.`;
-      analystReasoning = `Highly efficient operations: the company generates $${dupont.assetTurnover.toFixed(2)} in revenue for every $1.00 in assets on its balance sheet.`;
+      explanation = `High asset turnover (${dupont.assetTurnover.value.toFixed(2)}x) indicates efficient capital use.`;
+      analystReasoning = `Highly efficient operations: the company generates $${dupont.assetTurnover.value.toFixed(2)} in revenue for every $1.00 in assets on its balance sheet.`;
       scoreSum += 1;
-    } else if (dupont.assetTurnover < 0.5) {
+    } else if (dupont.assetTurnover?.value !== undefined && dupont.assetTurnover.value < 0.5) {
       status = "Weak";
-      explanation = `Low asset turnover (${dupont.assetTurnover.toFixed(2)}x) suggests capital inefficiency.`;
-      analystReasoning = `Poor asset utilization. Generating only $${dupont.assetTurnover.toFixed(2)} per $1.00 of assets indicates bloated inventory or underperforming PP&E.`;
+      explanation = `Low asset turnover (${dupont.assetTurnover.value.toFixed(2)}x) suggests capital inefficiency.`;
+      analystReasoning = `Poor asset utilization. Generating only $${dupont.assetTurnover.value.toFixed(2)} per $1.00 of assets indicates bloated inventory or underperforming PP&E.`;
       scoreSum -= 1;
       opportunities.push({ title: "Asset Optimization", description: "Liquidate underperforming assets or tighten inventory cycles.", metricTarget: `Target Asset Turnover > 0.8x` });
     }

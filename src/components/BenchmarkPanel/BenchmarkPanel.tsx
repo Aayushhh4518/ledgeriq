@@ -28,10 +28,10 @@ export default function BenchmarkPanel({ metrics }: Props) {
   const liquidity = calculateLiquidity(metrics);
 
   const rawMetrics: Partial<Record<BenchmarkMetricName, number | null>> = {
-    "Net Margin": dupont ? dupont.profitMargin * 100 : null,
-    "ROE": dupont ? dupont.roe * 100 : null,
-    "Current Ratio": liquidity ? liquidity.currentRatio : null,
-    "Asset Turnover": dupont ? dupont.assetTurnover : null,
+    "Net Margin": dupont?.profitMargin?.value !== undefined ? dupont.profitMargin.value * 100 : null,
+    "ROE": dupont?.roe?.value !== undefined ? dupont.roe.value * 100 : null,
+    "Current Ratio": liquidity?.currentRatio?.value ?? null,
+    "Asset Turnover": dupont?.assetTurnover?.value ?? null,
   };
 
   const results = Object.entries(rawMetrics).map(([name, value]) => {
