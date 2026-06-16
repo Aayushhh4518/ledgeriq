@@ -33,6 +33,8 @@ import { useFinancialData } from "@/contexts/FinancialContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { logger } from "@/lib/logger";
 
+const MAX_FILE_SIZE = 4.5 * 1024 * 1024; // 4.5 MB
+
 export default function UploadZone() {
   const [isDragging, setIsDragging] = useState(false);
   const {
@@ -45,6 +47,23 @@ export default function UploadZone() {
   } = useFinancialData();
   const { addNotification } = useNotifications();
   const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const validateFile = (selectedFile: File) => {
+    if (selectedFile.type !== "application/pdf") {
+      setUploadError("Invalid file format. Please upload a PDF document.");
+      addNotification("Invalid File", "Please upload a valid PDF document.", "warning");
+      return false;
+    }
+    
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      const sizeInMB = (selectedFile.size / (1024 * 1024)).toFixed(2);
+      setUploadError(`File size (${sizeInMB} MB) exceeds the 4.5 MB limit. Please optimize your PDF before uploading.`);
+      addNotification("File Too Large", "Maximum allowed size is 4.5 MB.", "error");
+      return false;
+    }
+    
+    return true;
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -60,11 +79,9 @@ export default function UploadZone() {
     e.preventDefault();
     setIsDragging(false);
     const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile?.type === "application/pdf") {
+    if (droppedFile && validateFile(droppedFile)) {
       setFile(droppedFile);
       setUploadError(null);
-    } else {
-      addNotification("Invalid File", "Please upload a valid PDF document.", "warning");
     }
   };
 
@@ -74,15 +91,25 @@ export default function UploadZone() {
       return;
     }
 
+    if (!validateFile(file)) {
+      return;
+    }
+
     try {
       setIsUploading(true);
       setUploadError(null);
-      const formData = new FormData();
-      formData.append("file", file);
+
+      // Client-side extraction
+      const { extractTextFromPDFFile } = await import("@/lib/pdf/clientExtractText");
+      const extractedText = await extractTextFromPDFFile(file);
 
       const response = await fetch("/api/upload", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: file.name,
+          text: extractedText
+        }),
       });
 
       if (!response.ok) {
@@ -151,7 +178,10 @@ export default function UploadZone() {
                 suppressHydrationWarning
                 onChange={(e) => {
                   const selectedFile = e.target.files?.[0];
-                  if (selectedFile) setFile(selectedFile);
+                  if (selectedFile && validateFile(selectedFile)) {
+                    setFile(selectedFile);
+                    setUploadError(null);
+                  }
                 }}
                 disabled={isUploading}
               />
@@ -185,6 +215,14 @@ export default function UploadZone() {
                     <div>
                       <h3 className="text-xl font-bold tracking-tight text-white">Upload Financial Statement</h3>
                       <p className="text-[13px] text-zinc-400 mt-2 font-medium">Drag & drop your SEC filing, 10-K, or PDF report here</p>
+                      <div className="flex items-center justify-center gap-3 mt-4">
+                        <span className="text-xs font-semibold px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-zinc-400 flex items-center gap-1.5">
+                          <FileText className="w-3.5 h-3.5" /> PDF Only
+                        </span>
+                        <span className="text-xs font-semibold px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-zinc-400 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Max 4.5 MB
+                        </span>
+                      </div>
                     </div>
                   </>
                 )}

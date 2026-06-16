@@ -9,14 +9,14 @@ import { evaluateQuality } from "@/lib/validation/qualityScore";
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    const file = formData.get("file") as File;
+    const body = await request.json();
+    const { fileName, text: extractedText } = body;
 
-    if (!file) {
+    if (!extractedText || !fileName) {
       return NextResponse.json(
         {
           success: false,
-          message: "No file uploaded",
+          message: "No text or file name provided",
         },
         {
           status: 400,
@@ -24,13 +24,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    const extractedText =
-      await extractTextFromPDF(buffer);
-
-    const financialData = parseFinancialData(extractedText, file.name);
+    const financialData = parseFinancialData(extractedText, fileName);
     const historicalData = extractHistoricalData(extractedText);
     const segmentData = extractSegmentData(extractedText, financialData.company?.value);
 
@@ -69,7 +63,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      fileName: file.name,
+      fileName,
       textPreview: extractedText.slice(0, 2000),
       textLength: extractedText.length,
       financialData,
