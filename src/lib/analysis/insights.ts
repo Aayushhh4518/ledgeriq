@@ -1,6 +1,7 @@
 import { FinancialMetrics, HistoricalData, DocumentQualityScore } from "@/types/financial";
 import { calculateDuPont } from "./profitability";
 import { calculateLiquidity } from "./liquidity";
+import { evaluateAgainstBenchmark, BenchmarkMetricName } from "./benchmarks";
 
 // ---------------------------------------------------------
 // Legacy Insights for backward compatibility (HeroSummary)
@@ -129,6 +130,78 @@ export function generateExecutiveIntelligence(
   const redFlags: AIRedFlag[] = [];
 
   let scoreSum = 0;
+  const industryStr = metrics.industry?.value || "Unknown";
+
+  // Benchmarking Engine Evaluation
+  const rawMetrics: Record<string, number | null> = {
+    "Gross Margin": metrics.revenue?.value && metrics.grossProfit?.value ? (metrics.grossProfit.value / metrics.revenue.value) * 100 : null,
+    "Net Margin": dupont ? dupont.profitMargin * 100 : null,
+    "ROE": dupont ? dupont.roe * 100 : null,
+    "ROA": dupont ? (dupont.profitMargin * dupont.assetTurnover) * 100 : null,
+    "Current Ratio": liquidity ? liquidity.currentRatio : null,
+    "Debt to Equity": metrics.totalDebt?.value !== undefined && metrics.shareholderEquity?.value ? (metrics.totalDebt.value / metrics.shareholderEquity.value) : null,
+    "Asset Turnover": dupont ? dupont.assetTurnover : null,
+  };
+
+  let benchmarkStrongCount = 0;
+  let benchmarkWeakCount = 0;
+  let hasBenchmarkSupport = false;
+
+  Object.entries(rawMetrics).forEach(([metricName, value]) => {
+    const res = evaluateAgainstBenchmark(metricName as BenchmarkMetricName, industryStr, value);
+    if (res && res.percentDifference !== null && res.companyValue !== null) {
+      hasBenchmarkSupport = true;
+      const formattedValue = res.isPercentage ? `${res.companyValue.toFixed(1)}%` : `${res.companyValue.toFixed(2)}x`;
+      const formattedAvg = res.isPercentage ? `${res.industryAverage.toFixed(1)}%` : `${res.industryAverage.toFixed(2)}x`;
+
+      if (res.rating === "Excellent" || res.rating === "Above Average") {
+        benchmarkStrongCount++;
+        insights.push({
+          type: "strength",
+          title: `Industry Leading ${metricName}`,
+          evidence: `${companyName}'s ${formattedValue} ${metricName.toLowerCase()} exceeds the ${industryStr} industry average of ${formattedAvg}, indicating superior performance and competitive advantage.`
+        });
+      } else if (res.rating === "Poor" || res.rating === "Below Average") {
+        benchmarkWeakCount++;
+        insights.push({
+          type: "risk",
+          title: `Underperforming ${metricName}`,
+          evidence: `${companyName}'s ${formattedValue} ${metricName.toLowerCase()} falls below the ${industryStr} average of ${formattedAvg}.`
+        });
+        opportunities.push({
+          title: `Optimize ${metricName}`,
+          description: `Align operational performance closer to the ${industryStr} standard to remain competitive.`,
+          metricTarget: `Target ${metricName} near ${formattedAvg}`
+        });
+      }
+    }
+  });
+
+  if (hasBenchmarkSupport) {
+    let status: "Strong" | "Moderate" | "Weak" = "Moderate";
+    let explanation = "Performance aligns with industry averages.";
+    let analystReasoning = `The company matches standard ${industryStr} performance benchmarks.`;
+    
+    if (benchmarkStrongCount > benchmarkWeakCount + 1) {
+      status = "Strong";
+      explanation = `Outperforming ${industryStr} peers across multiple metrics.`;
+      analystReasoning = `The company significantly leads the ${industryStr} sector, registering ${benchmarkStrongCount} metrics above the industry average, demonstrating strong competitive moats.`;
+      scoreSum += 3;
+    } else if (benchmarkWeakCount > benchmarkStrongCount + 1) {
+      status = "Weak";
+      explanation = `Lagging behind ${industryStr} sector benchmarks.`;
+      analystReasoning = `The company is struggling relative to its peers, with ${benchmarkWeakCount} key metrics falling below the ${industryStr} standard.`;
+      scoreSum -= 3;
+    }
+
+    signals.push({
+      name: "Industry Benchmarking",
+      status,
+      explanation,
+      analystReasoning,
+      confidence: 90
+    });
+  }
   
   // Profitability Signal
   if (dupont) {

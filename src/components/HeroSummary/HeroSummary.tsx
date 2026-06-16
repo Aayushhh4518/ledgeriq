@@ -71,6 +71,17 @@ export default function HeroSummary({ metrics, investmentScore }: Props) {
               <span className="text-xs font-semibold text-zinc-400 tracking-wide">Health Score</span>
               <strong className="text-sm text-white ml-1 font-mono"><AnimatedCounter value={investmentScore} duration={2} />/100</strong>
             </div>
+            
+            {/* Industry Classification Badge */}
+            <div className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 shadow-sm backdrop-blur-md">
+              <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Industry:</span>
+              <strong className="text-xs text-white">{metrics.industry?.value || "Unknown"}</strong>
+              <span className="text-[10px] text-blue-300/80 font-mono ml-1">({metrics.industry?.confidence || 0}%)</span>
+              <div className="w-1 h-1 rounded-full bg-blue-500/50 mx-1" />
+              <span className="text-[10px] text-zinc-400 uppercase tracking-widest">
+                {metrics.industry?.value === "Unknown" || metrics.industry?.value === "General Corporate" ? "No Benchmarks" : "Benchmarks Active"}
+              </span>
+            </div>
           </motion.div>
           <motion.div variants={itemVariants} className="pt-2">
             <p className="text-zinc-400 text-sm leading-relaxed max-w-xl">

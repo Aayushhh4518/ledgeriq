@@ -50,8 +50,8 @@ export default function FinancialAnalysisPage() {
           <div className="col-span-12 xl:col-span-4">
             <EarningsQuality metrics={metrics} />
           </div>
-          <div className="col-span-12 xl:col-span-6">
-            <BenchmarkPanel companyMargin={((metrics.netIncome?.value ?? 0) / (metrics.revenue?.value || 1)) * 100} />
+          <div className="col-span-12">
+            <BenchmarkPanel metrics={metrics} />
           </div>
         </div>
       </motion.div>

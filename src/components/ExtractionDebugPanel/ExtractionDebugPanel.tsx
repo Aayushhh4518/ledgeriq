@@ -62,6 +62,14 @@ export default function ExtractionDebugPanel({ responseData }: Props) {
                     <span className="text-zinc-400">Ticker:</span>
                     <span className="text-white">{financialData?.ticker?.value || <span className="text-zinc-600">N/A</span>}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">Industry:</span>
+                    <span className="text-white">{financialData?.industry?.value || <span className="text-zinc-600">N/A</span>}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">Class Source:</span>
+                    <span className="text-white">{financialData?.industry?.source || <span className="text-zinc-600">N/A</span>}</span>
+                  </div>
                 </div>
               </div>
 

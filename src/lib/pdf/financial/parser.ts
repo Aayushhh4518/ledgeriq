@@ -1,5 +1,6 @@
 import { FinancialMetrics, ExtractedMetric } from "@/types/financial";
 import { validateMetric, validateMetadata } from "@/lib/validation/metricValidator";
+import { detectIndustry } from "./industryClassification";
 
 export function parseFinancialData(
   text: string,
@@ -80,19 +81,27 @@ export function parseFinancialData(
   else if (isYen) result.currency = validateMetadata("JPY", filename);
   else result.currency = validateMetadata("USD", filename); // Default for US Filings
 
-  // Industry extraction (Best effort based on common keywords)
-  const topSlice = text.slice(0, 5000).toLowerCase();
-  if (topSlice.includes("technology") || topSlice.includes("software") || topSlice.includes("cloud computing")) {
-    result.industry = validateMetadata("Technology", filename);
-  } else if (topSlice.includes("retail") || topSlice.includes("e-commerce")) {
-    result.industry = validateMetadata("Retail / E-commerce", filename);
-  } else if (topSlice.includes("healthcare") || topSlice.includes("pharmaceutical")) {
-    result.industry = validateMetadata("Healthcare", filename);
-  } else if (topSlice.includes("financial services") || topSlice.includes("banking")) {
-    result.industry = validateMetadata("Financials", filename);
+  // Industry extraction (Robust Classification Engine)
+  const classification = detectIndustry(companyStr, text);
+  
+  if (classification.confidence < 60) {
+    result.industry = {
+      value: "General Corporate",
+      confidence: 50,
+      source: "Fallback"
+    };
   } else {
-    result.industry = validateMetadata("Unknown", filename);
+    result.industry = {
+      value: classification.value,
+      confidence: classification.confidence,
+      source: classification.source
+    };
   }
+  
+  console.log(`[INDUSTRY EXTRACTION DEBUG]`);
+  console.log(`Company Name: ${companyStr || 'Unknown'}`);
+  console.log(`Detected Industry: ${result.industry.value}`);
+  console.log(`Benchmark Source: ${result.industry.source} (Confidence: ${result.industry.confidence}%)`);
 
   const matchValue = (regex: RegExp) => {
     const match = text.match(regex);

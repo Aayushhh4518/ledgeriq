@@ -18,6 +18,7 @@ import ExecutiveSummary from "../ExecutiveSummary/ExecutiveSummary";
 import LiquidityPanel from "../LiquidityPanel/LiquidityPanel";
 import DuPontAnalysis from "../DuPontAnalysis/DuPontAnalysis";
 import GrowthAnalysis from "../GrowthAnalysis/GrowthAnalysis";
+import BenchmarkPanel from "../BenchmarkPanel/BenchmarkPanel";
 import ReportQuality from "@/components/Reporting/ReportQuality";
 
 export default function ExportReport() {
@@ -108,6 +109,7 @@ export default function ExportReport() {
                   <InvestmentVerdict score={investmentScore} />
                 </div>
                 <StrengthsWeaknesses metrics={metrics} />
+                <BenchmarkPanel metrics={metrics} />
               </div>
             )}
 
@@ -148,6 +150,7 @@ export default function ExportReport() {
                   netIncomeGrowth={responseData?.historicalData?.netIncome?.growth} 
                 />
                 <DuPontAnalysis metrics={metrics} />
+                <BenchmarkPanel metrics={metrics} />
                 <StrengthsWeaknesses metrics={metrics} />
               </div>
             )}
@@ -179,6 +182,7 @@ export default function ExportReport() {
                   netIncomeGrowth={responseData?.historicalData?.netIncome?.growth} 
                 />
                 <DuPontAnalysis metrics={metrics} />
+                <BenchmarkPanel metrics={metrics} />
                 <LiquidityPanel metrics={metrics} />
                 <RiskPanel metrics={metrics} />
                 <StrengthsWeaknesses metrics={metrics} />
