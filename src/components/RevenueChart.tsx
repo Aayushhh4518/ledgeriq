@@ -42,6 +42,7 @@ export default function RevenueChart({ metrics }: Props) {
   ];
 
   // Placeholder Industry Target (e.g. 75% of Revenue)
+   
   const benchmarkValue = (metrics.revenue?.value ?? 0) * 0.75;
 
   return (

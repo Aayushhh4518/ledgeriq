@@ -28,7 +28,7 @@ export default function OverviewCards({ metrics }: Props) {
 
   const cards = [
     {
-      title: "Revenue",
+      title: "Reve  2222nue",
       metric: metrics.revenue,
       value: metrics.revenue?.value ?? 0,
       trend: "+12.4%",
