@@ -20,7 +20,7 @@ export default function RiskPanel({ metrics }: Props) {
     (metrics.cash?.value ?? 0) > 20000 ? "LOW" : "HIGH";
 
   const profitabilityRisk =
-    netMargin > 15 ? "LOW" : "HIGH";
+    netMargin > 15 ? "LOW" : netMargin > 0 ? "MEDIUM" : "HIGH";
 
   const growthRisk =
     (metrics.revenue?.value ?? 0) > 100000 ? "LOW" : "MEDIUM";
