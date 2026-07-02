@@ -37,6 +37,12 @@ export default function RiskPanel({ metrics }: Props) {
     return <ShieldAlert className="w-4 h-4 text-rose-500" />;
   };
 
+  const getRiskDescription = (risk: string) => {
+    if (risk === "LOW") return "Healthy metrics within safe operational bounds.";
+    if (risk === "MEDIUM") return "Moderate levels detected. Monitor closely.";
+    return "Critical levels detected. High risk flag.";
+  };
+
   return (
     <div className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] hover:bg-[#0a0a0a]/60 overflow-hidden">
       <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-6">
@@ -46,7 +52,10 @@ export default function RiskPanel({ metrics }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex items-center justify-between">
           <p className="text-sm font-medium text-zinc-400">Liquidity Risk</p>
-          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded border ${getRiskColor(liquidityRisk)}`}>
+          <div 
+            title={getRiskDescription(liquidityRisk)}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded border cursor-help ${getRiskColor(liquidityRisk)}`}
+          >
             {getRiskIcon(liquidityRisk)}
             <span className="text-xs font-bold tracking-wider">{liquidityRisk}</span>
           </div>
@@ -54,7 +63,10 @@ export default function RiskPanel({ metrics }: Props) {
 
         <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex items-center justify-between">
           <p className="text-sm font-medium text-zinc-400">Profitability Risk</p>
-          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded border ${getRiskColor(profitabilityRisk)}`}>
+          <div 
+            title={getRiskDescription(profitabilityRisk)}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded border cursor-help ${getRiskColor(profitabilityRisk)}`}
+          >
             {getRiskIcon(profitabilityRisk)}
             <span className="text-xs font-bold tracking-wider">{profitabilityRisk}</span>
           </div>
@@ -62,7 +74,10 @@ export default function RiskPanel({ metrics }: Props) {
 
         <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex items-center justify-between">
           <p className="text-sm font-medium text-zinc-400">Growth Risk</p>
-          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded border ${getRiskColor(growthRisk)}`}>
+          <div 
+            title={getRiskDescription(growthRisk)}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded border cursor-help ${getRiskColor(growthRisk)}`}
+          >
             {getRiskIcon(growthRisk)}
             <span className="text-xs font-bold tracking-wider">{growthRisk}</span>
           </div>
