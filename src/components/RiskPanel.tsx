@@ -17,13 +17,13 @@ export default function RiskPanel({ metrics }: Props) {
   const netMargin = netMarginMetrics?.value ? netMarginMetrics.value * 100 : 0;
 
   const liquidityRisk =
-    (metrics.cash?.value ?? 0) > 20000 ? "LOW" : "HIGH";
+    (metrics.cash?.value ?? 0) > 20000 ? "LOW" : (metrics.cash?.value ?? 0) > 5000 ? "MEDIUM" : "HIGH";
 
   const profitabilityRisk =
     netMargin > 15 ? "LOW" : netMargin > 0 ? "MEDIUM" : "HIGH";
 
   const growthRisk =
-    (metrics.revenue?.value ?? 0) > 100000 ? "LOW" : "MEDIUM";
+    (metrics.revenue?.value ?? 0) > 100000 ? "LOW" : (metrics.revenue?.value ?? 0) > 0 ? "MEDIUM" : "HIGH";
 
   const getRiskColor = (risk: string) => {
     if (risk === "LOW") return "text-emerald-400 bg-emerald-400/10 border-emerald-500/20";
