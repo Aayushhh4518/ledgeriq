@@ -10,6 +10,18 @@ interface Props {
 export default function OpportunitiesAndFlags({ opportunities, redFlags, insights }: Props) {
   const strengths = insights.filter(i => i.type === 'strength');
 
+  const getSeverityColor = (severity: string) => {
+    switch(severity.toUpperCase()) {
+      case 'HIGH':
+      case 'CRITICAL':
+        return 'text-rose-400 bg-rose-500/10';
+      case 'MEDIUM':
+        return 'text-amber-400 bg-amber-500/10';
+      default:
+        return 'text-yellow-400 bg-yellow-500/10';
+    }
+  };
+
   return (
     <div className="bg-[#0a0a0a] border border-zinc-800 rounded-xl flex flex-col h-full overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-2 h-full divide-y md:divide-y-0 md:divide-x divide-zinc-800">
@@ -66,7 +78,7 @@ export default function OpportunitiesAndFlags({ opportunities, redFlags, insight
                 <div key={idx} className="border-l-2 border-rose-500 pl-4 py-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="text-sm font-semibold text-zinc-200">{flag.title}</h3>
-                    <span className="text-[9px] uppercase font-bold text-rose-400 bg-rose-500/10 px-1.5 py-0.5 rounded">
+                    <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded ${getSeverityColor(flag.severity)}`}>
                       {flag.severity} RISK
                     </span>
                   </div>
