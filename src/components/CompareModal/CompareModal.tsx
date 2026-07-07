@@ -55,12 +55,17 @@ export default function CompareModal() {
 
     try {
       setIsCompareUploading(true);
-      const formData = new FormData();
-      formData.append("file", compareFile);
+      // Client-side extraction to bypass Vercel limits
+      const { extractTextFromPDFFile } = await import("@/lib/pdf/clientExtractText");
+      const extractedText = await extractTextFromPDFFile(compareFile);
 
       const response = await fetch("/api/upload", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: compareFile.name,
+          text: extractedText
+        }),
       });
 
       if (!response.ok) {

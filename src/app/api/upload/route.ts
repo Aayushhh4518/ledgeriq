@@ -9,7 +9,14 @@ import { evaluateQuality } from "@/lib/validation/qualityScore";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const rawBody = await request.text();
+    let body;
+    try {
+      body = JSON.parse(rawBody);
+    } catch (parseError) {
+      console.error("RAW BODY PREVIEW:", rawBody.slice(0, 200));
+      throw parseError;
+    }
     const { fileName, text: extractedText } = body;
 
     if (!extractedText || !fileName) {
