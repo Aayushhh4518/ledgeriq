@@ -21,7 +21,7 @@ export default function HealthBreakdown({ breakdown, finalScore }: Props) {
 
       <div className="space-y-4 flex-1 overflow-y-auto pr-2">
         {breakdown.map((item, idx) => (
-          <div key={idx} className="flex gap-3 pb-4 border-b border-zinc-800/50 last:border-0 last:pb-0">
+          <div key={idx} className="flex gap-3 p-3 -mx-3 rounded-lg hover:bg-white/[0.03] transition-colors border-b border-zinc-800/50 hover:border-transparent last:border-0">
             <div className="mt-0.5">
               {item.status === 'passed' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
               {item.status === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-400" />}
