@@ -14,13 +14,17 @@ const RevenueChart = dynamic(() => import("@/components/RevenueChart"), {
   ssr: false, 
   loading: () => <SkeletonLoader className="w-full h-80" /> 
 });
+const TrendsCharts = dynamic(() => import("@/components/TrendsCharts"), { 
+  ssr: false, 
+  loading: () => <SkeletonLoader className="w-full h-80" /> 
+});
 const HealthScore = dynamic(() => import("@/components/HealthScore"), { 
   ssr: false, 
   loading: () => <SkeletonLoader className="w-full h-64" /> 
 });
 
 export default function Home() {
-  const { responseData, metrics } = useFinancialData();
+  const { responseData, metrics, historicalData } = useFinancialData();
 
   if (!responseData || !metrics) {
     return (
@@ -60,6 +64,11 @@ export default function Home() {
             <ErrorBoundary fallbackTitle="Revenue Chart">
               <RevenueChart metrics={metrics} />
             </ErrorBoundary>
+            {historicalData && historicalData.isValid && (
+              <ErrorBoundary fallbackTitle="Historical Trends">
+                <TrendsCharts historicalData={historicalData} />
+              </ErrorBoundary>
+            )}
           </div>
 
           <div className="col-span-12 lg:col-span-4 space-y-6">

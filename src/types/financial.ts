@@ -44,10 +44,12 @@ export interface HistoricalData {
   revenue: {
     current: number;
     previous: number;
+    growth?: number | null;
   };
   netIncome: {
     current: number;
     previous: number;
+    growth?: number | null;
   };
   isValid?: boolean; // Flag for anomalous growth data
 }
