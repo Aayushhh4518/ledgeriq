@@ -24,6 +24,9 @@ export default function ScenarioSimulator({
   const projectedNetIncome =
     projectedRevenue * margin;
 
+  const revenueDelta = projectedRevenue - revenue;
+  const netIncomeDelta = projectedNetIncome - netIncome;
+
   return (
     <div className="group relative bg-[#0a0a0a]/50 backdrop-blur-2xl border border-white/5 rounded-2xl p-6 transition-all duration-700 hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)] hover:bg-[#0a0a0a]/60 overflow-hidden">
       <h2 className="text-lg font-semibold tracking-tight text-zinc-100 mb-6">
@@ -65,6 +68,11 @@ export default function ScenarioSimulator({
           <p className="text-xl font-bold text-white">
             ${projectedRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
+          {revenueDelta !== 0 && (
+            <p className={`text-[11px] font-mono mt-1 ${revenueDelta > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {revenueDelta > 0 ? '+' : ''}${revenueDelta.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </p>
+          )}
         </div>
 
         <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex flex-col justify-center">
@@ -73,6 +81,11 @@ export default function ScenarioSimulator({
           <p className="text-xl font-bold text-white">
             ${projectedNetIncome.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
+          {netIncomeDelta !== 0 && (
+            <p className={`text-[11px] font-mono mt-1 ${netIncomeDelta > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {netIncomeDelta > 0 ? '+' : ''}${netIncomeDelta.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            </p>
+          )}
         </div>
 
         <div className="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800/50 hover:border-zinc-700/50 transition-colors flex flex-col justify-center">
