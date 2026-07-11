@@ -16,8 +16,11 @@ export default function DashboardShell({
     <SearchProvider>
       <div className="min-h-screen bg-[#0a0a0a] text-white flex relative">
         {/* Background Depth Elements */}
-        <div className="absolute inset-0 bg-dot-white/[0.15] z-0 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-dot-white/[0.05] z-0 pointer-events-none" />
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex justify-center items-center">
+          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-indigo-600/10 blur-[120px] mix-blend-screen" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-emerald-600/10 blur-[120px] mix-blend-screen" />
+        </div>
         
         <div className="relative z-10 flex w-full">
           <Sidebar />
