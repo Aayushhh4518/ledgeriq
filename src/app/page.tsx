@@ -22,6 +22,10 @@ const HealthScore = dynamic(() => import("@/components/HealthScore"), {
   ssr: false, 
   loading: () => <SkeletonLoader className="w-full h-64" /> 
 });
+const StrengthsWeaknesses = dynamic(() => import("@/components/StrengthsWeaknesses/StrengthsWeaknesses"), { 
+  ssr: false, 
+  loading: () => <SkeletonLoader className="w-full h-80" /> 
+});
 
 export default function Home() {
   const { responseData, metrics, historicalData } = useFinancialData();
@@ -80,6 +84,13 @@ export default function Home() {
             </ErrorBoundary>
           </div>
         </div>
+
+        {/* Strategic Insights Section */}
+        <section id="StrategicInsights" className="w-full pt-4">
+          <ErrorBoundary fallbackTitle="Strategic Insights">
+            <StrengthsWeaknesses metrics={metrics} />
+          </ErrorBoundary>
+        </section>
       </motion.div>
     </main>
   );
